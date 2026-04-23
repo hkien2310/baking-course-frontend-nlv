@@ -5,6 +5,8 @@ import { getPostBySlug, createPost, updatePost, getPostCategories } from '../ser
 import { toast } from 'react-toastify';
 import AdminImageUpload from '../components/Admin/AdminImageUpload';
 import { ROUTES } from '../constants/routes';
+import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
+import './AdminDesign.css';
 
 const AdminPostEditor = () => {
   const { id } = useParams();
@@ -106,13 +108,11 @@ const AdminPostEditor = () => {
               <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-subtle)', paddingBottom: '10px'}}>Trình Soạn Thảo</h5>
               
               <div className="admin-form-group">
-                <label>Tiêu đề <span className="text-danger">*</span></label>
-                <input
-                  type="text"
+                <AdminInput
+                  label={<>Tiêu đề <span className="text-danger">*</span></>}
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="admin-form-control input-lg"
                   placeholder="Nhập tiêu đề bài viết..."
                   style={{ fontSize: '18px', fontWeight: 'bold' }}
                   required
@@ -124,31 +124,39 @@ const AdminPostEditor = () => {
               </div>
 
               <div className="row mt-4">
-                <div className="col-md-6 admin-form-group">
-                  <label>Loại</label>
-                  <select name="type" value={formData.type} onChange={handleChange} className="admin-form-control">
-                    <option value="BLOG">Bài Viết Blog</option>
-                    <option value="RECIPE">Công Thức</option>
-                  </select>
+                <div className="col-md-6">
+                  <AdminSelect 
+                    label="Loại"
+                    name="type" 
+                    value={formData.type} 
+                    onChange={handleChange} 
+                    options={[
+                      { value: 'BLOG', label: 'Bài Viết Blog' },
+                      { value: 'RECIPE', label: 'Công Thức' }
+                    ]}
+                  />
                 </div>
-                <div className="col-md-6 admin-form-group">
-                  <label>Chuyên mục</label>
-                  <select name="category" value={formData.category} onChange={handleChange} className="admin-form-control mb-2">
-                    <option value="">-- Chọn có sẵn --</option>
-                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                  <input type="text" value={newCat} onChange={e => setNewCat(e.target.value)} className="admin-form-control" placeholder="Hoặc nhập chuyên mục mới..." />
+                <div className="col-md-6">
+                  <AdminSelect 
+                    label="Chuyên mục"
+                    name="category" 
+                    value={formData.category} 
+                    onChange={handleChange} 
+                    options={[
+                      { value: '', label: '-- Chọn có sẵn --' },
+                      ...categories.map(c => ({ value: c, label: c }))
+                    ]}
+                  />
+                  <input type="text" value={newCat} onChange={e => setNewCat(e.target.value)} className="admin-form-control mt-2" placeholder="Hoặc nhập chuyên mục mới..." />
                 </div>
               </div>
 
               <div className="row mt-3">
-                <div className="col-md-6 admin-form-group">
-                  <label>Tên Tác Giả</label>
-                  <input type="text" name="authorName" value={formData.authorName} onChange={handleChange} className="admin-form-control" />
+                <div className="col-md-6">
+                  <AdminInput label="Tên Tác Giả" name="authorName" value={formData.authorName} onChange={handleChange} />
                 </div>
-                <div className="col-md-6 admin-form-group">
-                  <label>Ngày Hiển Thị</label>
-                  <input type="text" name="dateString" value={formData.dateString} onChange={handleChange} className="admin-form-control" placeholder="12 Thg 8, 2026" />
+                <div className="col-md-6">
+                  <AdminInput label="Ngày Hiển Thị" name="dateString" value={formData.dateString} onChange={handleChange} placeholder="12 Thg 8, 2026" />
                 </div>
               </div>
 
@@ -161,53 +169,60 @@ const AdminPostEditor = () => {
                 />
               </div>
 
-              <div className="admin-form-group mt-3">
-                <label>Mô tả ngắn</label>
-                <textarea name="desc" value={formData.desc} onChange={handleChange} className="admin-form-control" rows="3" placeholder="Đoạn trích giới thiệu..."></textarea>
+              <div className="mt-3">
+                <AdminTextarea 
+                  label="Mô tả ngắn" 
+                  name="desc" 
+                  value={formData.desc} 
+                  onChange={handleChange} 
+                  rows="3" 
+                  placeholder="Đoạn trích giới thiệu..."
+                />
               </div>
 
-              <div className="admin-form-group mt-3 flex-grow-1 d-flex flexDirection-column">
-                <label>Nội dung chi tiết <span className="text-danger">*</span></label>
-                <textarea 
+              <div className="mt-3 flex-grow-1 d-flex flex-column">
+                <AdminTextarea 
+                  label={<>Nội dung chi tiết <span className="text-danger">*</span></>}
                   name="content" 
                   value={formData.content} 
                   onChange={handleChange} 
-                  className="admin-form-control"
                   style={{ minHeight: '300px', fontFamily: 'monospace', lineHeight: '1.6' }} 
                   placeholder="<p>Viết nội dung bài viết HTML tại đây...</p>"
                   required
                   minLength={50}
-                ></textarea>
+                />
               </div>
             </div>
           </div>
 
           {/* RIGHT: LIVE PREVIEW */}
           <div className="col-lg-6 mb-4">
-            <div className="admin-paper h-100 w-100 p-0 overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="admin-paper h-100 w-100 p-0 overflow-hidden" style={{ display: 'flex', flexDirection: 'column', border: '1px solid #e0e0e0', boxShadow: '0 8px 30px rgba(0,0,0,0.08)' }}>
               <div className="p-3" style={{ borderBottom: '1px solid var(--admin-border-subtle)', backgroundColor: 'var(--admin-paper-bg)' }}>
-                <h5 className="m-0" style={{ color: 'var(--admin-heading)' }}><i className="fa fa-eye mr-2"></i> Xem Trước</h5>
+                <h5 className="m-0" style={{ color: 'var(--admin-heading)', fontWeight: '700' }}><i className="fa fa-eye mr-2 text-info"></i> Xem Trước Giao Diện Blog</h5>
               </div>
               
               <div className="preview-container p-4" style={{ backgroundColor: '#fff', color: '#333', flexGrow: 1, overflowY: 'auto' }}>
-                {/* Simulated Blog Post View */}
-                {formData.thumbnail && (
-                  <img src={formData.thumbnail.startsWith('http') ? formData.thumbnail : `${(import.meta.env.VITE_API_BASE_URL || '').replace(/\/api$/, '')}${formData.thumbnail.startsWith('/') ? '' : '/'}${formData.thumbnail}`} alt="" style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '4px', marginBottom: '20px' }} />
-                )}
-                
-                <div style={{ color: '#eb5e43', fontWeight: '600', textTransform: 'uppercase', fontSize: '12px', marginBottom: '10px' }}>
-                  {formData.category || 'CHUYÊN MỤC'} • {formData.dateString || 'MỚI NHẤT'}
-                </div>
-                
-                <h1 style={{ fontSize: '28px', color: '#222', marginBottom: '15px' }}>
-                  {formData.title || 'Bài viết chưa có tiêu đề'}
-                </h1>
-                
-                <div style={{ fontStyle: 'italic', color: '#666', borderLeft: '4px solid #eb5e43', paddingLeft: '15px', marginBottom: '25px', fontSize: '16px' }}>
-                  {formData.desc || 'Đoạn chú thích sẽ xuất hiện tại đây...'}
-                </div>
+                <div style={{ maxWidth: '650px', margin: '0 auto' }}>
+                  {/* Simulated Blog Post View */}
+                  {formData.thumbnail && (
+                    <img src={formData.thumbnail.startsWith('http') ? formData.thumbnail : `${(import.meta.env.VITE_API_BASE_URL || '').replace(/\/api$/, '')}${formData.thumbnail.startsWith('/') ? '' : '/'}${formData.thumbnail}`} alt="" style={{ width: '100%', height: '350px', objectFit: 'cover', borderRadius: '12px', marginBottom: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
+                  )}
+                  
+                  <div style={{ color: 'var(--admin-primary)', fontWeight: '700', textTransform: 'uppercase', fontSize: '13px', marginBottom: '12px', letterSpacing: '0.5px' }}>
+                    {formData.category || 'CHUYÊN MỤC'} • {formData.dateString || 'MỚI NHẤT'}
+                  </div>
+                  
+                  <h1 style={{ fontSize: '32px', color: '#1a1a1a', marginBottom: '20px', fontWeight: '800', lineHeight: '1.3' }}>
+                    {formData.title || 'Bài viết chưa có tiêu đề'}
+                  </h1>
+                  
+                  <div style={{ fontStyle: 'italic', color: '#555', borderLeft: '4px solid var(--admin-primary)', paddingLeft: '18px', marginBottom: '35px', fontSize: '17px', lineHeight: '1.6', backgroundColor: 'rgba(0,0,0,0.02)', padding: '15px 15px 15px 20px', borderRadius: '0 8px 8px 0' }}>
+                    {formData.desc || 'Đoạn chú thích ngắn gọn sẽ xuất hiện tại đây để thu hút người đọc...'}
+                  </div>
 
-                <div className="content-preview" dangerouslySetInnerHTML={{ __html: formData.content || '<p class="text-muted">Nội dung sẽ xuất hiện tại đây...</p>' }} />
+                  <div className="content-preview" style={{ lineHeight: '1.8', fontSize: '16px', color: '#333' }} dangerouslySetInnerHTML={{ __html: formData.content || '<p class="text-muted">Nội dung bài viết sẽ xuất hiện tại đây...</p>' }} />
+                </div>
               </div>
 
             </div>

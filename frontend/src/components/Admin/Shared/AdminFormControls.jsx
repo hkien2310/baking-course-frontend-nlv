@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const AdminInput = ({ label, type = 'text', value, onChange, onBlur, placeholder, min, max, name, error, required, minLength }) => (
+export const AdminInput = ({ label, type = 'text', value, onChange, onBlur, placeholder, min, max, name, error, required, minLength, list }) => (
   <div className="admin-form-group">
     {label && <label htmlFor={name}>{label}</label>}
     <input 
@@ -16,6 +16,7 @@ export const AdminInput = ({ label, type = 'text', value, onChange, onBlur, plac
       max={max}
       required={required}
       minLength={minLength}
+      list={list}
     />
     {error && <span className="field-error">{error}</span>}
   </div>

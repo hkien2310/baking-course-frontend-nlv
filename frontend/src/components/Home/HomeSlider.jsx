@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../../i18n/LanguageContext';
+import Button from '../Shared/Button';
 
 const HomeSlider = ({ slides }) => {
   const { t } = useTranslation();
@@ -102,7 +103,7 @@ const HomeSlider = ({ slides }) => {
                       <div className="intro_layers">
                         <div className="intro_layer" data-animation="fadeInUp">
                           <h6 className="text-uppercase intro_after_featured_word color-main">
-                            {slide.authorName || 'Lớp học sắp tới'}
+                            {'Khóa học sắp tới'}
                           </h6>
                         </div>
                         <div className="intro_layer" data-animation="fadeInUp">
@@ -123,9 +124,9 @@ const HomeSlider = ({ slides }) => {
                           ></div>
                         </div>
                         <div className="intro_layer flex-btn" data-animation="fadeInUp">
-                          <div className="d-inline-block">
-                            <Link to={`/program/${slide.slug}`} className="btn btn-maincolor">{t('home.slider.enrollNow')}</Link>
-                            <a href="#chiefs" className="btn btn-light">{t('home.slider.ourFeedback')}</a>
+                          <div className="d-inline-flex" style={{ gap: '15px' }}>
+                            <Button to={`/program/${slide.slug}`} variant="main">{t('home.slider.enrollNow')}</Button>
+                            <Button href="#testimonials" variant="outline">{t('home.slider.ourFeedback')}</Button>
                           </div>
                         </div>
                       </div>

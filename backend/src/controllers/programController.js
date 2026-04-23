@@ -10,7 +10,7 @@ exports.getAllPrograms = async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit) || 10;
-    const { dayOfWeek, chiefId } = req.query;
+    const { dayOfWeek, chiefId, search, category, minPrice, maxPrice, sortBy } = req.query;
 
     const where = {};
     if (dayOfWeek) {
@@ -21,6 +21,37 @@ exports.getAllPrograms = async (req, res) => {
     if (chiefId) {
       where.chiefId = chiefId;
     }
+    if (search) {
+      where.title = { contains: search, mode: 'insensitive' };
+    }
+    if (category) {
+      // Support multiple categories by splitting commas
+      const categories = category.split(',').map(c => c.trim());
+      where.category = { in: categories };
+    }
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const min = !isNaN(parseInt(minPrice)) ? parseInt(minPrice) : 0;
+      const max = !isNaN(parseInt(maxPrice)) ? parseInt(maxPrice) : 999999999;
+      // Filter logic: program effective price is salePrice if it exists, otherwise price.
+      // Prisma doesn't support complex OR conditions on computed fields easily, so we use OR:
+      where.OR = [
+        { salePrice: { gte: min, lte: max } },
+        { salePrice: null, price: { gte: min, lte: max } }
+      ];
+    }
+
+    let orderBy = {};
+    if (sortBy === 'price_asc') {
+      // Because price logic is complex, Prisma sorting might just use base price
+      orderBy = { price: 'asc' };
+    } else if (sortBy === 'price_desc') {
+      orderBy = { price: 'desc' };
+    } else if (sortBy === 'popular') {
+      orderBy = { students: 'desc' };
+    } else {
+      // Default newest
+      orderBy = { createdAt: 'desc' };
+    }
 
     if (page) {
       const skip = (page - 1) * limit;
@@ -29,6 +60,7 @@ exports.getAllPrograms = async (req, res) => {
         where,
         skip,
         take: limit,
+        orderBy,
         include: { chief: true, classSessions: { include: { enrollments: true } } },
       });
       return res.json({
@@ -41,6 +73,7 @@ exports.getAllPrograms = async (req, res) => {
 
     const programs = await prisma.program.findMany({
       where,
+      orderBy,
       include: { chief: true, classSessions: { include: { enrollments: true } } },
     });
     res.json(programs);
@@ -120,7 +153,7 @@ exports.getProgramByIdOrSlug = async (req, res) => {
 
 exports.createProgram = async (req, res) => {
   try {
-    const { title, description, price, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType } = req.body;
+    const { title, category, description, price, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
     const finalSlug = slug || generateSlug(title);
     
     // Create nested classSessions
@@ -139,6 +172,7 @@ exports.createProgram = async (req, res) => {
       data: {
         title,
         slug: finalSlug,
+        category: category || null,
         description,
         price: price != null ? parseInt(price) : null,
         thumbnail,
@@ -151,6 +185,8 @@ exports.createProgram = async (req, res) => {
         curriculum: curriculum || null,
         premiumContent: premiumContent || null,
         isFeatured: req.body.isFeatured || false,
+        students: students != null ? parseInt(students) : 0,
+        reviews: reviews != null ? parseInt(reviews) : 0,
         classSessions: nestedSessions
       },
       include: {
@@ -166,7 +202,7 @@ exports.createProgram = async (req, res) => {
 exports.updateProgram = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, price, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType } = req.body;
+    const { title, category, description, price, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
     
     const finalSlug = slug || (title ? generateSlug(title) : undefined);
 
@@ -175,6 +211,7 @@ exports.updateProgram = async (req, res) => {
       data: {
         title,
         ...(finalSlug && { slug: finalSlug }),
+        ...(category !== undefined && { category }),
         description,
         price: price != null ? parseInt(price) : undefined,
         thumbnail,
@@ -186,7 +223,9 @@ exports.updateProgram = async (req, res) => {
         ...(curriculum !== undefined && { curriculum }),
         ...(premiumContent !== undefined && { premiumContent }),
         ...(req.body.isFeatured !== undefined && { isFeatured: req.body.isFeatured }),
-        ...(programType !== undefined && { programType })
+        ...(programType !== undefined && { programType }),
+        ...(students !== undefined && { students: parseInt(students) }),
+        ...(reviews !== undefined && { reviews: parseInt(reviews) })
       },
       include: {
         classSessions: true

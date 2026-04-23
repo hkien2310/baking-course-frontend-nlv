@@ -7,6 +7,7 @@ import AdminImageUpload from '../components/Admin/AdminImageUpload';
 import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
 import { ROUTES } from '../constants/routes';
 import { priceToDollars, dollarsToCents } from '../utils/formatters';
+import './AdminDesign.css';
 
 const AdminProgramEditor = () => {
   const { id } = useParams();
@@ -17,12 +18,21 @@ const AdminProgramEditor = () => {
   
   const [formData, setFormData] = useState({
     programType: 'VIDEO_COURSE', // [TEMPORARILY HIDDEN] Was 'LIVE_CLASS' — đổi mặc định sang Video khi ẩn tính năng lớp trực tiếp
+    category: '',
     authorName: '', authorImage: '', chiefId: '',
     learningGoals: [], classIncludes: [], curriculum: [], classSessions: [],
     premiumContent: { videos: [], resources: [], guides: '' }
   });
 
   const [chiefsList, setChiefsList] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
+
+  const TABS = [
+    { id: 0, label: 'Thông tin chung' },
+    { id: 1, label: 'Nội dung & Hình ảnh' },
+    { id: 2, label: 'Giáo trình (Curriculum)' },
+    { id: 3, label: 'Nội dung Premium' }
+  ];
 
   useEffect(() => {
     document.body.classList.add('admin-mode');
@@ -39,9 +49,12 @@ const AdminProgramEditor = () => {
             programType: prog.programType || 'VIDEO_COURSE', // [TEMPORARILY HIDDEN] Was 'LIVE_CLASS'
             title: prog.title || '',
             slug: prog.slug || '',
+            category: prog.category || '',
             description: prog.description || '',
             price: prog.price != null ? priceToDollars(prog.price) : '',
+            salePrice: prog.salePrice != null ? priceToDollars(prog.salePrice) : '',
             thumbnail: prog.thumbnail || '',
+            isFeatured: prog.isFeatured || false,
             chiefId: prog.chiefId || '',
             authorName: prog.authorName || '',
             authorImage: prog.authorImage || '',
@@ -54,6 +67,8 @@ const AdminProgramEditor = () => {
               endDate: cs.endDate ? new Date(cs.endDate).toISOString().slice(0, 16) : '',
               enrollmentDeadline: cs.enrollmentDeadline ? new Date(cs.enrollmentDeadline).toISOString().slice(0, 16) : ''
             })) : [],
+            students: prog.students || 0,
+            reviews: prog.reviews || 0,
             premiumContent: prog.premiumContent || { videos: [], resources: [], guides: '' }
           });
           setLoading(false);
@@ -68,7 +83,8 @@ const AdminProgramEditor = () => {
   }, [id, isEditing]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
   };
 
   const handleSave = async (e) => {
@@ -76,7 +92,8 @@ const AdminProgramEditor = () => {
     try {
       const payload = {
         ...formData,
-        price: formData.price ? dollarsToCents(formData.price) : null
+        price: formData.price ? dollarsToCents(formData.price) : null,
+        salePrice: formData.salePrice ? dollarsToCents(formData.salePrice) : null
       };
       if (isEditing) {
         await updateProgram(id, payload);
@@ -144,24 +161,75 @@ const AdminProgramEditor = () => {
       </div>
 
       <form id="admin-program-form" onSubmit={handleSave} className="container p-4" style={{ flexGrow: 1, maxWidth: '1000px' }}>
-        <div className="admin-paper p-4 mb-4">
-          <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Thông tin chung</h5>
+        
+        {/* Tabs Navigation */}
+        <div className="admin-tabs">
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`admin-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 0 && (
+          <div className="admin-tab-content admin-paper p-4 mb-4">
+            <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Thông tin chung & Chi phí</h5>
           
-          <AdminInput 
-            label={<>Tên Khóa Học <span className="text-danger">*</span></>} 
-            name="title" 
-            value={formData.title} 
-            onChange={handleChange}
-            placeholder="Làm Bánh Ngọt Pháp Cơ Bản..."
-            required
-            minLength={5}
-          />
+          <div className="row">
+            <div className="col-md-8">
+              <AdminInput 
+                label={<>Tên Khóa Học <span className="text-danger">*</span></>} 
+                name="title" 
+                value={formData.title} 
+                onChange={handleChange}
+                placeholder="Làm Bánh Ngọt Pháp Cơ Bản..."
+                required
+                minLength={5}
+              />
+            </div>
+            <div className="col-md-4">
+              <AdminInput 
+                label="Danh mục (Tự chọn hoặc nhập mới)" 
+                name="category" 
+                value={formData.category} 
+                onChange={handleChange}
+                placeholder="Ví dụ: Bánh Ngọt, Món Âu..."
+                list="category-suggestions"
+              />
+              <datalist id="category-suggestions">
+                <option value="Bánh Ngọt" />
+                <option value="Bánh Mì" />
+                <option value="Tráng Miệng" />
+                <option value="Món Việt" />
+                <option value="Món Âu" />
+                <option value="Món Á" />
+                <option value="Món Nhật" />
+                <option value="Món Hàn" />
+                <option value="Món Hoa" />
+                <option value="Món Chay" />
+                <option value="Đa Quốc Gia" />
+                <option value="Pha Chế" />
+              </datalist>
+            </div>
+          </div>
 
           <div className="row mt-3">
             <div className="col-md-6">
-              <AdminInput label={<>Giá (đ) <span className="text-danger">*</span></>} name="price" type="number" step="1000" min="0" value={formData.price} onChange={handleChange} placeholder="500000" required />
+              <AdminInput label={<>Giá gốc (đ) <span className="text-danger">*</span></>} name="price" type="number" step="1000" min="0" value={formData.price} onChange={handleChange} placeholder="500000" required />
             </div>
             <div className="col-md-6">
+              <AdminInput label="Giá khuyến mãi (đ)" name="salePrice" type="number" step="1000" min="0" value={formData.salePrice || ''} onChange={handleChange} placeholder="Để trống nếu không KM" />
+            </div>
+          </div>
+
+          {/* [TEMPORARILY HIDDEN] Ẩn dropdown giảng viên
+          <div className="row mt-3">
+            <div className="col-md-4">
               <AdminSelect 
                 label={<>Giảng viên <span className="text-danger">*</span></>} 
                 name="chiefId" 
@@ -174,6 +242,7 @@ const AdminProgramEditor = () => {
               />
             </div>
           </div>
+          */}
 
           {/* [TEMPORARILY HIDDEN] Ẩn dropdown loại sản phẩm — chỉ bán Premium Content
           <div className="row mt-3">
@@ -193,21 +262,86 @@ const AdminProgramEditor = () => {
           */}
 
           <div className="row mt-3">
-            <div className="col-sm-12">
-              <AdminImageUpload label="Ảnh Đại Diện (Thumbnail)" name="thumbnail" value={formData.thumbnail} onChange={(url) => setFormData({ ...formData, thumbnail: url })} />
+            <div className="col-12">
+              <label htmlFor="isFeatured" style={{ 
+                display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '12px 16px', borderRadius: '10px',
+                background: formData.isFeatured ? 'rgba(193,154,91,0.08)' : '#f9f9f9',
+                border: `1px solid ${formData.isFeatured ? 'rgba(193,154,91,0.3)' : '#eee'}`,
+                cursor: 'pointer', userSelect: 'none', transition: 'all 0.2s',
+                margin: 0
+              }}>
+                <span style={{
+                  width: '40px', height: '22px', borderRadius: '11px', position: 'relative',
+                  background: formData.isFeatured ? 'linear-gradient(135deg, #c19a5b, #d4af73)' : '#ccc',
+                  transition: 'background 0.25s', flexShrink: 0, display: 'inline-block'
+                }}>
+                  <span style={{
+                    width: '18px', height: '18px', borderRadius: '50%', background: '#fff',
+                    position: 'absolute', top: '2px', left: formData.isFeatured ? '20px' : '2px',
+                    transition: 'left 0.25s', boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                  }}></span>
+                </span>
+                <input 
+                  type="checkbox" 
+                  id="isFeatured" 
+                  name="isFeatured"
+                  checked={formData.isFeatured}
+                  onChange={handleChange}
+                  style={{ display: 'none' }}
+                />
+                <span style={{ fontSize: '14px', color: '#555', fontWeight: '500' }}>
+                  ⭐ Đặt làm "Khóa học nổi bật"
+                </span>
+              </label>
             </div>
           </div>
 
-          <AdminTextarea 
-            label={<>Mô tả tổng quát <span className="text-danger">*</span></>} 
-            name="description" 
-            value={formData.description} 
-            onChange={handleChange} 
-            placeholder="Nhập thông tin khóa học..."
-            required
-            minLength={20}
-          />
-        </div>
+          <div className="row mt-3">
+            <div className="col-md-6">
+              <AdminInput 
+                label="Số lượng học viên (Hiển thị Ảo)" 
+                name="students" 
+                type="number" 
+                value={formData.students !== undefined ? formData.students : ''} 
+                onChange={handleChange} 
+                min="0"
+              />
+            </div>
+            <div className="col-md-6">
+              <AdminInput 
+                label="Số lượng đánh giá (Hiển thị Ảo)" 
+                name="reviews" 
+                type="number" 
+                value={formData.reviews !== undefined ? formData.reviews : ''} 
+                onChange={handleChange} 
+                min="0"
+              />
+            </div>
+          </div>
+
+
+
+          </div>
+          )}
+
+          {activeTab === 1 && (
+            <div className="admin-tab-content admin-paper p-4 mb-4">
+              <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Nội dung & Hình ảnh</h5>
+
+              <div className="mb-4">
+                <AdminImageUpload label="Ảnh Đại Diện (Thumbnail)" name="thumbnail" value={formData.thumbnail} onChange={(url) => setFormData({ ...formData, thumbnail: url })} />
+              </div>
+              
+              <AdminTextarea 
+                label={<>Mô tả tổng quát <span className="text-danger">*</span></>} 
+                name="description" 
+                value={formData.description} 
+                onChange={handleChange} 
+                placeholder="Nhập thông tin khóa học..."
+                required
+                minLength={20}
+              />
 
         {/* [TEMPORARILY HIDDEN] Ẩn phần Lịch học & Ngày khai giảng */}
         {false && formData.programType === 'LIVE_CLASS' && (
@@ -272,134 +406,180 @@ const AdminProgramEditor = () => {
         )}
 
         {/* JSON ARRAY: Learning Goals */}
-        <div className="admin-paper p-4 mb-4">
-          <h5 className="mb-2" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Mục tiêu khóa học (Thanh Kỹ Năng)</h5>
-          {formData.learningGoals.map((goal, i) => (
-            <div key={i} className="row mt-2 align-items-center mb-2">
-              <div className="col-7">
-                <input className="admin-form-control shadow-none" value={goal.skill || ''} onChange={e => handleArrayChange('learningGoals', i, 'skill', e.target.value)} placeholder="Tên kỹ năng" />
-              </div>
-              <div className="col-3">
-                <input className="admin-form-control shadow-none" type="number" value={goal.percent || ''} onChange={e => handleArrayChange('learningGoals', i, 'percent', parseInt(e.target.value) || 0)} placeholder="%" min="0" max="100" />
-              </div>
-              <div className="col-2 text-center">
-                <button type="button" className="admin-btn-icon delete" onClick={() => removeArrayItem('learningGoals', i)}><i className="fa fa-trash"></i></button>
-              </div>
+        <h5 className="mt-5 mb-3" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Mục tiêu khóa học (Thanh Kỹ Năng)</h5>
+        {formData.learningGoals.map((goal, i) => (
+          <div key={i} className="admin-array-card compact-array-row">
+            <div className="flex-grow-1" style={{ flex: 2 }}>
+              <input type="text" className="admin-form-control shadow-none w-100" value={goal.skill || ''} onChange={e => handleArrayChange('learningGoals', i, 'skill', e.target.value)} placeholder="Tên kỹ năng" />
             </div>
-          ))}
-          <button type="button" className="btn btn-outline-info btn-sm mt-3" onClick={addLearningGoal}>+ Thêm Kỹ Năng</button>
-        </div>
+            <div className="flex-grow-1" style={{ flex: 1 }}>
+              <input className="admin-form-control shadow-none w-100" type="number" value={goal.percent || ''} onChange={e => handleArrayChange('learningGoals', i, 'percent', parseInt(e.target.value) || 0)} placeholder="Phần trăm (%)" min="0" max="100" />
+            </div>
+            <button type="button" className="btn-remove-array" onClick={() => removeArrayItem('learningGoals', i)}>
+              <i className="fa fa-trash"></i>
+            </button>
+          </div>
+        ))}
+        <button type="button" className="btn-add-array mt-3" onClick={addLearningGoal}>
+          <i className="fa fa-plus"></i> Thêm Kỹ Năng Mới
+        </button>
 
         {/* JSON ARRAY: Class Includes */}
-        <div className="admin-paper p-4 mb-4">
-          <h5 className="mb-2" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Lợi ích khóa học</h5>
-          {formData.classIncludes.map((item, i) => (
-            <div key={i} className="row mt-2 align-items-center">
-              <div className="col-10">
-                <AdminInput value={item} onChange={e => handleArrayChange('classIncludes', i, null, e.target.value)} placeholder="Nội dung..." />
-              </div>
-              <div className="col-2 text-center" style={{ paddingBottom: '24px' }}>
-                <button type="button" className="admin-btn-icon delete" onClick={() => removeArrayItem('classIncludes', i)}><i className="fa fa-trash"></i></button>
-              </div>
+        <h5 className="mt-5 mb-3" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Lợi ích khóa học</h5>
+        {formData.classIncludes.map((item, i) => (
+          <div key={i} className="admin-array-card compact-array-row">
+            <div className="flex-grow-1">
+              <input type="text" className="admin-form-control shadow-none w-100" value={item} onChange={e => handleArrayChange('classIncludes', i, null, e.target.value)} placeholder="Nội dung lợi ích..." />
             </div>
-          ))}
-          <button type="button" className="btn btn-outline-info btn-sm mt-3" onClick={addClassInclude}>+ Thêm Lợi Ích</button>
-        </div>
+            <button type="button" className="btn-remove-array" onClick={() => removeArrayItem('classIncludes', i)}>
+              <i className="fa fa-trash"></i>
+            </button>
+          </div>
+        ))}
+        <button type="button" className="btn-add-array mt-3" onClick={addClassInclude}>
+          <i className="fa fa-plus"></i> Thêm Lợi Ích Mới
+        </button>
+      </div>
+      )}
 
-        {/* JSON ARRAY: Curriculum */}
-        <div className="admin-paper p-4 mb-4">
-          <h5 className="mb-2" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Chương Trình Học (Curriculum)</h5>
-          {formData.curriculum.map((mod, i) => (
-            <div key={i} className="mt-3 p-3 position-relative" style={{ backgroundColor: 'var(--admin-glass-bg)', borderRadius: '12px', border: '1px solid var(--admin-glass-border)' }}>
-              <div className="d-flex justify-content-between mb-3 border-bottom pb-2" style={{borderColor: 'var(--admin-glass-border)'}}>
-                <label style={{ color: 'var(--admin-primary)', fontWeight: '600', margin: 0 }}>Chương {i + 1}</label>
-                <button type="button" className="admin-btn-icon delete" title="Xóa chương" onClick={() => removeArrayItem('curriculum', i)}><i className="fa fa-trash"></i></button>
-              </div>
-              <AdminInput value={mod.title} onChange={e => handleArrayChange('curriculum', i, 'title', e.target.value)} placeholder="Tiêu đề chương" required />
-              <AdminTextarea value={mod.content} onChange={e => handleArrayChange('curriculum', i, 'content', e.target.value)} rows="2" placeholder="Nội dung chương học..." required minLength={10} />
+      {/* TAB 2: CURRICULUM */}
+      {activeTab === 2 && (
+      <div className="admin-tab-content admin-paper p-4 mb-4">
+        <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Chương Trình Học (Giáo trình)</h5>
+        
+        {formData.curriculum.map((mod, i) => (
+          <div key={i} className="admin-array-card">
+            <div className="admin-array-card-header">
+              <h6 className="admin-array-card-title">Chương {i + 1}</h6>
+              <button type="button" className="btn-remove-array" title="Xóa chương" onClick={() => removeArrayItem('curriculum', i)}>
+                <i className="fa fa-trash"></i>
+              </button>
             </div>
-          ))}
-          <button type="button" className="btn btn-outline-info btn-sm mt-3" onClick={addCurriculum}>+ Thêm Chương Mới</button>
-        </div>
+            <AdminInput value={mod.title} onChange={e => handleArrayChange('curriculum', i, 'title', e.target.value)} placeholder="Tiêu đề chương" required />
+            <AdminTextarea value={mod.content} onChange={e => handleArrayChange('curriculum', i, 'content', e.target.value)} rows="3" placeholder="Nội dung chi tiết chương học..." required minLength={10} />
+          </div>
+        ))}
+        <button type="button" className="btn-add-array mt-3" onClick={addCurriculum}>
+          <i className="fa fa-plus"></i> Thêm Chương Mới
+        </button>
+      </div>
+      )}
 
-        {/* Premium Content Section */}
-        <div className="admin-paper p-4 mb-4">
-          <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>
-            <i className="fa fa-star mr-2" style={{color: '#c19a5b'}}></i> Nội Dung Private (Premium)
-            <small className="text-muted ml-2">(Chỉ hiển thị cho người dùng đã làm lễ mua khóa học)</small>
-          </h5>
+      {/* TAB 3: PREMIUM CONTENT */}
+      {activeTab === 3 && (
+      <div className="admin-tab-content admin-paper p-4 mb-4">
+        <h5 className="mb-2" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px', color: '#c19a5b'}}>
+          <i className="fa fa-star mr-2"></i> Nội Dung Private (Premium)
+        </h5>
+        <p className="text-muted mb-4" style={{ fontSize: '14px' }}>
+          Nội dung này chỉ hiển thị cho học viên đã sở hữu khóa học. Hệ thống sẽ tự động chuyển đổi link YouTube/Vimeo sang định dạng nhúng.
+        </p>
 
-          {/* Videos */}
-          <h6 className="mb-2">Video Bài Giảng</h6>
+        {/* ─── Videos ─── */}
+        <div className="mb-5">
+          <h6 className="mb-3 font-weight-bold d-flex align-items-center" style={{ gap: '8px' }}>
+            <i className="fa fa-play-circle" style={{ color: '#c19a5b' }}></i> Video Bài Giảng
+          </h6>
           {(formData.premiumContent?.videos || []).map((video, i) => (
-            <div key={i} className="row mt-2 align-items-center">
-              <div className="col-5">
-                <AdminInput value={video.title || ''} onChange={e => {
-                  const updated = [...(formData.premiumContent?.videos || [])];
-                  updated[i] = { ...updated[i], title: e.target.value };
-                  setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
-                }} placeholder="Tiêu đề video" />
+            <div key={i} className="admin-array-card p-3 mb-3">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <span style={{ fontWeight: '700', fontSize: '13px', color: '#c19a5b' }}>Bài {i + 1}</span>
+                <button type="button" className="btn-remove-array" onClick={() => {
+                    const updated = [...(formData.premiumContent?.videos || [])];
+                    updated.splice(i, 1);
+                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                }}>
+                  <i className="fa fa-trash"></i>
+                </button>
               </div>
-              <div className="col-5">
-                <AdminInput value={video.url || ''} onChange={e => {
-                  const updated = [...(formData.premiumContent?.videos || [])];
-                  updated[i] = { ...updated[i], url: e.target.value };
-                  setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
-                }} placeholder="Link nhúng Youtube/Vimeo/GoogleDrive" />
-              </div>
-              <div className="col-2 text-center" style={{ paddingBottom: '24px' }}>
-                <button type="button" className="admin-btn-icon delete" title="Xóa" onClick={() => {
-                  const updated = [...(formData.premiumContent?.videos || [])];
-                  updated.splice(i, 1);
-                  setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
-                }}><i className="fa fa-trash"></i></button>
+              <div className="row">
+                <div className="col-md-5">
+                  <label className="small text-muted mb-1">Tiêu đề video</label>
+                  <input type="text" className="admin-form-control shadow-none w-100" value={video.title || ''} onChange={e => {
+                    const updated = [...(formData.premiumContent?.videos || [])];
+                    updated[i] = { ...updated[i], title: e.target.value };
+                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                  }} placeholder="VD: Bài 1 - Kỹ thuật trộn bột" />
+                </div>
+                <div className="col-md-7">
+                  <label className="small text-muted mb-1">Link video (YouTube, Vimeo hoặc link nhúng)</label>
+                  <input type="text" className="admin-form-control shadow-none w-100" value={video.url || ''} onChange={e => {
+                    const updated = [...(formData.premiumContent?.videos || [])];
+                    updated[i] = { ...updated[i], url: e.target.value };
+                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                  }} placeholder="https://www.youtube.com/watch?v=..." />
+                  <small className="text-muted d-block mt-1" style={{ fontSize: '11px' }}>
+                    <i className="fa fa-info-circle mr-1"></i>Chấp nhận link YouTube, Vimeo, Google Drive. Hệ thống tự chuyển đổi.
+                  </small>
+                </div>
               </div>
             </div>
           ))}
-          <button type="button" className="btn btn-outline-info btn-sm mt-2" onClick={() => {
+          <button type="button" className="btn-add-array mt-2" onClick={() => {
             setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: [...(formData.premiumContent?.videos || []), { title: '', url: '' }] } });
-          }}>+ Thêm Video</button>
+          }}><i className="fa fa-plus mr-2"></i> Thêm Video Bài Giảng</button>
+        </div>
 
-          {/* Resources */}
-          <h6 className="mt-4 mb-2">Tài nguyên tải xuống</h6>
+        {/* ─── Resources ─── */}
+        <div className="mb-5">
+          <h6 className="mb-3 font-weight-bold d-flex align-items-center" style={{ gap: '8px' }}>
+            <i className="fa fa-download" style={{ color: '#c19a5b' }}></i> Tài Nguyên Tải Xuống
+          </h6>
           {(formData.premiumContent?.resources || []).map((res, i) => (
-            <div key={i} className="row mt-2 align-items-center">
-              <div className="col-5">
-                <AdminInput value={res.title || ''} onChange={e => {
-                  const updated = [...(formData.premiumContent?.resources || [])];
-                  updated[i] = { ...updated[i], title: e.target.value };
-                  setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
-                }} placeholder="Tên tài nguyên" />
+            <div key={i} className="admin-array-card p-3 mb-3">
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <span style={{ fontWeight: '700', fontSize: '13px', color: '#c19a5b' }}>Tài liệu {i + 1}</span>
+                <button type="button" className="btn-remove-array" onClick={() => {
+                    const updated = [...(formData.premiumContent?.resources || [])];
+                    updated.splice(i, 1);
+                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
+                }}>
+                  <i className="fa fa-trash"></i>
+                </button>
               </div>
-              <div className="col-5">
-                <AdminInput value={res.url || ''} onChange={e => {
-                  const updated = [...(formData.premiumContent?.resources || [])];
-                  updated[i] = { ...updated[i], url: e.target.value };
-                  setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
-                }} placeholder="Link tải" />
-              </div>
-              <div className="col-2 text-center" style={{ paddingBottom: '24px' }}>
-                <button type="button" className="admin-btn-icon delete" title="Xóa" onClick={() => {
-                  const updated = [...(formData.premiumContent?.resources || [])];
-                  updated.splice(i, 1);
-                  setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
-                }}><i className="fa fa-trash"></i></button>
+              <div className="row">
+                <div className="col-md-5">
+                  <label className="small text-muted mb-1">Tên tài liệu</label>
+                  <input type="text" className="admin-form-control shadow-none w-100" value={res.title || ''} onChange={e => {
+                    const updated = [...(formData.premiumContent?.resources || [])];
+                    updated[i] = { ...updated[i], title: e.target.value };
+                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
+                  }} placeholder="VD: Công thức Bánh Croissant PDF" />
+                </div>
+                <div className="col-md-7">
+                  <label className="small text-muted mb-1">Link tải xuống</label>
+                  <input type="text" className="admin-form-control shadow-none w-100" value={res.url || ''} onChange={e => {
+                    const updated = [...(formData.premiumContent?.resources || [])];
+                    updated[i] = { ...updated[i], url: e.target.value };
+                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
+                  }} placeholder="https://drive.google.com/..." />
+                </div>
               </div>
             </div>
           ))}
-          <button type="button" className="btn btn-outline-info btn-sm mt-2" onClick={() => {
+          <button type="button" className="btn-add-array mt-2" onClick={() => {
             setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: [...(formData.premiumContent?.resources || []), { title: '', url: '' }] } });
-          }}>+ Thêm Tài Nguyên</button>
+          }}><i className="fa fa-plus mr-2"></i> Thêm Tài Liệu</button>
+        </div>
 
-          {/* Guides */}
-          <h6 className="mt-4 mb-2">Hướng Dẫn Chi Tiết</h6>
+        {/* ─── Guides ─── */}
+        <div>
+          <h6 className="mb-3 font-weight-bold d-flex align-items-center" style={{ gap: '8px' }}>
+            <i className="fa fa-book" style={{ color: '#c19a5b' }}></i> Hướng Dẫn Chi Tiết
+          </h6>
+          <p className="text-muted mb-2" style={{ fontSize: '13px' }}>
+            Viết nội dung hướng dẫn, công thức, lưu ý dành riêng cho học viên. Hỗ trợ HTML cơ bản.
+          </p>
           <AdminTextarea 
             value={formData.premiumContent?.guides || ''} 
             onChange={e => setFormData({ ...formData, premiumContent: { ...formData.premiumContent, guides: e.target.value } })}
-            rows="4"
-            placeholder="Nội dung hướng dẫn chi tiết (Hỗ trợ HTML)..."
+            rows="8"
+            placeholder="<h3>Công thức chi tiết</h3>\n<p>Bước 1: Chuẩn bị nguyên liệu...</p>"
           />
         </div>
+      </div>
+      )}
+
       </form>
     </div>
   );

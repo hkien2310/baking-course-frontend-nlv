@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { submitContact } from '../../services/api';
 import { useTranslation } from '../../i18n/LanguageContext';
+import Input from '../Shared/Input';
 
 const ContactForm = () => {
   const { t } = useTranslation();
@@ -55,65 +56,57 @@ const ContactForm = () => {
 
         <div className="row">
           <div className="col-sm-6">
-            <div className="form-group has-placeholder">
-              <label htmlFor="fullName">{t('contact.fullName') || 'Full Name'}<span className="required">*</span></label>
-              <input
-                type="text"
-                name="fullName"
-                id="fullName"
-                className="form-control"
-                placeholder={t('contact.fullName') || 'Full Name'}
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <Input 
+              wrapperClassName="has-placeholder mb-3"
+              id="fullName"
+              name="fullName"
+              type="text"
+              label={t('contact.fullName') || 'Full Name'}
+              placeholder={t('contact.fullName') || 'Full Name'}
+              value={formData.fullName}
+              onChange={handleChange}
+              required
+            />
           </div>
           <div className="col-sm-6">
-            <div className="form-group has-placeholder">
-              <label htmlFor="email">{t('contact.email') || 'Email address'}<span className="required">*</span></label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                className="form-control"
-                placeholder={t('contact.email') || 'Email Address'}
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <Input 
+              wrapperClassName="has-placeholder mb-3"
+              id="email"
+              name="email"
+              type="email"
+              label={t('contact.email') || 'Email address'}
+              placeholder={t('contact.email') || 'Email Address'}
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
           </div>
         </div>
 
         <div className="row">
           <div className="col-sm-6">
-            <div className="form-group has-placeholder">
-              <label htmlFor="phone">{t('contact.phone') || 'Phone'} <span style={{color:'#999', fontWeight:400}}>({t('common.optional') || 'Optional'})</span></label>
-              <input
-                type="text"
-                name="phone"
-                id="phone"
-                className="form-control"
-                placeholder={`${t('contact.phone') || 'Phone Number'} (${t('common.optional') || 'Optional'})`}
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
+            <Input 
+              wrapperClassName="has-placeholder mb-3"
+              id="phone"
+              name="phone"
+              type="text"
+              label={<>{t('contact.phone') || 'Phone'} <span style={{color:'#999', fontWeight:400}}>({t('common.optional') || 'Optional'})</span></>}
+              placeholder={`${t('contact.phone') || 'Phone Number'} (${t('common.optional') || 'Optional'})`}
+              value={formData.phone}
+              onChange={handleChange}
+            />
           </div>
           <div className="col-sm-6">
-            <div className="form-group has-placeholder">
-              <label htmlFor="subject">{t('contact.subject') || 'Subject'}</label>
-              <input
-                type="text"
-                name="subject"
-                id="subject"
-                className="form-control"
-                placeholder={t('contact.subject') || 'Subject'}
-                value={formData.subject}
-                onChange={handleChange}
-              />
-            </div>
+            <Input 
+              wrapperClassName="has-placeholder mb-3"
+              id="subject"
+              name="subject"
+              type="text"
+              label={t('contact.subject') || 'Subject'}
+              placeholder={t('contact.subject') || 'Subject'}
+              value={formData.subject}
+              onChange={handleChange}
+            />
           </div>
         </div>
 

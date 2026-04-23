@@ -6,7 +6,7 @@
     "instructors": "Giảng viên",
     "recipes": "Công thức",
     "contacts": "Liên hệ",
-    "cta": "Tham quan xưởng",
+    "cta": "Tài khoản",
     "langToggle": "Ngôn ngữ"
   },
   "footer": {
@@ -25,14 +25,14 @@
       "ourFeedback": "phản hồi"
     },
     "classes": {
-      "subtitle": "Khắp mọi nơi",
-      "title": "Các lớp nấu ăn"
+      "subtitle": "",
+      "title": "Khóa học nổi bật"
     },
     "about": {
       "watch": "Xem",
       "video": "Video",
-      "subtitle": "thành tựu của chúng tôi",
-      "title": "Xin chào, Chào mừng đến Muka!"
+      "subtitle": "",
+      "title": "Giới thiệu về YUM Saigon"
     },
     "timetable": {
       "subtitle": "lịch cập nhật",
@@ -149,11 +149,10 @@
   "program": {
     "loading": "Đang tải chương trình...",
     "empty": "Không tìm thấy chương trình nào.",
+    "notFound": "Không tìm thấy khóa học nào khớp với bộ lọc.",
     "title": "Danh Sách Khóa Học"
   },
-  "checkout": {
-    "pageTitle": "Thanh Toán"
-  },
+
   "payment": {
     "resultTitle": "Kết Quả Giao Dịch",
     "success": {
@@ -247,6 +246,7 @@
     }
   },
   "checkout": {
+    "pageTitle": "Thanh Toán",
     "loading": "Đang tải thanh toán...",
     "notFound": "Không tìm thấy chương trình.",
     "steps": {
@@ -318,6 +318,7 @@
     }
   },
   "payment": {
+    "resultTitle": "Kết quả giao dịch",
     "success": {
       "title": "🎉 Thanh toán thành công!",
       "courseActivated": "Khóa học {title} đã được kích hoạt.",

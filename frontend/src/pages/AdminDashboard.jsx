@@ -5,7 +5,7 @@ import AdminPosts from '../components/Admin/AdminPosts';
 import AdminSliders from '../components/Admin/AdminSliders';
 import AdminEnrollments from '../components/Admin/AdminEnrollments';
 import AdminTestimonials from '../components/Admin/AdminTestimonials';
-import AdminChiefs from '../components/Admin/AdminChiefs';
+// [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
 import { getMe, getPrograms, getPosts, getEnrollments, getContacts, getTestimonials, getChiefs, getAllOrders } from '../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -78,8 +78,10 @@ const AdminDashboard = () => {
         return <AdminSliders />;
       case 'testimonials':
         return <AdminTestimonials />;
+      /* [TEMPORARILY HIDDEN] Ẩn tab giảng viên
       case 'chiefs':
         return <AdminChiefs />;
+      */
       case 'enrollments':
         return <AdminEnrollments />;
       case 'contacts':
@@ -131,12 +133,14 @@ const AdminDashboard = () => {
                   <p>Đánh giá (Testimonials)</p>
                 </div>
               </div>
+              {/* [TEMPORARILY HIDDEN] Ẩn stat card Giảng viên
               <div className="col-md-4 mb-4">
                 <div className="admin-stat-card" onClick={() => setActiveTab('chiefs')} style={{ cursor: 'pointer' }}>
                   <h3>{stats.chiefs}</h3>
                   <p>Giảng viên</p>
                 </div>
               </div>
+              */}
               <div className="col-md-4 mb-4">
                 <div className="admin-stat-card" onClick={() => setActiveTab('orders')} style={{ cursor: 'pointer' }}>
                   <h3>{stats.orders}</h3>
@@ -211,11 +215,13 @@ const AdminDashboard = () => {
               <i className="fa fa-quote-left"></i> Đánh giá
             </a>
           </li>
+          {/* [TEMPORARILY HIDDEN] Ẩn tab sidebar Giảng viên
           <li className={activeTab === 'chiefs' ? 'active' : ''}>
             <a href="#chiefs" onClick={(e) => { e.preventDefault(); setActiveTab('chiefs'); }}>
               <i className="fa fa-user-circle"></i> Giảng viên
             </a>
           </li>
+          */}
         </ul>
         
         <button className="admin-logout-btn mt-auto" onClick={handleLogout}>

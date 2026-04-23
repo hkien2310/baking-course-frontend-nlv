@@ -40,22 +40,13 @@ const AdminPrograms = () => {
     { label: 'Ảnh', render: (row) => <img src={row.thumbnail} alt="" width="50" style={{borderRadius: '4px'}}/> },
     { label: 'Tiêu đề', key: 'title' },
     { label: 'Giá', render: (row) => formatPrice(row.price) },
-    { label: 'Giảng viên', render: (row) => row.authorName || row.chief?.name || 'Admin' },
+    { label: 'Danh mục', render: (row) => row.category || '—' },
     { label: 'Thống kê', render: (row) => {
-      const studentCount = row.classSessions ? row.classSessions.reduce((acc, s) => acc + (s.enrollments?.length || 0), 0) : 0;
+      const studentCount = row.students || 0;
       return <small>{studentCount} học viên / {row.reviews || 0} đánh giá</small>;
     }},
     { label: 'Trạng thái', render: (row) => {
-        if (!row.classSessions || row.classSessions.length === 0) return <span className="badge badge-secondary">BẢN NHÁP</span>;
-        
-        const now = new Date();
-        const hasUpcoming = row.classSessions.some(cs => cs.startDate && new Date(cs.startDate) > now);
-        const hasOngoing = row.classSessions.some(cs => cs.startDate && cs.endDate && new Date(cs.startDate) <= now && new Date(cs.endDate) >= now);
-        
-        if (hasOngoing) return <span className="badge badge-success">ĐANG DIỄN RA</span>;
-        if (hasUpcoming) return <span className="badge badge-warning text-dark">SẮP DIỄN RA</span>;
-        
-        return <span className="badge badge-danger">ĐÃ KẾT THÚC</span>;
+        return <span className="badge badge-success">ĐÃ XUẤT BẢN</span>;
     }}
   ];
 

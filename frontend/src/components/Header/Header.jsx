@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { siteConfig } from '../../config/siteConfig';
 import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
+import Button from '../Shared/Button';
 
 const Header = () => {
   const location = useLocation();
@@ -34,9 +35,11 @@ const Header = () => {
                   <li className={location.pathname.startsWith("/program") ? "active" : ""}>
                     <Link to={ROUTES.PROGRAM}>{t('header.programs')}</Link>
                   </li>
+                  {/* [HIDDEN] Ẩn menu Giảng viên theo yêu cầu khách hàng
                   <li className={location.pathname === "/chiefs" ? "active" : ""}>
                     <Link to={ROUTES.CHIEFS}>{t('header.instructors')}</Link>
                   </li>
+                  */}
                   <li className={location.pathname === "/receipt" || location.pathname.startsWith("/post") ? "active" : ""}>
                     <Link to={ROUTES.RECEIPT}>{t('header.recipes')}</Link>
                   </li>
@@ -49,9 +52,9 @@ const Header = () => {
             <div className="col-xl-2 col-lg-3 text-left text-xl-right d-none d-lg-block">
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
                 {hasToken ? (
-                  <Link to={ROUTES.MY_ACCOUNT} className="btn btn-maincolor2">{t('userDash.title') || 'Dashboard'}</Link>
+                  <Button to={ROUTES.MY_ACCOUNT} variant="main2">{t('userDash.title') || 'Dashboard'}</Button>
                 ) : (
-                  <Link to={ROUTES.AUTH} className="btn btn-maincolor2">{t('header.cta')}</Link>
+                  <Button to={ROUTES.AUTH} variant="main2">{t('header.cta')}</Button>
                 )}
               </span>
             </div>

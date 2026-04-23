@@ -6,6 +6,8 @@ const HomeClasses = ({ classes }) => {
   const { t } = useTranslation();
   const carouselRef = useRef(null);
 
+  if (!classes || classes.length === 0) return null;
+
 
 	return (
 		<section className="ls s-py-40 s-py-lg-130 program program-carousel animate" data-animation="fadeInUp" id="classes">
@@ -14,7 +16,7 @@ const HomeClasses = ({ classes }) => {
 				<div className="row">
 					<div className="col-sm-12 text-center">
 						<div className="section-heading">
-							<h6 className="small-text color-main2">{t('home.classes.subtitle')}</h6>
+							{t('home.classes.subtitle') && <h6 className="small-text color-main2">{t('home.classes.subtitle')}</h6>}
 							<h3>{t('home.classes.title')}</h3>
 							<img className="image-wrap" src={`${import.meta.env.BASE_URL}images/icon-main.png`} alt="" />
 						</div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import AdminConfirmModal from './AdminConfirmModal';
+import AdminModal from './AdminModal';
 import AdminButton from './Shared/AdminButton';
 import { getContacts, deleteContact } from '../../services/api';
 
@@ -8,11 +9,14 @@ const AdminContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [selectedContact, setSelectedContact] = useState(null);
 
   const fetchContacts = async () => {
     try {
       const data = await getContacts();
-      setContacts(data);
+      // Sort by date descending (newest first)
+      const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setContacts(sorted);
       setLoading(false);
     } catch (err) {
       console.error("Lỗi khi tải danh sách tin nhắn", err);
@@ -28,6 +32,7 @@ const AdminContacts = () => {
     try {
       await deleteContact(id);
       toast.success('Xóa tin nhắn thành công!');
+      if (selectedContact?.id === id) setSelectedContact(null);
       fetchContacts();
     } catch (err) {
       toast.error('Lỗi khi xóa tin nhắn');
@@ -48,28 +53,32 @@ const AdminContacts = () => {
           <thead>
             <tr>
               <th>Ngày</th>
-              <th>Họ tên</th>
-              <th>Email</th>
+              <th>Khách hàng</th>
               <th>Chủ đề</th>
               <th>Nội dung</th>
-              <th>Thao tác</th>
+              <th className="text-right">Thao tác</th>
             </tr>
           </thead>
           <tbody>
             {contacts.length === 0 ? (
-              <tr><td colSpan="6" className="text-center">Chưa có tin nhắn nào</td></tr>
+              <tr><td colSpan="5" className="text-center">Chưa có tin nhắn nào</td></tr>
             ) : (
               contacts.map(contact => (
-                <tr key={contact.id}>
-                  <td style={{ whiteSpace: 'nowrap' }}>{new Date(contact.createdAt).toLocaleDateString()}</td>
-                  <td>{contact.fullName}</td>
-                  <td>{contact.email}</td>
-                  <td>{contact.subject || 'Không có chủ đề'}</td>
-                  <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={contact.message}>
-                    {contact.message}
+                <tr key={contact.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedContact(contact)}>
+                  <td style={{ whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
+                    {new Date(contact.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </td>
                   <td>
-                    <AdminButton variant="danger" icon="trash" outline size="sm" onClick={() => setDeleteTargetId(contact.id)} />
+                    <div style={{ fontWeight: 600, color: 'var(--admin-primary)' }}>{contact.fullName}</div>
+                    <div style={{ fontSize: '13px', color: 'var(--admin-text-muted)' }}>{contact.email}</div>
+                  </td>
+                  <td style={{ fontWeight: 500 }}>{contact.subject || 'Không có chủ đề'}</td>
+                  <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
+                    {contact.message}
+                  </td>
+                  <td className="text-right">
+                    <AdminButton variant="primary" icon="eye" outline size="sm" onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }} style={{ marginRight: '8px' }} />
+                    <AdminButton variant="danger" icon="trash" outline size="sm" onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }} />
                   </td>
                 </tr>
               ))
@@ -78,6 +87,75 @@ const AdminContacts = () => {
         </table>
       </div>
     </div>
+
+    {/* Message Detail Modal */}
+    <AdminModal
+      isOpen={!!selectedContact}
+      onClose={() => setSelectedContact(null)}
+      title="Chi tiết Tin nhắn"
+    >
+      {selectedContact && (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '20px' }}>
+            <div>
+              <h5 style={{ margin: '0 0 5px 0', color: 'var(--admin-heading)' }}>{selectedContact.fullName}</h5>
+              <div style={{ color: 'var(--admin-text-muted)', fontSize: '14px' }}>
+                <i className="fa fa-envelope-o mr-2"></i>{selectedContact.email}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right', color: 'var(--admin-text-muted)', fontSize: '14px' }}>
+              <i className="fa fa-clock-o mr-2"></i>
+              {new Date(selectedContact.createdAt).toLocaleString('vi-VN')}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <h6 style={{ color: 'var(--admin-text-muted)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>Chủ đề</h6>
+            <div style={{ fontWeight: 600, fontSize: '16px', color: 'var(--admin-heading)' }}>
+              {selectedContact.subject || 'Không có chủ đề'}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '30px' }}>
+            <h6 style={{ color: 'var(--admin-text-muted)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>Nội dung tin nhắn</h6>
+            <div style={{ 
+              background: 'var(--admin-bg)', 
+              padding: '20px', 
+              borderRadius: '8px', 
+              border: '1px solid var(--admin-border-subtle)',
+              whiteSpace: 'pre-wrap',
+              lineHeight: '1.6',
+              color: 'var(--admin-text-base)'
+            }}>
+              {selectedContact.message}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--admin-border-light)', paddingTop: '20px' }}>
+            <button 
+              type="button" 
+              className="btn btn-outline-danger btn-sm"
+              onClick={() => setDeleteTargetId(selectedContact.id)}
+            >
+              <i className="fa fa-trash mr-2"></i>Xóa tin nhắn
+            </button>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button type="button" className="btn btn-light" onClick={() => setSelectedContact(null)}>
+                Đóng
+              </button>
+              <a 
+                href={`mailto:${selectedContact.email}?subject=Re: ${encodeURIComponent(selectedContact.subject || 'Phản hồi từ Muka Bakery')}`}
+                className="btn btn-primary"
+                style={{ background: 'var(--admin-brand)', borderColor: 'var(--admin-brand)', color: 'white' }}
+              >
+                <i className="fa fa-reply mr-2"></i> Phản hồi qua Email
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </AdminModal>
 
     <AdminConfirmModal
       isOpen={!!deleteTargetId}

@@ -1,0 +1,136 @@
+/* AdminDesign.css - Modern UI for Admin Editor */
+
+/* Tabs Navigation */
+.admin-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--admin-border-light, #e0e0e0);
+  padding-bottom: 10px;
+  overflow-x: auto;
+}
+
+.admin-tab-btn {
+  background: transparent;
+  border: none;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-tab-btn:hover {
+  background: rgba(0, 0, 0, 0.03);
+  color: #333;
+}
+
+.admin-tab-btn.active {
+  background: linear-gradient(135deg, #fc834b, #e74c3c);
+  color: white;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
+}
+
+/* Tab Content Transitions */
+.admin-tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Array Cards (Curriculum, Premium Content) */
+.admin-array-card {
+  background: #fdfdfd;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  transition: box-shadow 0.2s ease;
+}
+
+.admin-array-card:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.admin-array-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.admin-array-card-title {
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  font-size: 16px;
+}
+
+.btn-remove-array {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-remove-array:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+/* Add New Item Button */
+.btn-add-array {
+  width: 100%;
+  padding: 15px;
+  background: transparent;
+  border: 2px dashed #ccc;
+  color: #666;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-add-array:hover {
+  border-color: #fc834b;
+  color: #fc834b;
+  background: rgba(252, 131, 75, 0.05);
+}
+
+/* Compact input row for simple arrays */
+.compact-array-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.compact-array-row .admin-form-group {
+  margin-bottom: 0;
+  flex-grow: 1;
+}
+
+.compact-array-row .btn-remove-array {
+  margin-top: 0;
+}

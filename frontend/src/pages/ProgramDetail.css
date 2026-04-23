@@ -25,21 +25,35 @@
                   /* Tabs */
                   .premium-tabs {
                     display: flex;
-                    gap: 0;
-                    border-bottom: 2px solid #f0e8d8;
-                    margin-bottom: 24px;
+                    gap: 10px;
+                    margin-bottom: 28px;
+                    flex-wrap: wrap;
                   }
                   .premium-tab {
-                    background: none; border: none;
-                    padding: 12px 20px;
-                    font-size: 14px; font-weight: 600;
-                    color: #888; cursor: pointer;
-                    border-bottom: 3px solid transparent;
-                    margin-bottom: -2px;
-                    transition: all 0.2s;
+                    background: #f8f4ee;
+                    border: 1px solid #e8dcc8;
+                    padding: 10px 22px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #8b7355;
+                    cursor: pointer;
+                    border-radius: 50px;
+                    transition: all 0.25s ease;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
                   }
-                  .premium-tab:hover { color: #c19a5b; }
-                  .premium-tab.active { color: #c19a5b; border-bottom-color: #c19a5b; }
+                  .premium-tab:hover {
+                    background: #f0e8d8;
+                    border-color: #c19a5b;
+                    color: #8b6914;
+                  }
+                  .premium-tab.active {
+                    background: linear-gradient(135deg, #c19a5b, #d4af73);
+                    color: #fff;
+                    border-color: transparent;
+                    box-shadow: 0 4px 12px rgba(193,154,91,0.3);
+                  }
 
                   /* Panels */
                   .premium-panel { display: none; }
@@ -49,15 +63,17 @@
                   .video-card {
                     border-radius: 12px;
                     overflow: hidden;
-                    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                     background: #fff;
                     transition: transform 0.2s;
+                    border: 1px solid #f0e8d8;
                   }
                   .video-card:hover { transform: translateY(-3px); }
                   .video-wrapper {
                     position: relative;
                     padding-bottom: 56.25%;
                     height: 0;
+                    background: #1a1a2e;
                   }
                   .video-wrapper iframe {
                     position: absolute;
@@ -66,28 +82,28 @@
                     border: none;
                   }
                   .video-info {
-                    padding: 14px 16px;
+                    padding: 18px 20px;
                   }
                   .video-num {
                     display: inline-block;
                     background: rgba(193,154,91,0.1);
                     color: #c19a5b;
-                    padding: 2px 8px;
+                    padding: 3px 12px;
                     border-radius: 10px;
-                    font-size: 11px;
+                    font-size: 12px;
                     font-weight: 700;
-                    margin-bottom: 6px;
+                    margin-bottom: 8px;
                   }
-                  .video-info h6 { margin: 0; font-size: 14px; color: #333; }
+                  .video-info h6 { margin: 0; font-size: 16px; color: #333; font-weight: 600; }
 
                   /* Resource Cards */
                   .resource-card {
                     display: flex;
                     align-items: center;
-                    gap: 14px;
-                    padding: 16px;
+                    gap: 16px;
+                    padding: 18px 20px;
                     background: #fff;
-                    border-radius: 10px;
+                    border-radius: 12px;
                     border: 1px solid #f0e8d8;
                     text-decoration: none;
                     transition: all 0.2s;
@@ -98,16 +114,16 @@
                     transform: translateY(-2px);
                   }
                   .resource-icon {
-                    width: 44px; height: 44px;
+                    width: 48px; height: 48px;
                     background: rgba(193,154,91,0.1);
-                    border-radius: 10px;
+                    border-radius: 12px;
                     display: flex; align-items: center; justify-content: center;
-                    color: #c19a5b; font-size: 20px; flex-shrink: 0;
+                    color: #c19a5b; font-size: 22px; flex-shrink: 0;
                   }
                   .resource-info { flex: 1; }
-                  .resource-info h6 { margin: 0; font-size: 14px; color: #333; }
-                  .resource-info small { color: #aaa; }
-                  .resource-dl { color: #c19a5b; font-size: 18px; }
+                  .resource-info h6 { margin: 0; font-size: 15px; color: #333; font-weight: 600; }
+                  .resource-info small { color: #aaa; font-size: 13px; }
+                  .resource-dl { color: #c19a5b; font-size: 20px; }
 
                   /* Guide */
                   .guide-content {
@@ -182,3 +198,141 @@
                     0%, 100% { box-shadow: 0 0 0 0 rgba(193,154,91,0.4); }
                     50% { box-shadow: 0 0 0 12px rgba(193,154,91,0); }
                   }
+
+/* Enrollment Widget Styles */
+.enrollment-widget {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0,0,0,0.04);
+  text-align: center;
+  position: sticky;
+  top: 100px;
+}
+
+.enrollment-widget .widget-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 15px;
+}
+
+.enrollment-widget p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.enrollment-widget .discount-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.enrollment-widget .discount-badge.category-badge {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.enrollment-widget .discount-badge.sale-badge {
+  background: #e74c3c;
+  color: #fff;
+  position: static;
+}
+
+.enrollment-widget .price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.enrollment-widget .price-original {
+  font-size: 16px;
+  text-decoration: line-through;
+  color: #a0a0a0;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.enrollment-widget .price-sale {
+  font-size: 36px;
+  color: #e74c3c;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.enrollment-widget .btn-enroll {
+  background: linear-gradient(135deg, #fc834b, #e74c3c);
+  color: #fff;
+  border: none;
+  width: 100%;
+  padding: 16px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.enrollment-widget .btn-enroll.btn-warning {
+  background: linear-gradient(135deg, #f1c40f, #f39c12);
+  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+}
+
+.enrollment-widget .btn-enroll:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+  color: #fff;
+}
+
+.enrollment-widget .btn-enroll.btn-warning:hover {
+  box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+}
+
+.enrollment-widget .features-list {
+  text-align: left;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.enrollment-widget .feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.enrollment-widget .feature-item i {
+  color: #27ae60;
+  font-size: 16px;
+}
+
+.enrollment-widget .secure-payment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #888;
+}
+
+.enrollment-widget .secure-payment i {
+  color: #95a5a6;
+}

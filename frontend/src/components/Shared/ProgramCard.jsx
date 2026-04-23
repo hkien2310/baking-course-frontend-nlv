@@ -1,48 +1,65 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
-import { formatPrice } from '../../utils/formatters';
+import { formatPrice, formatStudentCount, calcDiscountPercent } from '../../utils/formatters';
+import Button from './Button';
 
 const ProgramCard = ({ cls }) => {
+  const navigate = useNavigate();
+  const discountPercent = calcDiscountPercent(cls.price, cls.salePrice);
+  const displayPrice = cls.salePrice && cls.price > cls.salePrice ? cls.salePrice : cls.price;
+
+  const handleBuyClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(ROUTES.PROGRAM_DETAIL(cls.slug));
+  };
+
+  const getCategoryLabel = () => {
+    if (cls.category) return cls.category;
+    if (cls.programType === 'LIVE_CLASS') return 'Live class';
+    return 'Premium content';
+  };
+
   return (
-    <div className="vertical-item text-center bordered">
-      <div className="item-media" style={{ position: 'relative' }}>
-        <img src={cls.thumbnail} alt="" style={{ objectFit: 'cover', width: '100%', aspectRatio: '4/3' }} />
-        <div className="media-links">
-          <Link className="abs-link" to={ROUTES.PROGRAM_DETAIL(cls.slug)}></Link>
-        </div>
-        {/* [TEMPORARILY HIDDEN] Ẩn phân loại Live/Video — mặc định Premium Content */}
+    <div className="program-card-v3 bordered">
+      {/* Image */}
+      <div className="pc3-image">
         {cls.programType && (
-          <span className="program-type-badge video">
-            🎬 Premium Content
-          </span>
+          <span className="pc3-category-pill">{getCategoryLabel()}</span>
         )}
-        <div className="content-absolute bg-maincolor2-transparent text-left ds">
-          <h6>{cls.authorName || cls.chief?.name}</h6>
-          <div className={`autor ${cls.id === 1 ? 'half-circle' : ''}`}>
-            <img src={cls.authorImage || cls.chief?.image} alt="" style={{ objectFit: 'cover', width: '70px', height: '70px', borderRadius: '50%' }} />
-          </div>
-        </div>
+        <Link to={ROUTES.PROGRAM_DETAIL(cls.slug)}>
+          <img src={cls.thumbnail} alt={cls.title} />
+        </Link>
       </div>
-      <div className="item-content">
-        <h5>
+
+      {/* Content */}
+      <div className="pc3-body">
+        <h5 className="pc3-title">
           <Link to={ROUTES.PROGRAM_DETAIL(cls.slug)}>{cls.title}</Link>
         </h5>
-        <p>{cls.description}</p>
+        <p className="pc3-desc">{cls.description}</p>
       </div>
-      <div className="program-icon text-center">
-        <div>
-          <i className="fa fa-users color-main"></i>
-          {cls.students}
+
+      {/* Footer: stats + buy button */}
+      <div className="pc3-footer">
+        <div className="pc3-stats-row">
+          {discountPercent && (
+            <span className="pc3-discount-pill">-{discountPercent}%</span>
+          )}
+          {cls.salePrice && cls.price > cls.salePrice && (
+            <span className="pc3-price-old">{formatPrice(cls.price)}</span>
+          )}
+          <span className="pc3-students">{formatStudentCount(cls.students)} học viên</span>
         </div>
-        <div>
-          <i className="fa fa-comments color-main"></i>
-          {cls.reviews}
-        </div>
-        <div>
-          <i className="fa fa-money color-main"></i>
-          {formatPrice(cls.price)}
-        </div>
+        <Button 
+          variant="main" 
+          onClick={handleBuyClick} 
+          style={{ width: '100%', fontSize: '18px', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', borderRadius: '50px' }}
+        >
+          <i className="fa fa-shopping-cart"></i>
+          {formatPrice(displayPrice)}
+        </Button>
       </div>
     </div>
   );

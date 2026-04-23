@@ -6,49 +6,96 @@ import Pagination from '../components/Shared/Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { getPrograms } from '../services/api';
 import { useTranslation } from '../i18n/LanguageContext';
+import Input from '../components/Shared/Input';
+import { formatPrice } from '../utils/formatters';
+import './Program.css';
 
 const ITEMS_PER_PAGE = 6;
+const CATEGORIES = [
+  'Bánh Ngọt', 'Bánh Mì', 'Tráng Miệng', 'Món Việt', 'Món Âu', 
+  'Món Á', 'Món Nhật', 'Món Hàn', 'Món Hoa', 'Món Chay', 'Đa Quốc Gia', 'Pha Chế'
+];
 
 const Program = () => {
   const { t } = useTranslation();
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   
   const chiefId = searchParams.get('chiefId') || '';
+  const searchKeyword = searchParams.get('search') || '';
+  const categoryStr = searchParams.get('category') || '';
+  const categories = categoryStr ? categoryStr.split(',') : [];
+  const sortBy = searchParams.get('sortBy') || 'newest';
+  const currentPage = parseInt(searchParams.get('page') || '1');
+  const minPriceParam = searchParams.get('minPrice') || '';
+  const maxPriceParam = searchParams.get('maxPrice') || '';
+
+  const [localSearch, setLocalSearch] = useState(searchKeyword);
+  const [localMinPrice, setLocalMinPrice] = useState(minPriceParam);
+  const [localMaxPrice, setLocalMaxPrice] = useState(maxPriceParam);
+  const [localCategories, setLocalCategories] = useState(categories);
 
   useEffect(() => {
     setLoading(true);
     const filter = { page: currentPage, limit: ITEMS_PER_PAGE };
     if (chiefId) filter.chiefId = chiefId;
+    if (searchKeyword) filter.search = searchKeyword;
+    if (categoryStr) filter.category = categoryStr;
+    if (sortBy) filter.sortBy = sortBy;
+    if (minPriceParam) filter.minPrice = minPriceParam;
+    if (maxPriceParam) filter.maxPrice = maxPriceParam;
 
     getPrograms(filter)
       .then(response => {
         setPrograms(response.data || []);
         setTotalPages(response.totalPages || 1);
+        setTotalItems(response.totalItems || 0);
         setLoading(false);
       })
       .catch(err => {
         console.error("Failed to fetch programs", err);
         setLoading(false);
       });
-  }, [currentPage, chiefId]);
+  }, [currentPage, chiefId, searchKeyword, categoryStr, sortBy, minPriceParam, maxPriceParam]);
 
   useInitOnLoaded(loading);
 
-  if (loading) {
-    return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('program.loading') || 'Đang tải danh sách khóa học...'}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
-    );
-  }
+  const applyFilters = () => {
+    const newParams = new URLSearchParams(searchParams);
+    
+    if (localSearch) newParams.set('search', localSearch);
+    else newParams.delete('search');
 
-  const paginatedPrograms = programs;
-  const filteredChiefName = chiefId && programs.length > 0 && programs[0].chief ? programs[0].chief.name : null;
+    if (localMinPrice) newParams.set('minPrice', localMinPrice);
+    else newParams.delete('minPrice');
+
+    if (localMaxPrice) newParams.set('maxPrice', localMaxPrice);
+    else newParams.delete('maxPrice');
+
+    if (localCategories.length > 0) newParams.set('category', localCategories.join(','));
+    else newParams.delete('category');
+
+    newParams.set('page', '1');
+    setSearchParams(newParams);
+  };
+
+  const toggleCategory = (cat) => {
+    if (localCategories.includes(cat)) {
+      setLocalCategories(localCategories.filter(c => c !== cat));
+    } else {
+      setLocalCategories([...localCategories, cat]);
+    }
+  };
+
+  const handlePageChange = (page) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', page);
+    setSearchParams(newParams);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <>
@@ -57,33 +104,120 @@ const Program = () => {
         breadcrumbs={[{ label: t('header.home'), link: '/' }, { label: t('header.programs') || 'Khóa Học' }]} 
       />
 
-			<section className="ls s-pt-90 s-pb-40 s-py-lg-100 c-gutter-30 c-mb-50 c-mb-md-30 program">
+			<section className="ls s-pt-90 s-pb-40 s-py-lg-100 c-gutter-30 c-mb-50 c-mb-md-30 program program-page">
 				<div className="container">
 					<div className="row">
-						<div className="d-none d-lg-block divider-20"></div>
             
+            {/* SIDEBAR FILTER */}
+            <aside className="col-lg-3 order-lg-1">
+              <div className="sidebar-filter">
+                {/* Search Widget */}
+                <div className="widget widget_search">
+                  <h3 className="widget-title">Tìm kiếm</h3>
+                  <div className="d-flex position-relative">
+                    <Input 
+                      placeholder="Tên khóa học..." 
+                      value={localSearch} 
+                      onChange={e => setLocalSearch(e.target.value)} 
+                      style={{ borderRadius: '50px', background: '#f8f9fa', border: '1px solid #eee' }}
+                      wrapperClassName="w-100"
+                      icon="search"
+                      onIconClick={applyFilters}
+                      onKeyDown={(e) => { if (e.key === 'Enter') applyFilters(); }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Categories Widget */}
+                <div className="widget widget_categories">
+                  <h3 className="widget-title">Danh mục</h3>
+                  <div className="category-list">
+                    {CATEGORIES.map(cat => (
+                      <div key={cat} className="custom-checkbox">
+                        <input type="checkbox" id={`cat-${cat}`} 
+                               checked={localCategories.includes(cat)} onChange={() => toggleCategory(cat)} />
+                        <label htmlFor={`cat-${cat}`}>{cat}</label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-            
-            {paginatedPrograms.length === 0 && !loading && (
-              <div className="col-12 text-center">
-                <h4>{t('program.notFound') || 'Không tìm thấy khóa học nào.'}</h4>
+                {/* Price Range Widget */}
+                <div className="widget widget_categories">
+                  <h3 className="widget-title">Khoảng giá tối đa</h3>
+                  <div className="mb-3">
+                    <input 
+                      type="range" 
+                      className="w-100" 
+                      min="0" 
+                      max="10000000" 
+                      step="100000"
+                      value={localMaxPrice || 10000000} 
+                      onChange={e => {
+                        setLocalMaxPrice(e.target.value);
+                        setLocalMinPrice('0'); // implicitly set min to 0
+                      }} 
+                    />
+                    <div className="d-flex justify-content-between mt-2">
+                      <span className="small-text text-muted">0đ</span>
+                      <span className="font-weight-bold color-main">
+                        {localMaxPrice ? `${formatPrice(localMaxPrice)}` : '10,000,000đ'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <button className="btn-apply-filter mt-3" onClick={applyFilters}>
+                  Áp dụng bộ lọc
+                </button>
               </div>
-            )}
+            </aside>
 
-            {paginatedPrograms.map((cls) => (
-              <div key={cls.id} className="col-md-6 col-lg-4">
-                <ProgramCard cls={cls} />
-              </div>
-            ))}
-						
-						<div className="d-none d-lg-block divider-30"></div>
+            {/* MAIN CONTENT */}
+            <main className="col-lg-9 order-lg-2">
+              {loading ? (
+                <div className="text-center" style={{ padding: '100px 0' }}>
+                  <div className="spinner-border" style={{ color: '#fc834b' }} role="status"></div>
+                </div>
+              ) : (
+                <>
+                  <div className="row">
+                    {programs.length === 0 && (
+                      <div className="col-12 text-center" style={{ padding: '50px 0' }}>
+                        <h4>{t('program.notFound') || 'Không tìm thấy khóa học nào khớp với bộ lọc.'}</h4>
+                        <button className="btn btn-maincolor mt-3" style={{ borderRadius: '50px' }} 
+                                onClick={() => { 
+                                  setLocalSearch(''); 
+                                  setLocalMinPrice(''); 
+                                  setLocalMaxPrice(''); 
+                                  setSearchParams({}); 
+                                }}>
+                          Xóa tất cả bộ lọc
+                        </button>
+                      </div>
+                    )}
+
+                    {programs.map((cls) => (
+                      <div key={cls.id} className="col-md-6 mb-4">
+                        <ProgramCard cls={cls} />
+                      </div>
+                    ))}
+                  </div>
+
+                  {totalPages > 0 && (
+                    <div className="mt-4">
+                      <Pagination 
+                        currentPage={currentPage} 
+                        totalPages={totalPages} 
+                        onPageChange={handlePageChange} 
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </main>
+
 					</div>
-
-          <Pagination 
-            currentPage={currentPage} 
-            totalPages={totalPages} 
-            onPageChange={(page) => { setCurrentPage(page); window.scrollTo(0, 0); }} 
-          />
 				</div>
 			</section>
     </>

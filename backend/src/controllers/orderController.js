@@ -82,7 +82,7 @@ exports.createOrder = async (req, res) => {
         userId,
         programId,
         classSessionId: finalClassSessionId,
-        amount: program.price,
+        amount: program.salePrice && program.price > program.salePrice ? program.salePrice : program.price,
         transferContent,
       },
       include: {

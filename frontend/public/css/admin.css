@@ -347,19 +347,23 @@ body.admin-mode, .admin-layout {
 
 .admin-form-control {
   width: 100%;
-  padding: 12px 15px;
-  border: 1px solid var(--admin-border-dark);
-  border-radius: 4px;
-  font-size: 14px;
   font-family: inherit;
   transition: all 0.3s ease;
   color: var(--admin-input-text);
-  background-color: var(--admin-input-bg);
+  background-color: var(--admin-input-bg) !important;
+}
+
+textarea.admin-form-control {
+  height: auto !important;
+  resize: vertical;
+  line-height: 1.6;
+  padding: 9px 28px !important;
 }
 
 .admin-form-control:focus {
   outline: none;
-  border-color: var(--admin-brand);
+  border-color: var(--admin-brand) !important;
+  box-shadow: 0 0 0 3px rgba(252, 131, 75, 0.1);
 }
 
 /* ---------------- FORM VALIDATION ---------------- */

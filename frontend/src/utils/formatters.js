@@ -4,8 +4,8 @@
  * @returns {string} Formatted price string (e.g. "$550.00")
  */
 export const formatPrice = (priceInCents) => {
-  if (priceInCents == null || priceInCents === 0) return 'Miễn phí';
-  return `${priceInCents.toLocaleString('vi-VN')}đ`;
+  if (priceInCents == null || priceInCents === 0 || priceInCents === '0') return 'Miễn phí';
+  return `${Number(priceInCents).toLocaleString('vi-VN')}đ`;
 };
 
 /**
@@ -49,4 +49,29 @@ export const getOrderStatusBadge = (status) => {
     default:
       return { label: status || 'Không rõ', className: 'badge-secondary bg-secondary' };
   }
+};
+
+/**
+ * Format student count for display: 1600 → "1,6k", 813 → "813"
+ * @param {number} count
+ * @returns {string}
+ */
+export const formatStudentCount = (count) => {
+  if (count == null || count === 0) return '0';
+  if (count >= 1000) {
+    const k = count / 1000;
+    return k % 1 === 0 ? `${k}k` : `${k.toFixed(1).replace('.0', '')}k`;
+  }
+  return count.toLocaleString('vi-VN');
+};
+
+/**
+ * Calculate discount percentage between original price and sale price
+ * @param {number} price - Original price
+ * @param {number} salePrice - Sale price
+ * @returns {number|null} Discount percentage or null
+ */
+export const calcDiscountPercent = (price, salePrice) => {
+  if (!price || !salePrice || salePrice >= price) return null;
+  return Math.round(((price - salePrice) / price) * 100);
 };

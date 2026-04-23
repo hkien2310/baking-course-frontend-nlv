@@ -6,6 +6,7 @@ import { getChiefById, submitContact } from '../services/api';
 import { ROUTES } from '../constants/routes';
 import { toast } from 'react-toastify';
 import { useTranslation } from '../i18n/LanguageContext';
+import Input from '../components/Shared/Input';
 
 const ChiefDetail = () => {
   const { t } = useTranslation();
@@ -185,16 +186,26 @@ const ChiefDetail = () => {
                         </div>
                         <div className="row">
                           <div className="col-md-6">
-                            <div className="form-group has-placeholder">
-                              <label htmlFor="name">{t('form.fullName') || 'Họ và tên'} <span className="required">*</span></label>
-                              <input type="text" className="form-control" placeholder={t('form.fullName') || 'Họ và tên'} value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required/>
-                            </div>
+                            <Input 
+                              wrapperClassName="has-placeholder mb-3"
+                              label={t('form.fullName') || 'Họ và tên'}
+                              type="text" 
+                              placeholder={t('form.fullName') || 'Họ và tên'} 
+                              value={formData.name} 
+                              onChange={e => setFormData({...formData, name: e.target.value})} 
+                              required
+                            />
                           </div>
                           <div className="col-md-6">
-                            <div className="form-group has-placeholder">
-                              <label htmlFor="email">{t('form.email') || 'Email'} <span className="required">*</span></label>
-                              <input type="email" className="form-control" placeholder={t('form.email') || 'Địa chỉ Email'} value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required/>
-                            </div>
+                            <Input 
+                              wrapperClassName="has-placeholder mb-3"
+                              label={t('form.email') || 'Email'}
+                              type="email" 
+                              placeholder={t('form.email') || 'Địa chỉ Email'} 
+                              value={formData.email} 
+                              onChange={e => setFormData({...formData, email: e.target.value})} 
+                              required
+                            />
                           </div>
                         </div>
                         <div className="row">

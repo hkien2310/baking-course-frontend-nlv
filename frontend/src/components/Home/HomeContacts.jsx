@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { submitContact } from '../../services/api';
 import { useTranslation } from '../../i18n/LanguageContext';
+import Input from '../Shared/Input';
 
 const HomeContacts = () => {
   const { t } = useTranslation();
@@ -73,64 +74,56 @@ const HomeContacts = () => {
         <form className="custom-react-form c-mb-10 c-mb-md-20 c-gutter-20" onSubmit={handleSubmit}>
           <div className="row">
             <div className="col-12 col-md-3">
-              <div className="form-group has-placeholder">
-                <label htmlFor="fullName">{t('form.fullName')} <span className="required">*</span></label>
-                <input
-                  type="text"
-                  name="fullName"
-                  id="fullName"
-                  className="form-control"
-                  placeholder={t('form.fullName') || 'Họ và tên'}
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <Input 
+                wrapperClassName="has-placeholder mb-3"
+                id="fullName"
+                name="fullName"
+                type="text"
+                label={t('form.fullName')}
+                placeholder={t('form.fullName') || 'Họ và tên'}
+                value={formData.fullName}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="col-12 col-md-3">
-              <div className="form-group has-placeholder">
-                <label htmlFor="email">{t('form.email')} <span className="required">*</span></label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  className="form-control"
-                  placeholder={t('form.email') || 'Email'}
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <Input 
+                wrapperClassName="has-placeholder mb-3"
+                id="email"
+                name="email"
+                type="email"
+                label={t('form.email')}
+                placeholder={t('form.email') || 'Email'}
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="col-12 col-md-3">
-              <div className="form-group has-placeholder">
-                <label htmlFor="phone">{t('form.phone')} <span className="required">*</span></label>
-                <input
-                  type="text"
-                  name="phone"
-                  id="phone"
-                  className="form-control"
-                  placeholder={t('form.phone') || 'Số điện thoại'}
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <Input 
+                wrapperClassName="has-placeholder mb-3"
+                id="phone"
+                name="phone"
+                type="text"
+                label={t('form.phone')}
+                placeholder={t('form.phone') || 'Số điện thoại'}
+                value={formData.phone}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="col-12 col-md-3">
-              <div className="form-group has-placeholder">
-                <label htmlFor="message">{t('form.message')} <span className="required">*</span></label>
-                <input
-                  type="text"
-                  name="message"
-                  id="message"
-                  className="form-control"
-                  placeholder={t('form.message') || 'Nội dung tư vấn...'}
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <Input 
+                wrapperClassName="has-placeholder mb-3"
+                id="message"
+                name="message"
+                type="text"
+                label={t('form.message')}
+                placeholder={t('form.message') || 'Nội dung tư vấn...'}
+                value={formData.message}
+                onChange={handleChange}
+                required
+              />
             </div>
           </div>
           <div className="row c-mt-10">

@@ -53,9 +53,11 @@ model Program {
   id          String   @id @default(uuid())
   slug        String   @unique
   title       String
+  category    String?
   programType ProgramType @default(LIVE_CLASS)
   description String?
   price       Int?
+  salePrice   Int?
   reviews     Int      @default(0)
   students    Int      @default(0)
   thumbnail     String?

@@ -203,7 +203,7 @@ const Checkout = () => {
                   <div className="d-flex justify-content-between align-items-center p-3" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
                     <span style={{ fontSize: '18px', fontWeight: '600' }}>{t('checkout.total')}</span>
                     <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--colorMain)' }}>
-                      {formatPrice(program.price)}
+                      {formatPrice(program.salePrice && program.price > program.salePrice ? program.salePrice : program.price)}
                     </span>
                   </div>
 
@@ -290,19 +290,29 @@ const Checkout = () => {
                         <i className="fa fa-hourglass-half" style={{ fontSize: '60px', color: '#ffc107' }}></i>
                       </div>
                       <h4 className="mb-3">Thanh toán đang chờ</h4>
-                      <button className="btn btn-maincolor" onClick={handleVnpayPayment} disabled={submitting}>
-                        {submitting ? '...' : <><i className="fa fa-arrow-right mr-1"></i> Thanh toán qua VNPay ngay</>}
-                      </button>
+                      <div className="d-flex justify-content-center" style={{ gap: '15px' }}>
+                        <button className="btn btn-maincolor" onClick={handleVnpayPayment} disabled={submitting}>
+                          {submitting ? '...' : <><i className="fa fa-arrow-right mr-1"></i> Thanh toán qua VNPay ngay</>}
+                        </button>
+                        <button className="btn btn-outline-dark" onClick={handleCancel} disabled={submitting}>
+                          <i className="fa fa-times mr-1"></i> Hủy đơn hàng
+                        </button>
+                      </div>
                     </>
                   )}
 
-                  <div className="mt-4 p-3" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                    <small className="text-muted">
-                      {t('checkout.status.orderCode')}: <strong>{order.orderCode}</strong> • 
-                      {t('checkout.total')}: <strong>{formatPrice(order.amount)}</strong> • 
-                      Created: <strong>{new Date(order.createdAt).toLocaleString()}</strong>
-                      {order.paymentMethod && <> • Method: <strong>{order.paymentMethod === 'VNPAY' ? t('checkout.vnpay.title') : t('checkout.manual.title')}</strong></>}
-                    </small>
+                  <div className="mt-4 p-4 text-left" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                    <ul className="list-unstyled mb-0" style={{ fontSize: '14px', lineHeight: '1.8' }}>
+                      <li><strong style={{ display: 'inline-block', width: '120px' }}>{t('checkout.status.orderCode')}:</strong> {order.orderCode}</li>
+                      <li><strong style={{ display: 'inline-block', width: '120px' }}>{t('checkout.total')}:</strong> {formatPrice(order.amount)}</li>
+                      <li><strong style={{ display: 'inline-block', width: '120px' }}>Ngày tạo:</strong> {new Date(order.createdAt).toLocaleString()}</li>
+                      {order.paymentMethod && (
+                        <li>
+                          <strong style={{ display: 'inline-block', width: '120px' }}>Phương thức:</strong> 
+                          {order.paymentMethod === 'VNPAY' ? t('checkout.vnpay.title') : t('checkout.manual.title')}
+                        </li>
+                      )}
+                    </ul>
                   </div>
                 </div>
               )}

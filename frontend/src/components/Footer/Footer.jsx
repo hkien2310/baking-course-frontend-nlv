@@ -5,6 +5,7 @@ import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
 import { getPosts, submitContact } from '../../services/api';
 import { toast } from 'react-toastify';
+import Input from '../Shared/Input';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -121,8 +122,17 @@ const Footer = () => {
                 <h3 className="widget-title">{siteConfig.footer.newsletterTitle}</h3>
                 <p>{siteConfig.footer.newsletterDescription}</p>
                 <form className="signup" onSubmit={handleSubscribe}>
-                  <label htmlFor="mailchimp_email"><span className="screen-reader-text">Subscribe:</span></label>
-                  <input id="mailchimp_email" name="email" type="email" className="form-control mailchimp_email ds" placeholder={t('footer.emailPlaceholder') || 'Nhập địa chỉ Email'} value={email} onChange={e => setEmail(e.target.value)} required />
+                  <Input 
+                    id="mailchimp_email" 
+                    name="email" 
+                    type="email" 
+                    inputClassName="mailchimp_email ds" 
+                    placeholder={t('footer.emailPlaceholder') || 'Nhập địa chỉ Email'} 
+                    value={email} 
+                    onChange={e => setEmail(e.target.value)} 
+                    required 
+                    wrapperClassName="mb-3"
+                  />
                   <button type="submit" className="btn btn-maincolor" disabled={submitting}>
                     {submitting ? (t('common.sending') || 'Đang gửi...') : t('footer.subscribe')}
                   </button>

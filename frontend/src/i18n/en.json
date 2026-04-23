@@ -25,14 +25,14 @@
       "ourFeedback": "our feedback"
     },
     "classes": {
-      "subtitle": "Round the Globe",
-      "title": "Our Cooking Classes"
+      "subtitle": "",
+      "title": "Featured Courses"
     },
     "about": {
       "watch": "Watch",
       "video": "Video",
-      "subtitle": "our achievements",
-      "title": "Hello, Welcome to Muka!"
+      "subtitle": "",
+      "title": "About YUM Saigon"
     },
     "timetable": {
       "subtitle": "updated schedule",
@@ -149,6 +149,7 @@
   "program": {
     "loading": "Loading Programs...",
     "empty": "No programs found for this instructor.",
+    "notFound": "No programs found matching the filters.",
     "title": "Programs List"
   },
   "checkout": {
@@ -318,6 +319,7 @@
     }
   },
   "payment": {
+    "resultTitle": "Transaction Result",
     "success": {
       "title": "🎉 Payment Successful!",
       "courseActivated": "Course {title} has been activated.",
