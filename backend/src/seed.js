@@ -30,6 +30,7 @@ const MOCK_DATA = {
     // ── FEATURED (isFeatured: true) ──
     {
       slug: 'lam-banh-ngot-pastry',
+      category: "Bánh Ngọt & Pastry",
       title: 'Làm bánh ngọt & Pastry',
       price: 550000,
       salePrice: 450000,
@@ -52,6 +53,7 @@ const MOCK_DATA = {
     },
     {
       slug: 'xu-ly-thit-ca-gia-cam',
+      category: "Món Âu",
       title: 'Xử lý Thịt, Cá & Gia Cầm',
       price: 480000,
       salePrice: 380000,
@@ -74,6 +76,7 @@ const MOCK_DATA = {
     },
     {
       slug: 'am-thuc-ngoai-quoc',
+      category: "Món Á & Quốc Tế",
       title: 'Ẩm thực Ngoại quốc',
       price: 660000,
       salePrice: 520000,
@@ -97,6 +100,7 @@ const MOCK_DATA = {
     // ── NEW COURSES (isFeatured: false) ──
     {
       slug: 'che-lot-thai-suong-sa',
+      category: "Chè & Tráng Miệng",
       title: 'Lớp Chè Lọt Thái Sương Sa Hat Lựu',
       price: 600000,
       salePrice: null,
@@ -119,6 +123,7 @@ const MOCK_DATA = {
     },
     {
       slug: 'banh-trung-thu-handmade',
+      category: "Bánh Truyền Thống",
       title: 'Workshop Bánh Trung Thu Handmade',
       price: 550000,
       salePrice: 450000,
@@ -141,6 +146,7 @@ const MOCK_DATA = {
     },
     {
       slug: 'masterclass-sushi-sashimi',
+      category: "Món Á & Quốc Tế",
       title: 'Masterclass Sushi & Sashimi',
       price: 750000,
       salePrice: 600000,
@@ -163,6 +169,7 @@ const MOCK_DATA = {
     },
     {
       slug: 'lam-banh-mi-viet-nam',
+      category: "Bánh Mì & Bakery",
       title: 'Làm Bánh Mì Việt Nam Chuẩn Vị Sài Gòn',
       price: 420000,
       salePrice: 350000,
@@ -185,6 +192,7 @@ const MOCK_DATA = {
     },
     {
       slug: 'decorating-cake-fondant',
+      category: "Bánh Ngọt & Pastry",
       title: 'Decorating Cake Fondant Nghệ Thuật',
       price: 850000,
       salePrice: 680000,
@@ -207,6 +215,7 @@ const MOCK_DATA = {
     },
     {
       slug: 'pho-bo-truyen-thong',
+      category: "Món Á & Quốc Tế",
       title: 'Phở Bò Truyền Thống Hà Nội',
       price: 380000,
       salePrice: null,
