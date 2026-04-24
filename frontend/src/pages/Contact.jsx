@@ -14,12 +14,12 @@ const Contact = () => {
 				breadcrumbs={[{ label: t('header.home'), link: '/' }, { label: t('contact.title') || 'Liên Hệ' }]}
 			/>
 
-			<section className="ls ms page_map" data-draggable="true" data-scrollwheel="true" style={{ position: 'relative' }}>
+			<section className="ls ms page_map" data-draggable="true" data-scrollwheel="true" style={{ position: 'relative', minHeight: '500px' }}>
 				<iframe
 					src={siteConfig.contact.googleMapsUrl}
 					width="100%"
 					height="100%"
-					style={{ position: 'absolute', top: 0, left: 0, border: 0, zIndex: 0 }}
+					style={{ position: 'absolute', top: 0, left: 0, border: 0, zIndex: 0, width: '100%', height: '100%' }}
 					allowFullScreen=""
 					aria-hidden="false"
 					tabIndex="0"

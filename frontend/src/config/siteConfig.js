@@ -11,7 +11,7 @@ export const siteConfig = {
     email: "yumsaigon2020@gmail.com",
     website: "www.yumsaigon.com",
     workingHours: "T2-T7: 8:00 - 17:00",
-    googleMapsUrl: "https://maps.google.com/maps?q=114B%20Hoang%20Hoa%20Tham,%20Phuong%207,%20Tan%20Binh,%20Ho%20Chi%20Minh&t=&z=15&ie=UTF8&iwloc=&output=embed"
+    googleMapsUrl: "https://maps.google.com/maps?q=114B%20Ho%C3%A0ng%20Hoa%20Th%C3%A1m%20Ph%C6%B0%E1%BB%9Dng%20B%E1%BA%A3y%20Hi%E1%BB%81n%20TP%20H%E1%BB%93%20Ch%C3%AD%20Minh&t=&z=16&ie=UTF8&iwloc=&output=embed"
   },
   socials: {
     facebook: "https://facebook.com/yumsaigon2020",
