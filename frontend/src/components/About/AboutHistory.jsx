@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from '../../i18n/LanguageContext';
+import { siteConfig } from '../../config/siteConfig';
 
 const AboutHistory = ({ history }) => {
   const { t } = useTranslation();
@@ -23,6 +24,13 @@ const AboutHistory = ({ history }) => {
                 <li key={i}>{f}</li>
               ))}
             </ul>
+            <div className="widget_social_icons mt-4">
+              <span className="mr-3 font-weight-bold">Kết nối với chúng tôi:</span>
+              {siteConfig.socials?.facebook && <a href={siteConfig.socials.facebook} className="fa fa-facebook bg-icon border-icon mr-2" title="facebook" target="_blank" rel="noopener noreferrer"></a>}
+              {siteConfig.socials?.instagram && <a href={siteConfig.socials.instagram} className="fa fa-instagram bg-icon border-icon mr-2" title="instagram" target="_blank" rel="noopener noreferrer"></a>}
+              {siteConfig.socials?.tiktok && <a href={siteConfig.socials.tiktok} className="fa fa-paper-plane bg-icon border-icon mr-2" title="tiktok" target="_blank" rel="noopener noreferrer"></a>}
+              {siteConfig.socials?.youtube && siteConfig.socials.youtube !== '#' && <a href={siteConfig.socials.youtube} className="fa fa-youtube-play bg-icon border-icon mr-2" title="youtube" target="_blank" rel="noopener noreferrer"></a>}
+            </div>
           </div>
           <div className="col-lg-6 border-none">
             <img src={`${import.meta.env.BASE_URL}images/about.jpg`} alt="" />
