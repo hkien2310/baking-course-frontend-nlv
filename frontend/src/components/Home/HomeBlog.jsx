@@ -5,7 +5,7 @@ import { useTranslation } from '../../i18n/LanguageContext';
 
 const imgSrc = (path) => {
 	if (!path) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
-	if (path.startsWith('http') || path.startsWith(import.meta.env.BASE_URL)) return path;
+	if (path.startsWith('http') || path.startsWith(import.meta.env.BASE_URL) || path.startsWith("/uploads/")) return path;
 	return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 };
 

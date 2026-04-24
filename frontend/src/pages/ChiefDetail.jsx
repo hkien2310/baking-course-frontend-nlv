@@ -78,7 +78,7 @@ const ChiefDetail = () => {
 
   const imgSrc = (src) => {
     if (!src) return `${import.meta.env.BASE_URL}images/team/single-profile.jpg`;
-    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL)) return src;
+    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
     return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
   };
 
