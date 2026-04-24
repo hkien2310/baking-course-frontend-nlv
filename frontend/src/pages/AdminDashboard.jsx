@@ -8,6 +8,7 @@ import AdminEnrollments from '../components/Admin/AdminEnrollments';
 import AdminTestimonials from '../components/Admin/AdminTestimonials';
 // [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
+import AdminSettings from './AdminSettings';
 import { getMe, getDashboardStats } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
@@ -89,6 +90,8 @@ const AdminDashboard = () => {
         return <AdminContacts />;
       case 'orders':
         return <AdminOrders />;
+      case 'settings':
+        return <AdminSettings />;
       case 'overview':
       default:
         return (
@@ -224,6 +227,11 @@ const AdminDashboard = () => {
           <li className={activeTab === 'testimonials' ? 'active' : ''}>
             <a href="#testimonials" onClick={(e) => { e.preventDefault(); handleTabChange('testimonials'); }}>
               <i className="fa fa-quote-left"></i> Đánh giá
+            </a>
+          </li>
+          <li className={activeTab === 'settings' ? 'active' : ''}>
+            <a href="#settings" onClick={(e) => { e.preventDefault(); handleTabChange('settings'); }}>
+              <i className="fa fa-cogs"></i> Cấu hình Website
             </a>
           </li>
         </ul>

@@ -292,4 +292,15 @@ export const getDashboardStats = async () => {
   return data;
 };
 
+// ---------------- SITE CONFIG ----------------
+export const getSiteConfig = async () => {
+  const { data } = await api.get('/settings/siteConfig');
+  return data;
+};
+
+export const updateSiteConfig = async (payload) => {
+  const { data } = await api.put('/settings/siteConfig', payload);
+  return data;
+};
+
 export default api;

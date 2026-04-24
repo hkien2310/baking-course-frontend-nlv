@@ -2,10 +2,11 @@ import React from 'react';
 import PageTitle from '../components/Shared/PageTitle';
 import ContactForm from '../components/Contact/ContactForm';
 import ContactInfo from '../components/Contact/ContactInfo';
-import { siteConfig } from '../config/siteConfig';
+import { useSiteConfig } from '../context/SiteConfigContext';
 import { useTranslation } from '../i18n/LanguageContext';
 
 const Contact = () => {
+	const { siteConfig } = useSiteConfig();
 	const { t } = useTranslation();
 	return (
 		<>

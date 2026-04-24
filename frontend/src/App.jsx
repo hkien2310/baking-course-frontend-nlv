@@ -25,10 +25,12 @@ import PaymentResult from './pages/PaymentResult';
 import NotFound from './pages/NotFound';
 import { ROUTES } from './constants/routes';
 import ScrollToTop from './components/Shared/ScrollToTop';
+import { SiteConfigProvider } from './context/SiteConfigContext';
 
 function App() {
   return (
-    <LanguageProvider>
+    <SiteConfigProvider>
+      <LanguageProvider>
     <Router basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
       <Routes>
@@ -102,6 +104,7 @@ function App() {
       theme="colored"
     />
     </LanguageProvider>
+    </SiteConfigProvider>
   );
 }
 

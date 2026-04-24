@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { siteConfig } from '../../config/siteConfig';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
 import { getPosts, submitContact } from '../../services/api';
@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import Input from '../Shared/Input';
 
 const Footer = () => {
+  const { siteConfig } = useSiteConfig();
   const { t } = useTranslation();
   const [recentPosts, setRecentPosts] = useState([]);
   const [email, setEmail] = useState('');

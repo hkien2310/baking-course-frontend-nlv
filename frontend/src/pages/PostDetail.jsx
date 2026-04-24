@@ -5,7 +5,6 @@ import PageTitle from '../components/Shared/PageTitle';
 import BlogSidebar from '../components/Blog/BlogSidebar';
 import { getPostBySlug, getPosts } from '../services/api';
 import { ROUTES } from '../constants/routes';
-import { siteConfig } from '../config/siteConfig';
 import { useTranslation } from '../i18n/LanguageContext';
 
 const PostDetail = () => {
@@ -219,7 +218,7 @@ const PostDetail = () => {
             </main>
 
             {/* ===== RIGHT SIDEBAR ===== */}
-            <BlogSidebar data={siteConfig.sidebar} />
+            <BlogSidebar />
 
           </div>
         </div>

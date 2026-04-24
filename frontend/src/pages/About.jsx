@@ -6,9 +6,10 @@ import { useTranslation } from '../i18n/LanguageContext';
 import AboutVideo from '../components/About/AboutVideo';
 import TestimonialsSlider from '../components/Shared/TestimonialsSlider';
 import { getTestimonials } from '../services/api';
-import { siteConfig } from '../config/siteConfig';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 const About = () => {
+  const { siteConfig } = useSiteConfig();
   const { t } = useTranslation();
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);

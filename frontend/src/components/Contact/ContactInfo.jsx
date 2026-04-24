@@ -1,8 +1,9 @@
 import React from 'react';
-import { siteConfig } from '../../config/siteConfig';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 import { useTranslation } from '../../i18n/LanguageContext';
 
 const ContactInfo = () => {
+  const { siteConfig } = useSiteConfig();
   const { t } = useTranslation();
   return (
     <div className="col-lg-4 animate" data-animation="scaleAppear">

@@ -6,7 +6,6 @@ import BlogCard from '../components/Blog/BlogCard';
 import BlogSidebar from '../components/Blog/BlogSidebar';
 import Pagination from '../components/Shared/Pagination';
 import { getPosts } from '../services/api';
-import { siteConfig } from '../config/siteConfig';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 
@@ -140,7 +139,7 @@ const Receipt = () => {
               />
 						</main>
 
-						<BlogSidebar data={siteConfig.sidebar} />
+						<BlogSidebar />
 
 					</div>
 				</div>

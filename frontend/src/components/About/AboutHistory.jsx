@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from '../../i18n/LanguageContext';
-import { siteConfig } from '../../config/siteConfig';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 
 const AboutHistory = ({ history }) => {
+  const { siteConfig } = useSiteConfig();
   const { t } = useTranslation();
   return (
     <section className="ls s-py-75 s-py-lg-130 about">

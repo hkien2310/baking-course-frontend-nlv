@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from '../../i18n/LanguageContext';
-import { siteConfig } from '../../config/siteConfig';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 
 const HomeFaq = () => {
+  const { siteConfig } = useSiteConfig();
   const { t } = useTranslation();
   return (
     <section className="s-pt-40 s-pb-50 s-py-lg-130 ds faq s-overlay bg-card" id="faq">

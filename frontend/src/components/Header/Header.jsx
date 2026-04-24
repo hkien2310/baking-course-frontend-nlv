@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
-import { siteConfig } from '../../config/siteConfig';
+import { useSiteConfig } from '../../context/SiteConfigContext';
 import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
 import Button from '../Shared/Button';
 
 const Header = () => {
+  const { siteConfig } = useSiteConfig();
   const location = useLocation();
   const isHome = location.pathname === '/';
   const { t, language, setLanguage } = useTranslation();

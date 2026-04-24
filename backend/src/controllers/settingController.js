@@ -1,6 +1,8 @@
-import { ROUTES } from '../constants/routes';
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-export const siteConfig = {
+// The default config we fall back to if database is empty
+const DEFAULT_SITE_CONFIG = {
   name: "YUM Saigon",
   logoText: "YUM Saigon",
   logoDot: "",
@@ -15,17 +17,11 @@ export const siteConfig = {
   },
   socials: {
     facebook: "https://facebook.com/yumsaigon2020",
-    twitter: "#",
     instagram: "https://instagram.com/yumsaigon.com",
     tiktok: "https://www.tiktok.com/@yumsaigon.com",
     youtube: "#"
   },
   copyrightYear: new Date().getFullYear(),
-  heroSliderInterval: 7000, // Duration in milliseconds before auto-sliding
-  header: {
-    ctaButtonText: "Visit workshop",
-    ctaButtonLink: "#classes"
-  },
   footer: {
     newsletterTitle: "Đăng ký nhận bản tin",
     newsletterDescription: "Nhập Email của bạn để nhận những mẹo làm bánh và công thức mới nhất. Chúng tôi cam kết không gửi thư rác!"
@@ -58,17 +54,51 @@ export const siteConfig = {
         desc: 'Định hướng lộ trình sự nghiệp vững chắc, hỗ trợ giới thiệu tận tay cho các đơn vị liên kết uy tín.'
       }
     ]
-  },
-  sidebar: {
-    categories: [
-      { name: 'Recipes', count: null, link: ROUTES.RECEIPT },
-      { name: 'Classes', count: null, link: ROUTES.RECEIPT },
-      { name: 'Cook', count: null, link: ROUTES.RECEIPT },
-      { name: 'Kitchen', count: null, link: ROUTES.RECEIPT },
-      { name: 'Baking', count: null, link: ROUTES.RECEIPT }
-    ],
-    tags: [
-      'Beef', 'Baking', 'Recipes', 'Cook', 'Kitchen', 'Classes', 'Pastry', 'Healthy', 'Menu'
-    ]
   }
+};
+
+const getSiteConfig = async (req, res) => {
+  try {
+    let setting = await prisma.setting.findUnique({
+      where: { key: 'siteConfig' }
+    });
+
+    if (!setting) {
+      // Create default if not exists
+      setting = await prisma.setting.create({
+        data: {
+          key: 'siteConfig',
+          value: DEFAULT_SITE_CONFIG
+        }
+      });
+    }
+
+    res.json(setting.value);
+  } catch (error) {
+    console.error("Error fetching siteConfig:", error);
+    res.status(500).json({ error: "Lỗi khi tải cấu hình website" });
+  }
+};
+
+const updateSiteConfig = async (req, res) => {
+  try {
+    const updatedValue = req.body;
+    
+    // Upsert to ensure it's created or updated safely
+    const setting = await prisma.setting.upsert({
+      where: { key: 'siteConfig' },
+      update: { value: updatedValue },
+      create: { key: 'siteConfig', value: updatedValue }
+    });
+
+    res.json({ message: "Cập nhật cấu hình thành công", config: setting.value });
+  } catch (error) {
+    console.error("Error updating siteConfig:", error);
+    res.status(500).json({ error: "Lỗi khi lưu cấu hình website" });
+  }
+};
+
+module.exports = {
+  getSiteConfig,
+  updateSiteConfig
 };

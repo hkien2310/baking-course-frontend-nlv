@@ -235,3 +235,10 @@ model Category {
   @@unique([name, type])
   @@unique([slug, type])
 }
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
