@@ -77,8 +77,12 @@ const AdminContacts = () => {
                     {contact.message}
                   </td>
                   <td className="text-right">
-                    <AdminButton variant="primary" icon="eye" outline size="sm" onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }} style={{ marginRight: '8px' }} />
-                    <AdminButton variant="danger" icon="trash" outline size="sm" onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }} />
+                    <button className="admin-btn-icon view" title="Xem chi tiết" onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }}>
+                      <i className="fa fa-eye"></i>
+                    </button>
+                    <button className="admin-btn-icon delete" title="Xóa" onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }}>
+                      <i className="fa fa-trash"></i>
+                    </button>
                   </td>
                 </tr>
               ))

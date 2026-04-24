@@ -216,3 +216,22 @@ model PaymentConfig {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+enum CategoryType {
+  PROGRAM
+  POST
+}
+
+model Category {
+  id        String       @id @default(uuid())
+  name      String       
+  slug      String       
+  type      CategoryType @default(PROGRAM)
+  sortOrder Int          @default(0)
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@unique([name, type])
+  @@unique([slug, type])
+}

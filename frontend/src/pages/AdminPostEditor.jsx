@@ -1,7 +1,7 @@
 import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getPostBySlug, createPost, updatePost, getPostCategories } from '../services/api';
+import { getPostBySlug, createPost, updatePost, getCategories } from '../services/api';
 import { toast } from 'react-toastify';
 import AdminImageUpload from '../components/Admin/AdminImageUpload';
 import { ROUTES } from '../constants/routes';
@@ -15,7 +15,7 @@ const AdminPostEditor = () => {
 
   const [loading, setLoading] = useState(isEditing);
   const [categories, setCategories] = useState([]);
-  const [newCat, setNewCat] = useState('');
+
   
   const [formData, setFormData] = useState({
     title: '', slug: '', category: '', type: 'BLOG', thumbnail: '', authorName: 'Admin', dateString: '', content: '', desc: ''
@@ -25,7 +25,7 @@ const AdminPostEditor = () => {
     // We add 'admin-mode' body class since this is a full page component replacing AdminDashboard wrapper
     document.body.classList.add('admin-mode');
     
-    getPostCategories()
+    getCategories({ type: 'POST' })
       .then(res => setCategories(res))
       .catch(() => console.error("Could not load categories"));
 
@@ -62,8 +62,6 @@ const AdminPostEditor = () => {
     e.preventDefault();
     try {
       const payload = { ...formData };
-      if (newCat) payload.category = newCat;
-
       if (isEditing) {
         await updatePost(id, payload);
         toast.success("Cập nhật bài viết thành công!");
@@ -144,10 +142,9 @@ const AdminPostEditor = () => {
                     onChange={handleChange} 
                     options={[
                       { value: '', label: '-- Chọn có sẵn --' },
-                      ...categories.map(c => ({ value: c, label: c }))
+                      ...categories.map(c => ({ value: c.name, label: c.name }))
                     ]}
                   />
-                  <input type="text" value={newCat} onChange={e => setNewCat(e.target.value)} className="admin-form-control mt-2" placeholder="Hoặc nhập chuyên mục mới..." />
                 </div>
               </div>
 

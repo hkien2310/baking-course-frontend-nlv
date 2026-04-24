@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from '../../i18n/LanguageContext';
+import { siteConfig } from '../../config/siteConfig';
 
 const HomeFaq = () => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const HomeFaq = () => {
 										<h5>
 											<a data-toggle="collapse" href="#collapse01" aria-expanded="true" aria-controls="collapse01">
 												<i className="fa fa-pencil" aria-hidden="true"></i>
-												Làm sao để đăng ký khóa học trên Muka?
+												Làm sao để đăng ký khóa học trên {siteConfig.name}?
 											</a>
 										</h5>
 									</div>
@@ -68,7 +69,7 @@ const HomeFaq = () => {
 									<div id="collapse04" className="collapse" role="tabpanel" aria-labelledby="collapse04_header" data-parent="#accordion01">
 										<div className="card-body">
 											<p>
-												Hoàn toàn được! Các khóa học trên Muka được thiết kế từ cơ bản đến nâng cao. Giáo viên sẽ hướng dẫn từng bước chi tiết để bạn có thể thực hành thành công ngay từ lần đầu.
+												Hoàn toàn được! Các khóa học trên {siteConfig.name} được thiết kế từ cơ bản đến nâng cao. Giáo viên sẽ hướng dẫn từng bước chi tiết để bạn có thể thực hành thành công ngay từ lần đầu.
 											</p>
 										</div>
 									</div>
@@ -86,7 +87,7 @@ const HomeFaq = () => {
 									<div id="collapse05" className="collapse" role="tabpanel" aria-labelledby="collapse05_header" data-parent="#accordion01">
 										<div className="card-body">
 											<p>
-												Chính sách của Muka cho phép hoàn tiền 100% trong vòng 7 ngày đầu tiên nếu bạn chưa xem quá 3 bài giảng và cảm thấy không phù hợp với khóa học.
+												Chính sách của {siteConfig.name} cho phép hoàn tiền 100% trong vòng 7 ngày đầu tiên nếu bạn chưa xem quá 3 bài giảng và cảm thấy không phù hợp với khóa học.
 											</p>
 										</div>
 									</div>
@@ -96,18 +97,18 @@ const HomeFaq = () => {
 						<div className="col-md-6">
 							<div className="ls page_map" style={{ position: 'relative' }}>
 								<iframe 
-									src="https://maps.google.com/maps?q=66%20Ton%20That%20Thuyet,%20Hanoi&t=&z=14&ie=UTF8&iwloc=&output=embed" 
+									src={siteConfig.contact.googleMapsUrl} 
 									width="100%" 
 									height="100%" 
 									style={{position: 'absolute', top: 0, left: 0, border: 0, zIndex: 0}} 
 									allowFullScreen="" 
 									aria-hidden="false" 
 									tabIndex="0"
-									title="Muka Location"
+									title={`${siteConfig.name} Location`}
 								></iframe>
 								<div className="marker" style={{ zIndex: 1 }}>
-									<div className="marker-address">Hà Nội, Việt Nam, Tôn Thất Thuyết, 66</div>
-									<div className="marker-title">Muka</div>
+									<div className="marker-address">{siteConfig.contact.address}</div>
+									<div className="marker-title">{siteConfig.name}</div>
 									<div className="marker-description">
 
 										<ul className="list-unstyled">
@@ -118,7 +119,7 @@ const HomeFaq = () => {
 													</span>
 
 													<span>
-														66 Tôn Thất Thuyết, HN
+														{siteConfig.contact.address}
 													</span>
 												</span>
 											</li>
@@ -130,7 +131,7 @@ const HomeFaq = () => {
 													</span>
 
 													<span>
-														T2-CN: 9h - 19h
+														{siteConfig.contact.workingHours || 'T2-T7: 8:00 - 17:00'}
 													</span>
 												</span>
 											</li>

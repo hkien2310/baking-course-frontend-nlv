@@ -15,8 +15,8 @@
   --admin-text-muted: #94a3b8;
   --admin-heading: #0f172a;
   
-  --admin-primary: #78bf4d;
-  --admin-brand: #fc834b;
+  --admin-primary: #5fa88a;
+  --admin-brand: #3f785e;
   
   --admin-border-subtle: #ebdcd0;
   --admin-border-dark: #cbd5e1;
@@ -202,17 +202,32 @@ body.admin-mode, .admin-layout {
   background: var(--admin-paper-bg);
   border-radius: 6px;
   border: 1px solid var(--admin-border-subtle);
-  padding: 30px;
   margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+.admin-paper > .admin-paper-header {
+  padding: 30px 30px 15px 30px;
+}
+.admin-paper > .table-responsive {
+  padding: 0 30px;
+}
+.admin-paper > .admin-pagination-wrapper {
+  padding: 15px 30px;
 }
 
 .admin-paper-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
   border-bottom: 1px solid var(--admin-border-subtle);
+  background-color: var(--admin-paper-bg);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .admin-paper-header h4 {
@@ -222,21 +237,37 @@ body.admin-mode, .admin-layout {
 }
 
 /* ---------------- TABLE DEFAULT STYLES ---------------- */
+.table-responsive {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
 .admin-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .admin-table th {
-  background: transparent;
-  padding: 0 15px 15px 15px;
+  background: var(--admin-paper-bg);
+  padding: 15px;
   font-weight: 600;
   font-size: 12px;
   color: var(--admin-text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-bottom: 1px dashed var(--admin-border-dark);
   text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.admin-table th::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border-bottom: 1px dashed var(--admin-border-dark);
 }
 
 .admin-table td {
@@ -245,6 +276,13 @@ body.admin-mode, .admin-layout {
   border-bottom: 1px solid var(--admin-border-light);
   color: var(--admin-text-base);
   font-size: 14px;
+}
+
+.admin-pagination-wrapper {
+  background-color: var(--admin-paper-bg);
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
 }
 
 .admin-table tbody tr:hover td {
@@ -264,12 +302,20 @@ body.admin-mode, .admin-layout {
 }
 
 .admin-btn-icon.edit:hover {
-  color: var(--admin-brand);
+  background-color: var(--admin-brand);
+  color: #ffffff;
   transform: scale(1.1);
 }
 
 .admin-btn-icon.delete:hover {
-  color: #dc3545;
+  background-color: #dc3545;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.admin-btn-icon.view:hover {
+  background-color: var(--admin-primary);
+  color: #ffffff;
   transform: scale(1.1);
 }
 

@@ -7,5 +7,13 @@ export default defineConfig({
   build: {
     outDir: 'dist/baking'
   },
+  server: {
+    proxy: {
+      '/uploads': {
+        target: 'http://localhost:5001',
+        changeOrigin: true
+      }
+    }
+  },
   plugins: [react()],
 })

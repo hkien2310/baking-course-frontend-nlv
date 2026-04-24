@@ -47,6 +47,32 @@ export const deleteProgram = async (id) => {
   return data;
 };
 
+// ---------------- CATEGORIES (Program) ----------------
+export const getCategories = async (params = {}) => {
+  const { data } = await api.get('/categories', { params });
+  return data;
+};
+
+export const createCategory = async (payload) => {
+  const { data } = await api.post('/categories', payload);
+  return data;
+};
+
+export const updateCategory = async (id, payload) => {
+  const { data } = await api.put(`/categories/${id}`, payload);
+  return data;
+};
+
+export const deleteCategory = async (id) => {
+  const { data } = await api.delete(`/categories/${id}`);
+  return data;
+};
+
+export const reorderCategories = async (items) => {
+  const { data } = await api.put('/categories/reorder', { items });
+  return data;
+};
+
 
 // ---------------- TIMETABLES ----------------
 export const getTimetables = async () => {
@@ -143,11 +169,6 @@ export const deleteEnrollment = async (id) => {
 };
 
 // ---------------- POSTS ----------------
-export const getPostCategories = async () => {
-  const { data } = await api.get('/posts/categories');
-  return data;
-};
-
 export const getPosts = async (params = {}) => {
   const { data } = await api.get('/posts', { params });
   return data;
@@ -263,6 +284,12 @@ export const updatePaymentConfig = async (payload) => {
 export const createVnpayPaymentUrl = async (orderId, bankCode) => {
   const { data } = await api.post('/vnpay/create-payment-url', { orderId, bankCode });
   return data; // { paymentUrl }
+};
+
+// ---------------- DASHBOARD STATS ----------------
+export const getDashboardStats = async () => {
+  const { data } = await api.get('/stats');
+  return data;
 };
 
 export default api;

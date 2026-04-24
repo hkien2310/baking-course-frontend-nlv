@@ -1,20 +1,23 @@
 import { ROUTES } from '../constants/routes';
 
 export const siteConfig = {
-  name: "Muka",
-  logoText: "Muka",
-  logoDot: ".",
-  description: "Trường Dạy Nấu Ăn Muka có lịch sử tự hào với hơn 10 năm kinh nghiệm. Nơi khởi nguồn của những thợ bánh chuyên nghiệp thế hệ mới.",
+  name: "YUM Saigon",
+  logoText: "YUM Saigon",
+  logoDot: "",
+  description: "Mỗi công thức tại YUM Saigon được xây dựng từ trải nghiệm thực tế, hướng đến sự ổn định và khả năng ứng dụng trong kinh doanh.",
   contact: {
-    address: "66 Tôn Thất Thuyết, Dịch Vọng Hậu, Hà Nội",
-    phone: "0912 345 678",
-    email: "lienhe@muka.vn",
-    website: "www.muka.vn"
+    address: "114B Hoàng Hoa Thám Phường Bảy Hiền TP Hồ Chí Minh",
+    phone: "0938561989",
+    email: "yumsaigon2020@gmail.com",
+    website: "www.yumsaigon.com",
+    workingHours: "T2-T7: 8:00 - 17:00",
+    googleMapsUrl: "https://maps.google.com/maps?q=114B%20Hoang%20Hoa%20Tham,%20Phuong%207,%20Tan%20Binh,%20Ho%20Chi%20Minh&t=&z=15&ie=UTF8&iwloc=&output=embed"
   },
   socials: {
-    facebook: "#",
+    facebook: "https://facebook.com/yumsaigon2020",
     twitter: "#",
-    google: "#",
+    instagram: "https://instagram.com/yumsaigon.com",
+    tiktok: "https://www.tiktok.com/@yumsaigon.com",
     youtube: "#"
   },
   copyrightYear: new Date().getFullYear(),
@@ -29,13 +32,13 @@ export const siteConfig = {
   },
   about: {
     historyParagraphs: [
-      'Trường Dạy Nấu Ăn Muka được thành lập với mục tiêu mang nghệ thuật ẩm thực đến gần hơn với mọi người. Ban đầu, chúng tôi chỉ là một phòng lab nhỏ dành cho những người yêu thích bánh kem và bánh mì nghệ thuật.',
-      'Trải qua hơn 10 năm phát triển, Muka đã đào tạo hơn hàng ngàn học viên. Đội ngũ tự tin khẳng định chất lượng qua các giải thưởng trong nước và quốc tế, và hơn hết là ngọn lửa đam mê truyền lửa cho thế hệ tương lai.'
+      'YUM Saigon được thành lập với mục tiêu mang nghệ thuật ẩm thực đến gần hơn với mọi người. Ban đầu, chúng tôi chỉ là một phòng lab nhỏ dành cho những người yêu thích bánh kem và bánh mì nghệ thuật.',
+      'Trải qua quá trình phát triển, YUM Saigon đã đào tạo nhiều học viên. Đội ngũ tự tin khẳng định chất lượng qua các khóa học thực tế, và hơn hết là ngọn lửa đam mê truyền lửa cho thế hệ tương lai.'
     ],
     historyFeatures: [
-      'Cơ sở vật chất hiện đại chuẩn 5 sao',
-      'Giáo trình thực hành theo chuẩn Châu Âu',
-      'Công thức độc quyền từ nghệ nhân làm bánh',
+      'Cơ sở vật chất hiện đại chuẩn',
+      'Giáo trình thực hành bám sát thực tế',
+      'Công thức chuẩn kinh doanh',
       'Môi trường rèn luyện thực tế nghề nghiệp'
     ],
     achievements: [

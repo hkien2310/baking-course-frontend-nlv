@@ -8,7 +8,7 @@ router.post('/', auth, postController.createPost);
 router.put('/:id', auth, postController.updatePost);
 router.delete('/:id', auth, postController.deletePost);
 
-router.get('/categories', postController.getCategories);
+
 router.get('/:identifier', postController.getPostByIdOrSlug);
 
 module.exports = router;

@@ -72,7 +72,7 @@ const Footer = () => {
               <div className="widget widget_icons_list footer-list">
                 <div className="text-center">
                   <Link to={ROUTES.HOME} className="logo logo-footer">
-                    <img src={`${import.meta.env.BASE_URL}images/logo.png`} alt="" />
+                    <img src={`${import.meta.env.BASE_URL}images/logo_yum_saigon.png`} alt="" style={{ maxWidth: '120px', marginRight: '15px' }} />
                     <span className="logo-text color-darkgrey">{siteConfig.logoText}<strong className="color-main">{siteConfig.logoDot}</strong></span>
                   </Link>
                 </div>
@@ -122,15 +122,15 @@ const Footer = () => {
                 <h3 className="widget-title">{siteConfig.footer.newsletterTitle}</h3>
                 <p>{siteConfig.footer.newsletterDescription}</p>
                 <form className="signup" onSubmit={handleSubscribe}>
-                  <Input 
-                    id="mailchimp_email" 
-                    name="email" 
-                    type="email" 
-                    inputClassName="mailchimp_email ds" 
-                    placeholder={t('footer.emailPlaceholder') || 'Nhập địa chỉ Email'} 
-                    value={email} 
-                    onChange={e => setEmail(e.target.value)} 
-                    required 
+                  <Input
+                    id="mailchimp_email"
+                    name="email"
+                    type="email"
+                    inputClassName="mailchimp_email ds"
+                    placeholder={t('footer.emailPlaceholder') || 'Nhập địa chỉ Email'}
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
                     wrapperClassName="mb-3"
                   />
                   <button type="submit" className="btn btn-maincolor" disabled={submitting}>

@@ -153,7 +153,7 @@ exports.getProgramByIdOrSlug = async (req, res) => {
 
 exports.createProgram = async (req, res) => {
   try {
-    const { title, category, description, price, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
+    const { title, category, description, price, salePrice, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
     const finalSlug = slug || generateSlug(title);
     
     // Create nested classSessions
@@ -175,6 +175,7 @@ exports.createProgram = async (req, res) => {
         category: category || null,
         description,
         price: price != null ? parseInt(price) : null,
+        salePrice: salePrice != null ? parseInt(salePrice) : null,
         thumbnail,
         chiefId: chiefId || null,
         programType: programType || 'LIVE_CLASS',
@@ -202,7 +203,7 @@ exports.createProgram = async (req, res) => {
 exports.updateProgram = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, category, description, price, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
+    const { title, category, description, price, salePrice, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
     
     const finalSlug = slug || (title ? generateSlug(title) : undefined);
 
@@ -214,6 +215,7 @@ exports.updateProgram = async (req, res) => {
         ...(category !== undefined && { category }),
         description,
         price: price != null ? parseInt(price) : undefined,
+        ...(salePrice !== undefined && { salePrice: salePrice != null ? parseInt(salePrice) : null }),
         thumbnail,
         chiefId: chiefId || null,
         authorName,
@@ -267,7 +269,17 @@ exports.updateProgram = async (req, res) => {
 exports.deleteProgram = async (req, res) => {
   try {
     const { id } = req.params;
+    // Fetch before deleting to get image URLs
+    const program = await prisma.program.findUnique({ where: { id } });
+    if (!program) return res.status(404).json({ error: 'Program not found' });
+
     await prisma.program.delete({ where: { id } });
+
+    // Clean up uploaded images
+    const { deleteUploadedFile } = require('../utils/fileCleanup');
+    deleteUploadedFile(program.thumbnail);
+    deleteUploadedFile(program.authorImage);
+
     res.json({ message: 'Program deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete program' });

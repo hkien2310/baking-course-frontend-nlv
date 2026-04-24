@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AdminPrograms from '../components/Admin/AdminPrograms';
+import AdminCategories from '../components/Admin/AdminCategories';
 import AdminContacts from '../components/Admin/AdminContacts';
 import AdminPosts from '../components/Admin/AdminPosts';
 import AdminSliders from '../components/Admin/AdminSliders';
@@ -7,44 +8,41 @@ import AdminEnrollments from '../components/Admin/AdminEnrollments';
 import AdminTestimonials from '../components/Admin/AdminTestimonials';
 // [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
-import { getMe, getPrograms, getPosts, getEnrollments, getContacts, getTestimonials, getChiefs, getAllOrders } from '../services/api';
+import { getMe, getDashboardStats } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 
 const AdminDashboard = () => {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState(window.location.hash.replace('#', '') || 'overview');
-  const [stats, setStats] = useState({ programs: 0, posts: 0, enrollments: 0, contacts: 0, sliders: 0, testimonials: 0, orders: 0 });
+  const [stats, setStats] = useState({ programs: 0, categories: 0, posts: 0, enrollments: 0, contacts: 0, sliders: 0, testimonials: 0, orders: 0 });
   const navigate = useNavigate();
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    window.history.replaceState(null, '', `#${tab}`);
+  };
 
   useEffect(() => {
     document.body.classList.add('admin-mode');
     
     getMe().then(setUser).catch(() => navigate(ROUTES.AUTH));
 
-    // Fetch real stats
-    Promise.all([
-      getPrograms().catch(() => []),
-      getPosts().catch(() => []),
-      getEnrollments().catch(() => []),
-      getContacts().catch(() => []),
-      getTestimonials().catch(() => []),
-      getChiefs().catch(() => []),
-      getAllOrders().catch(() => [])
-    ]).then(([programsRes, posts, enrollments, contacts, testimonials, chiefsRes, ordersRes]) => {
-      // programsRes is an object { data, totalPages... } because we used page in controller
-      const programs = programsRes?.data || programsRes || [];
-      const featured = programs.filter(p => p.isFeatured).length;
+    // Fetch real stats from new API
+    getDashboardStats().then((data) => {
       setStats({
-        programs: programs.length,
-        posts: posts?.data?.length || posts.length || 0,
-        enrollments: enrollments.length || 0,
-        contacts: contacts.length || 0,
-        sliders: featured || 0,
-        testimonials: testimonials?.length || 0,
-        chiefs: Array.isArray(chiefsRes) ? chiefsRes.length : (chiefsRes?.data?.length || 0),
-        orders: ordersRes?.length || 0
+        programs: data.programs || 0,
+        categories: data.categories || 0,
+        posts: data.posts || 0,
+        enrollments: data.enrollments || 0,
+        contacts: data.contacts || 0,
+        sliders: data.sliders || 0,
+        testimonials: data.testimonials || 0,
+        chiefs: data.chiefs || 0,
+        orders: data.orders || 0
       });
+    }).catch(err => {
+      console.error('Failed to load dashboard stats', err);
     });
     const handleHash = () => {
       const hash = window.location.hash.replace('#', '');
@@ -69,6 +67,8 @@ const AdminDashboard = () => {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'categories':
+        return <AdminCategories />;
       case 'programs':
         return <AdminPrograms />;
 
@@ -101,6 +101,12 @@ const AdminDashboard = () => {
                 <div className="admin-stat-card" onClick={() => setActiveTab('programs')} style={{ cursor: 'pointer' }}>
                   <h3>{stats.programs}</h3>
                   <p>Khóa học</p>
+                </div>
+              </div>
+              <div className="col-md-4 mb-4">
+                <div className="admin-stat-card" onClick={() => setActiveTab('categories')} style={{ cursor: 'pointer' }}>
+                  <h3>{stats.categories}</h3>
+                  <p>Danh mục</p>
                 </div>
               </div>
               <div className="col-md-4 mb-4">
@@ -142,7 +148,7 @@ const AdminDashboard = () => {
               </div>
               */}
               <div className="col-md-4 mb-4">
-                <div className="admin-stat-card" onClick={() => setActiveTab('orders')} style={{ cursor: 'pointer' }}>
+                <div className="admin-stat-card" onClick={() => handleTabChange('orders')} style={{ cursor: 'pointer' }}>
                   <h3>{stats.orders}</h3>
                   <p>Đơn hàng</p>
                 </div>
@@ -168,60 +174,57 @@ const AdminDashboard = () => {
       <div className="admin-sidebar" style={{ width: '280px', flexShrink: 0 }}>
         <div className="admin-logo-section">
           <i className="fa fa-cutlery"></i>
-          <h5>Trang Quản Trị</h5>
+          <h5>YUM Saigon Admin</h5>
           <p>{user.email}</p>
         </div>
         
         <ul className="admin-menu">
           <li className={activeTab === 'overview' ? 'active' : ''}>
-            <a href="#overview" onClick={(e) => { e.preventDefault(); setActiveTab('overview'); }}>
+            <a href="#overview" onClick={(e) => { e.preventDefault(); handleTabChange('overview'); }}>
               <i className="fa fa-th-large"></i> Tổng quan
             </a>
           </li>
           {/* <li className={activeTab === 'enrollments' ? 'active' : ''}>
-            <a href="#enrollments" onClick={(e) => { e.preventDefault(); setActiveTab('enrollments'); }}>
+            <a href="#enrollments" onClick={(e) => { e.preventDefault(); handleTabChange('enrollments'); }}>
               <i className="fa fa-graduation-cap"></i> Ghi danh
             </a>
           </li> */}
           <li className={activeTab === 'orders' ? 'active' : ''}>
-            <a href="#orders" onClick={(e) => { e.preventDefault(); setActiveTab('orders'); }}>
+            <a href="#orders" onClick={(e) => { e.preventDefault(); handleTabChange('orders'); }}>
               <i className="fa fa-credit-card"></i> Đơn hàng
             </a>
           </li>
           <li className={activeTab === 'contacts' ? 'active' : ''}>
-            <a href="#contacts" onClick={(e) => { e.preventDefault(); setActiveTab('contacts'); }}>
+            <a href="#contacts" onClick={(e) => { e.preventDefault(); handleTabChange('contacts'); }}>
               <i className="fa fa-envelope"></i> Tin nhắn liên hệ
             </a>
           </li>
+          <li className={activeTab === 'categories' ? 'active' : ''}>
+            <a href="#categories" onClick={(e) => { e.preventDefault(); handleTabChange('categories'); }}>
+              <i className="fa fa-tags"></i> Danh mục
+            </a>
+          </li>
           <li className={activeTab === 'programs' ? 'active' : ''}>
-            <a href="#programs" onClick={(e) => { e.preventDefault(); setActiveTab('programs'); }}>
+            <a href="#programs" onClick={(e) => { e.preventDefault(); handleTabChange('programs'); }}>
               <i className="fa fa-book"></i> Khóa học
             </a>
           </li>
           <li className={activeTab === 'posts' ? 'active' : ''}>
-            <a href="#posts" onClick={(e) => { e.preventDefault(); setActiveTab('posts'); }}>
+            <a href="#posts" onClick={(e) => { e.preventDefault(); handleTabChange('posts'); }}>
               <i className="fa fa-pencil"></i> Bài viết & Cẩm nang
             </a>
           </li>
 
-
           <li className={activeTab === 'sliders' ? 'active' : ''}>
-            <a href="#sliders" onClick={(e) => { e.preventDefault(); setActiveTab('sliders'); }}>
+            <a href="#sliders" onClick={(e) => { e.preventDefault(); handleTabChange('sliders'); }}>
               <i className="fa fa-image"></i> Sliders trang chủ
             </a>
           </li>
           <li className={activeTab === 'testimonials' ? 'active' : ''}>
-            <a href="#testimonials" onClick={(e) => { e.preventDefault(); setActiveTab('testimonials'); }}>
+            <a href="#testimonials" onClick={(e) => { e.preventDefault(); handleTabChange('testimonials'); }}>
               <i className="fa fa-quote-left"></i> Đánh giá
             </a>
           </li>
-          {/* [TEMPORARILY HIDDEN] Ẩn tab sidebar Giảng viên
-          <li className={activeTab === 'chiefs' ? 'active' : ''}>
-            <a href="#chiefs" onClick={(e) => { e.preventDefault(); setActiveTab('chiefs'); }}>
-              <i className="fa fa-user-circle"></i> Giảng viên
-            </a>
-          </li>
-          */}
         </ul>
         
         <button className="admin-logout-btn mt-auto" onClick={handleLogout}>

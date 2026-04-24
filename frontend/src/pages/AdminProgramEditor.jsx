@@ -1,7 +1,7 @@
 import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProgramBySlug, createProgram, updateProgram, getChiefs } from '../services/api';
+import { getProgramBySlug, createProgram, updateProgram, getChiefs, getCategories } from '../services/api';
 import { toast } from 'react-toastify';
 import AdminImageUpload from '../components/Admin/AdminImageUpload';
 import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
@@ -25,6 +25,7 @@ const AdminProgramEditor = () => {
   });
 
   const [chiefsList, setChiefsList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
 
   const TABS = [
@@ -40,6 +41,10 @@ const AdminProgramEditor = () => {
     getChiefs().then(res => {
       setChiefsList(res.data || res || []);
     }).catch(err => console.error("Failed to load chiefs", err));
+
+    getCategories().then(res => {
+      setCategoriesList(res.filter(c => c.isActive) || []);
+    }).catch(err => console.error("Failed to load categories", err));
 
     if (isEditing) {
       // getProgramByIdOrSlug supports both
@@ -193,28 +198,17 @@ const AdminProgramEditor = () => {
               />
             </div>
             <div className="col-md-4">
-              <AdminInput 
-                label="Danh mục (Tự chọn hoặc nhập mới)" 
+              <AdminSelect 
+                label={<>Danh mục <span className="text-danger">*</span></>}
                 name="category" 
                 value={formData.category} 
                 onChange={handleChange}
-                placeholder="Ví dụ: Bánh Ngọt, Món Âu..."
-                list="category-suggestions"
+                options={[
+                  { value: '', label: '-- Chọn danh mục --' },
+                  ...categoriesList.map(c => ({ value: c.name, label: c.name }))
+                ]}
+                required
               />
-              <datalist id="category-suggestions">
-                <option value="Bánh Ngọt" />
-                <option value="Bánh Mì" />
-                <option value="Tráng Miệng" />
-                <option value="Món Việt" />
-                <option value="Món Âu" />
-                <option value="Món Á" />
-                <option value="Món Nhật" />
-                <option value="Món Hàn" />
-                <option value="Món Hoa" />
-                <option value="Món Chay" />
-                <option value="Đa Quốc Gia" />
-                <option value="Pha Chế" />
-              </datalist>
             </div>
           </div>
 

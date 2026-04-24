@@ -71,7 +71,15 @@ exports.updateChief = async (req, res) => {
 
 exports.deleteChief = async (req, res) => {
   try {
+    const chief = await prisma.chief.findUnique({ where: { id: req.params.id } });
+    if (!chief) return res.status(404).json({ error: 'Chief not found' });
+
     await prisma.chief.delete({ where: { id: req.params.id } });
+
+    // Clean up uploaded image
+    const { deleteUploadedFile } = require('../utils/fileCleanup');
+    deleteUploadedFile(chief.image);
+
     res.json({ message: 'Deleted successfully' });
   } catch (e) {
     res.status(500).json({ error: 'Failed to delete chief' });

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getPostCategories } from '../../services/api';
+import { getCategories } from '../../services/api';
 import { ROUTES } from '../../constants/routes';
 
 const BlogSidebar = ({ data }) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    getPostCategories()
+    getCategories({ type: 'POST' })
       .then(res => setCategories(res))
       .catch(() => console.error("Could not load categories in sidebar"));
   }, []);
@@ -62,7 +62,7 @@ const BlogSidebar = ({ data }) => {
           </li>
           {categories.map((cat, index) => (
             <li key={index} className="cat-item">
-              <Link to={ROUTES.RECEIPT + "?cat=" + cat}>{cat}</Link>
+              <Link to={ROUTES.RECEIPT + "?cat=" + cat.name}>{cat.name}</Link>
             </li>
           ))}
         </ul>

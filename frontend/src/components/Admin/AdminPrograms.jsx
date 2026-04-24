@@ -39,15 +39,29 @@ const AdminPrograms = () => {
   const columns = [
     { label: 'Ảnh', render: (row) => <img src={row.thumbnail} alt="" width="50" style={{borderRadius: '4px'}}/> },
     { label: 'Tiêu đề', key: 'title' },
-    { label: 'Giá', render: (row) => formatPrice(row.price) },
+    { label: 'Giá', render: (row) => (
+      <div>
+        {row.salePrice && row.price > row.salePrice ? (
+          <>
+            <div style={{ fontWeight: 600 }}>{formatPrice(row.salePrice)}</div>
+            <small style={{ textDecoration: 'line-through', color: '#999' }}>{formatPrice(row.price)}</small>
+          </>
+        ) : (
+          <span style={{ fontWeight: 600 }}>{formatPrice(row.price)}</span>
+        )}
+      </div>
+    )},
     { label: 'Danh mục', render: (row) => row.category || '—' },
     { label: 'Thống kê', render: (row) => {
       const studentCount = row.students || 0;
       return <small>{studentCount} học viên / {row.reviews || 0} đánh giá</small>;
     }},
-    { label: 'Trạng thái', render: (row) => {
-        return <span className="badge badge-success">ĐÃ XUẤT BẢN</span>;
-    }}
+    { label: 'Trạng thái', render: (row) => (
+      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+        <span className="badge badge-success">ĐÃ XUẤT BẢN</span>
+        {row.isFeatured && <span className="badge" style={{ background: '#c19a5b', color: '#fff' }}>⭐ Nổi bật</span>}
+      </div>
+    )}
   ];
 
   return (

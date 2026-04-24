@@ -6,30 +6,30 @@ import { siteConfig } from '../config/siteConfig';
 import { useTranslation } from '../i18n/LanguageContext';
 
 const Contact = () => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <PageTitle 
-        title={t('contact.title') || 'Liên Hệ'}
-        breadcrumbs={[{ label: t('header.home'), link: '/' }, { label: t('contact.title') || 'Liên Hệ' }]}
-      />
+	const { t } = useTranslation();
+	return (
+		<>
+			<PageTitle
+				title={t('contact.title') || 'Liên Hệ'}
+				breadcrumbs={[{ label: t('header.home'), link: '/' }, { label: t('contact.title') || 'Liên Hệ' }]}
+			/>
 
 			<section className="ls ms page_map" data-draggable="true" data-scrollwheel="true" style={{ position: 'relative' }}>
-				<iframe 
-					src="https://maps.google.com/maps?q=66%20Ton%20That%20Thuyet,%20Hanoi&t=&z=14&ie=UTF8&iwloc=&output=embed" 
-					width="100%" 
-					height="100%" 
-					style={{position: 'absolute', top: 0, left: 0, border: 0, zIndex: 0}} 
-					allowFullScreen="" 
-					aria-hidden="false" 
+				<iframe
+					src={siteConfig.contact.googleMapsUrl}
+					width="100%"
+					height="100%"
+					style={{ position: 'absolute', top: 0, left: 0, border: 0, zIndex: 0 }}
+					allowFullScreen=""
+					aria-hidden="false"
 					tabIndex="0"
-					title="Muka Location"
+					title="YUM Saigon Location"
 				></iframe>
 				<div className="marker" style={{ zIndex: 1 }}>
 					<div className="marker-address">{siteConfig.contact.address}</div>
 					<div className="marker-title">{t('contact.mainLocation') || 'ĐỊA ĐIỂM CHÍNH'}</div>
 					<div className="marker-description">
-						<img src={`${import.meta.env.BASE_URL}images/logo.png`} alt=""/>
+						<img src={`${import.meta.env.BASE_URL}images/logo_yum_saigon.png`} alt="" />
 						<ul className="list-unstyled">
 							<li>
 								<span className="icon-inline">
@@ -51,7 +51,7 @@ const Contact = () => {
 							</li>
 						</ul>
 					</div>
-					<img className="marker-icon" src={`${import.meta.env.BASE_URL}images/map_marker_icon.png`} alt=""/>
+					<img className="marker-icon" src={`${import.meta.env.BASE_URL}images/map_marker_icon.png`} alt="" />
 				</div>
 			</section>
 
@@ -59,16 +59,16 @@ const Contact = () => {
 				<div className="container">
 					<div className="row">
 						<div className="divider-20 d-none d-xl-block"></div>
-						
-            <ContactForm />
-            <ContactInfo />
+
+						<ContactForm />
+						<ContactInfo />
 
 						<div className="divider-30 d-none d-xl-block"></div>
 					</div>
 				</div>
 			</section>
-    </>
-  );
+		</>
+	);
 };
 
 export default Contact;

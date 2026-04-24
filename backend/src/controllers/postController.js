@@ -36,18 +36,7 @@ exports.getAllPosts = async (req, res) => {
   }
 };
 
-exports.getCategories = async (req, res) => {
-  try {
-    const categories = await prisma.post.findMany({
-      where: { category: { not: null } },
-      distinct: ['category'],
-      select: { category: true }
-    });
-    res.json(categories.map(c => c.category).filter(Boolean));
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch categories' });
-  }
-};
+// Categories are now managed by categoryController
 
 exports.getPostByIdOrSlug = async (req, res) => {
   try {
@@ -111,6 +100,11 @@ exports.deletePost = async (req, res) => {
     if (!existingPost) return res.status(404).json({ error: 'Post not found for deletion' });
 
     await prisma.post.delete({ where: { id: existingPost.id } });
+
+    // Clean up uploaded thumbnail
+    const { deleteUploadedFile } = require('../utils/fileCleanup');
+    deleteUploadedFile(existingPost.thumbnail);
+
     res.json({ message: 'Deleted successfully' });
   } catch (e) {
     res.status(500).json({ error: 'Failed to delete post' });

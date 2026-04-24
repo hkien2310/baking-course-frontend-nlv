@@ -4,17 +4,13 @@ import PageTitle from '../components/Shared/PageTitle';
 import ProgramCard from '../components/Shared/ProgramCard';
 import Pagination from '../components/Shared/Pagination';
 import { useSearchParams } from 'react-router-dom';
-import { getPrograms } from '../services/api';
+import { getPrograms, getCategories } from '../services/api';
 import { useTranslation } from '../i18n/LanguageContext';
 import Input from '../components/Shared/Input';
 import { formatPrice } from '../utils/formatters';
 import './Program.css';
 
 const ITEMS_PER_PAGE = 6;
-const CATEGORIES = [
-  'Bánh Ngọt', 'Bánh Mì', 'Tráng Miệng', 'Món Việt', 'Món Âu', 
-  'Món Á', 'Món Nhật', 'Món Hàn', 'Món Hoa', 'Món Chay', 'Đa Quốc Gia', 'Pha Chế'
-];
 
 const Program = () => {
   const { t } = useTranslation();
@@ -35,8 +31,15 @@ const Program = () => {
 
   const [localSearch, setLocalSearch] = useState(searchKeyword);
   const [localMinPrice, setLocalMinPrice] = useState(minPriceParam);
-  const [localMaxPrice, setLocalMaxPrice] = useState(maxPriceParam);
+  const [localMaxPrice, setLocalMaxPrice] = useState(maxPriceParam || '10000000');
   const [localCategories, setLocalCategories] = useState(categories);
+  const [categoryOptions, setCategoryOptions] = useState([]);
+
+  useEffect(() => {
+    getCategories()
+      .then(data => setCategoryOptions(data.filter(c => c.isActive).map(c => c.name)))
+      .catch(() => console.error('Failed to load categories'));
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -132,7 +135,7 @@ const Program = () => {
                 <div className="widget widget_categories">
                   <h3 className="widget-title">Danh mục</h3>
                   <div className="category-list">
-                    {CATEGORIES.map(cat => (
+                    {categoryOptions.map(cat => (
                       <div key={cat} className="custom-checkbox">
                         <input type="checkbox" id={`cat-${cat}`} 
                                checked={localCategories.includes(cat)} onChange={() => toggleCategory(cat)} />
