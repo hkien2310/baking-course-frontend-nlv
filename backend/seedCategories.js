@@ -40,19 +40,20 @@ async function main() {
   
   for (let i = 0; i < CATEGORIES.length; i++) {
     const name = CATEGORIES[i];
-    const existing = await prisma.category.findUnique({ where: { name } });
+    const existing = await prisma.category.findUnique({ where: { name_type: { name, type: 'PROGRAM' } } });
     if (!existing) {
       await prisma.category.create({
         data: {
           name,
           slug: generateSlug(name),
+          type: 'PROGRAM',
           sortOrder: i * 10,
           isActive: true
         }
       });
-      console.log(`Created category: ${name}`);
+      console.log(`Created PROGRAM category: ${name}`);
     } else {
-      console.log(`Category already exists: ${name}`);
+      console.log(`PROGRAM Category already exists: ${name}`);
     }
   }
   

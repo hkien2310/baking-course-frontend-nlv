@@ -42,7 +42,7 @@ const AdminProgramEditor = () => {
       setChiefsList(res.data || res || []);
     }).catch(err => console.error("Failed to load chiefs", err));
 
-    getCategories().then(res => {
+    getCategories({ type: 'PROGRAM' }).then(res => {
       setCategoriesList(res.filter(c => c.isActive) || []);
     }).catch(err => console.error("Failed to load categories", err));
 

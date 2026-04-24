@@ -36,8 +36,11 @@ const Program = () => {
   const [categoryOptions, setCategoryOptions] = useState([]);
 
   useEffect(() => {
-    getCategories()
-      .then(data => setCategoryOptions(data.filter(c => c.isActive).map(c => c.name)))
+    getCategories({ type: 'PROGRAM' })
+      .then(res => {
+        const cats = res?.data || res || [];
+        setCategoryOptions(cats.filter(c => c.isActive).map(c => c.name));
+      })
       .catch(() => console.error('Failed to load categories'));
   }, []);
 
