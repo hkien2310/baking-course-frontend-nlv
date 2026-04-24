@@ -14,11 +14,18 @@ const UserDashboard = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    getMe().then(setUser).catch(() => navigate('/auth'));
+    getMe().then(user => {
+      if (user.role === 'ADMIN') {
+        navigate(ROUTES.ADMIN, { replace: true });
+      } else {
+        setUser(user);
+      }
+    }).catch(() => navigate('/auth'));
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     navigate('/auth');
   };
 

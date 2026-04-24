@@ -52,7 +52,7 @@ const Header = () => {
             <div className="col-xl-2 col-lg-3 text-left text-xl-right d-none d-lg-block">
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
                 {hasToken ? (
-                  <Button to={ROUTES.MY_ACCOUNT} variant="main2">{t('userDash.title') || 'Dashboard'}</Button>
+                  <Button to={localStorage.getItem('role') === 'ADMIN' ? ROUTES.ADMIN : ROUTES.MY_ACCOUNT} variant="main2">{t('userDash.title') || 'Dashboard'}</Button>
                 ) : (
                   <Button to={ROUTES.AUTH} variant="main2">{t('header.cta')}</Button>
                 )}

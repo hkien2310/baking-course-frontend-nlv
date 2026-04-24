@@ -22,11 +22,13 @@ const Auth = () => {
     if (!token) { setCheckingAuth(false); return; }
     getMe()
       .then(user => {
+        if (user.role) localStorage.setItem('role', user.role);
         if (user.role === 'ADMIN') navigate(ROUTES.ADMIN, { replace: true });
         else navigate(ROUTES.MY_ACCOUNT, { replace: true });
       })
       .catch(() => {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         setCheckingAuth(false);
       });
   }, [navigate]);
@@ -40,7 +42,8 @@ const Auth = () => {
     try {
       const data = await loginUser(loginForm);
       localStorage.setItem('token', data.token);
-      if (data.user.role === 'ADMIN') navigate(ROUTES.ADMIN);
+      if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
+      if (data.user?.role === 'ADMIN') navigate(ROUTES.ADMIN);
       else navigate(ROUTES.MY_ACCOUNT);
     } catch (err) {
       setLoginError(err.response?.data?.error || t('auth.loginFailed') || 'Đăng nhập thất bại. Vui lòng thử lại.');
@@ -53,6 +56,7 @@ const Auth = () => {
     try {
       const data = await registerUser(regForm);
       localStorage.setItem('token', data.token);
+      if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
       navigate(ROUTES.MY_ACCOUNT);
     } catch (err) {
       setRegError(err.response?.data?.error || t('auth.regFailed') || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.');

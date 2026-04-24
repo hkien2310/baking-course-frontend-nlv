@@ -89,15 +89,18 @@ const HomeSlider = ({ slides }) => {
       <div className="flexslider" data-nav="true" data-dots="false">
         <ul className="slides">
           {slides.map((slide, index) => (
-            <li key={slide.id || index} className={`ds text-center ${index === 1 ? 'slide02' : index === 2 ? 'slide03' : ''}`}>
-              <span className="flexslider-overlay"></span>
+            <li key={slide.id || index} className={`ds text-center ${index === 1 ? 'slide02' : index === 2 ? 'slide03' : ''}`} style={{ position: 'relative', width: '100%', height: '90vh', minHeight: '700px', maxHeight: '1000px' }}>
               <img 
                 src={slide.thumbnail || `/images/slide0${index + 1}.jpg`} 
                 alt={slide.title} 
-                style={{ objectFit: 'cover', width: '100%', height: '90vh', minHeight: '700px', maxHeight: '1000px' }}
+                style={{ objectFit: 'cover', width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 0 }}
               />
-              <div className="container-fluid">
-                <div className="row">
+              <div 
+                className="flexslider-overlay" 
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 1 }}
+              ></div>
+              <div className="container-fluid" style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', alignItems: 'center' }}>
+                <div className="row w-100">
                   <div className="col-md-12">
                     <div className="intro_layers_wrapper">
                       <div className="intro_layers">
