@@ -150,8 +150,6 @@ const AdminProgramEditor = () => {
 
   useInitOnLoaded(loading);
 
-  if (loading) return <div className="admin-loading-page"><AdminLoadingBlock rows={6} /></div>;
-
   return (
     <div className="admin-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
@@ -180,13 +178,18 @@ const AdminProgramEditor = () => {
               type="button"
               className={`admin-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.id)}
+              disabled={loading}
             >
               {tab.label}
             </button>
           ))}
         </div>
 
-        {activeTab === 0 && (
+        {loading ? (
+          <div className="admin-tab-content admin-paper p-4 mb-4">
+            <AdminLoadingBlock rows={8} />
+          </div>
+        ) : activeTab === 0 && (
           <div className="admin-tab-content admin-paper p-4 mb-4">
             <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Thông tin chung & Chi phí</h5>
           

@@ -82,8 +82,6 @@ const AdminPostEditor = () => {
 
   useInitOnLoaded(loading);
 
-  if (loading) return <div className="admin-loading-page"><AdminLoadingBlock rows={6} /></div>;
-
   return (
     <div className="admin-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
@@ -103,6 +101,11 @@ const AdminPostEditor = () => {
       </div>
 
       <div className="container-fluid p-4" style={{ flexGrow: 1 }}>
+        {loading ? (
+          <div className="admin-paper h-100 w-100 p-4">
+            <AdminLoadingBlock rows={8} />
+          </div>
+        ) : (
         <form id="admin-post-form" onSubmit={handleSave} className="row h-100">
           
           {/* LEFT: EDITOR FORM */}
@@ -231,6 +234,7 @@ const AdminPostEditor = () => {
           </div>
 
         </form>
+        )}
       </div>
     </div>
   );
