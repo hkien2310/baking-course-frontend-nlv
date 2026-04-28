@@ -33,6 +33,11 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     return <Navigate to="/my-account" replace />;
   }
 
+  // Pass authenticated user to child component to avoid duplicate getMe() calls
+  if (React.isValidElement(children)) {
+    return React.cloneElement(children, { user });
+  }
+
   return children;
 };
 

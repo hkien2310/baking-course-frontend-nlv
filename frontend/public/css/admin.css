@@ -424,3 +424,37 @@ textarea.admin-form-control {
   color: #e53e3e;
   font-weight: 500;
 }
+
+/* ---------------- SMOOTH LOADING TRANSITIONS ---------------- */
+/* Fade-in animation for admin content after skeleton */
+.admin-content-ready {
+  animation: adminContentFadeIn 0.35s ease-out both;
+}
+
+@keyframes adminContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ensure consistent background during all loading states */
+.admin-layout,
+body.admin-mode {
+  background-color: var(--admin-bg);
+}
+
+/* AdminRouteLoading skeleton fade-in */
+.admin-layout .admin-sidebar,
+.admin-layout .admin-content {
+  animation: adminPanelFadeIn 0.25s ease-out both;
+}
+
+@keyframes adminPanelFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

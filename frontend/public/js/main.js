@@ -1561,7 +1561,8 @@ function windowLoadInit() {
 
 	//page preloader
 	var hidePreloaderWhenReady = function() {
-		if (document.body.getAttribute('data-site-config-ready') !== 'true') {
+		var isAdminRoute = window.location.pathname.startsWith('/admin');
+		if (!isAdminRoute && document.body.getAttribute('data-site-config-ready') !== 'true') {
 			setTimeout(hidePreloaderWhenReady, 100);
 			return;
 		}

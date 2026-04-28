@@ -10,12 +10,11 @@ import AdminTestimonials from '../components/Admin/AdminTestimonials';
 import AdminOrders from '../components/Admin/AdminOrders';
 import AdminSettings from './AdminSettings';
 import AdminOverviewLoading from '../components/Admin/AdminOverviewLoading';
-import { getMe, getDashboardStats } from '../services/api';
+import { getDashboardStats } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 
-const AdminDashboard = () => {
-  const [user, setUser] = useState(null);
+const AdminDashboard = ({ user }) => {
   const [activeTab, setActiveTab] = useState(window.location.hash.replace('#', '') || 'overview');
   const [stats, setStats] = useState({ programs: 0, categories: 0, posts: 0, enrollments: 0, contacts: 0, sliders: 0, testimonials: 0, orders: 0 });
   const [statsLoading, setStatsLoading] = useState(true);
@@ -28,10 +27,6 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     document.body.classList.add('admin-mode');
-    
-    getMe()
-      .then(setUser)
-      .catch(() => navigate(ROUTES.AUTH));
 
     getDashboardStats()
       .then((data) => {
@@ -61,7 +56,7 @@ const AdminDashboard = () => {
       document.body.classList.remove('admin-mode'); 
       window.removeEventListener('hashchange', handleHash);
     };
-  }, [navigate]);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -70,8 +65,6 @@ const AdminDashboard = () => {
   };
 
   const isOverviewLoading = activeTab === 'overview' && statsLoading;
-
-  if (!user) return null;
 
   const pendingEnrollments = stats.enrollments;
 
@@ -185,7 +178,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-layout d-flex">
+    <div className="admin-layout d-flex admin-content-ready">
       {/* Fixed Sidebar */}
       <div className="admin-sidebar" style={{ width: '280px', flexShrink: 0 }}>
         <div className="admin-logo-section">
