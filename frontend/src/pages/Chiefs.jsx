@@ -6,6 +6,7 @@ import Pagination from '../components/Shared/Pagination';
 import { getChiefs } from '../services/api';
 import { useTranslation } from '../i18n/LanguageContext';
 import { ROUTES } from '../constants/routes';
+import { imageUrl } from '../utils/imageUrl';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -44,11 +45,7 @@ const Chiefs = () => {
 
   const paginatedChiefs = chiefs;
 
-  const imgSrc = (src) => {
-    if (!src) return `${import.meta.env.BASE_URL}images/team/01.jpg`;
-    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
-    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
-  };
+  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/team/01.jpg`);
 
   return (
     <>

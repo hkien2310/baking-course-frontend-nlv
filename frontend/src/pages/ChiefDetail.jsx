@@ -7,6 +7,7 @@ import { ROUTES } from '../constants/routes';
 import { toast } from 'react-toastify';
 import { useTranslation } from '../i18n/LanguageContext';
 import Input from '../components/Shared/Input';
+import { imageUrl } from '../utils/imageUrl';
 
 const ChiefDetail = () => {
   const { t } = useTranslation();
@@ -76,11 +77,7 @@ const ChiefDetail = () => {
   // highlights
   const highlights = chief.highlights ? chief.highlights.split('|').map(s => s.trim()).filter(Boolean) : [];
 
-  const imgSrc = (src) => {
-    if (!src) return `${import.meta.env.BASE_URL}images/team/single-profile.jpg`;
-    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
-    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
-  };
+  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/team/single-profile.jpg`);
 
   return (
     <>

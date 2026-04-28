@@ -9,6 +9,7 @@ import { formatPrice, formatStudentCount, calcDiscountPercent } from '../utils/f
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 import Input from '../components/Shared/Input';
+import { imageUrl } from '../utils/imageUrl';
 
 const VI_DAYS = {
   MONDAY: 'Thứ 2',
@@ -132,11 +133,7 @@ const ProgramDetail = () => {
     );
   };
 
-  const imgSrc = (src) => {
-    if (!src) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
-    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
-    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
-  };
+  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
 
   return (
     <>

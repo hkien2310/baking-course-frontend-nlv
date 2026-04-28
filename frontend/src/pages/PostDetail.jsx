@@ -6,6 +6,7 @@ import BlogSidebar from '../components/Blog/BlogSidebar';
 import { getPostBySlug, getPosts } from '../services/api';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
+import { imageUrl } from '../utils/imageUrl';
 
 const PostDetail = () => {
   const { t } = useTranslation();
@@ -59,11 +60,7 @@ const PostDetail = () => {
   relatedPosts = relatedPosts.slice(0, 4);
 
   // Helper for image src
-  const imgSrc = (src) => {
-    if (!src) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
-    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
-    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
-  };
+  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
 
   return (
     <>
