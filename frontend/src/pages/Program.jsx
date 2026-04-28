@@ -9,6 +9,7 @@ import { useTranslation } from '../i18n/LanguageContext';
 import Input from '../components/Shared/Input';
 import { formatPrice } from '../utils/formatters';
 import './Program.css';
+import PageLoading from '../components/Shared/PageLoading';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -182,9 +183,7 @@ const Program = () => {
             {/* MAIN CONTENT */}
             <main className="col-lg-9 order-lg-2">
               {loading ? (
-                <div className="text-center" style={{ padding: '100px 0' }}>
-                  <div className="spinner-border" style={{ color: '#fc834b' }} role="status"></div>
-                </div>
+                <PageLoading compact />
               ) : (
                 <>
                   <div className="row">
