@@ -1,5 +1,11 @@
 /* AdminDesign.css - Modern UI for Admin Editor */
 
+.admin-loading-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: var(--admin-bg, #f4f6fb);
+}
+
 .admin-loading-block {
   background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(249,246,240,0.96));
   border: 1px solid rgba(193,154,91,0.18);
@@ -15,21 +21,25 @@
 .admin-loading-block-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   margin-bottom: 18px;
 }
 
-.admin-loading-block-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1f2430;
-  margin-bottom: 6px;
+.admin-loading-heading-shell {
+  height: 18px;
+  width: min(220px, 55%);
+  border-radius: 999px;
+  background: rgba(193,154,91,0.14);
 }
 
+.admin-loading-heading-shell::after {
+  border-radius: inherit;
+}
+
+.admin-loading-block-title,
 .admin-loading-block-subtitle {
-  color: #7b8494;
-  font-size: 13px;
+  display: none;
 }
 
 .admin-inline-spinner {
@@ -137,6 +147,43 @@
     -webkit-overflow-scrolling: touch;
     padding-right: 8px;
   }
+}
+
+.admin-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.admin-loading-stat-card {
+  height: 132px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(193,154,91,0.16);
+  box-shadow: 0 10px 24px rgba(33, 39, 55, 0.05);
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-loading-stat-value,
+.admin-loading-stat-label {
+  border-radius: 999px;
+  background: rgba(193,154,91,0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-loading-stat-value {
+  width: 72px;
+  height: 34px;
+  margin-bottom: 20px;
+}
+
+.admin-loading-stat-label {
+  width: 60%;
+  height: 14px;
 }
 
 @keyframes fadeIn {

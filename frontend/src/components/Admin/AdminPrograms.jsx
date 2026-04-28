@@ -77,7 +77,6 @@ const AdminPrograms = () => {
         columns={columns} 
         data={programs} 
         loading={loading}
-        loadingTitle="Đang tải danh sách khóa học..."
         onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}

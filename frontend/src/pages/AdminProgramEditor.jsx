@@ -7,6 +7,7 @@ import AdminImageUpload from '../components/Admin/AdminImageUpload';
 import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
 import { ROUTES } from '../constants/routes';
 import { priceToDollars, dollarsToCents } from '../utils/formatters';
+import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
 import './AdminDesign.css';
 
 const AdminProgramEditor = () => {
@@ -145,7 +146,7 @@ const AdminProgramEditor = () => {
 
   useInitOnLoaded(loading);
 
-  if (loading) return <div className="p-5 text-center text-white">Đang tải dữ liệu...</div>;
+  if (loading) return <div className="admin-loading-page"><AdminLoadingBlock rows={6} /></div>;
 
   return (
     <div className="admin-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

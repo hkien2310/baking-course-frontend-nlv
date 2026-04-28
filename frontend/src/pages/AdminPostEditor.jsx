@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import AdminImageUpload from '../components/Admin/AdminImageUpload';
 import { ROUTES } from '../constants/routes';
 import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
+import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
 import './AdminDesign.css';
 
 const AdminPostEditor = () => {
@@ -77,7 +78,7 @@ const AdminPostEditor = () => {
 
   useInitOnLoaded(loading);
 
-  if (loading) return <div className="p-5 text-center text-white">Đang tải biểu mẫu...</div>;
+  if (loading) return <div className="admin-loading-page"><AdminLoadingBlock rows={6} /></div>;
 
   return (
     <div className="admin-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

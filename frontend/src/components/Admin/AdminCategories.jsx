@@ -134,7 +134,6 @@ const AdminCategories = () => {
         columns={columns} 
         data={categories} 
         loading={loading}
-        loadingTitle={activeTab === 'PROGRAM' ? 'Đang tải danh mục khóa học...' : 'Đang tải danh mục bài viết...'}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onCreate={() => setIsModalOpen(true)}

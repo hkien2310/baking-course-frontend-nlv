@@ -9,6 +9,7 @@ import AdminTestimonials from '../components/Admin/AdminTestimonials';
 // [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
 import AdminSettings from './AdminSettings';
+import AdminOverviewLoading from '../components/Admin/AdminOverviewLoading';
 import { getMe, getDashboardStats } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
@@ -17,6 +18,8 @@ const AdminDashboard = () => {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState(window.location.hash.replace('#', '') || 'overview');
   const [stats, setStats] = useState({ programs: 0, categories: 0, posts: 0, enrollments: 0, contacts: 0, sliders: 0, testimonials: 0, orders: 0 });
+  const [authLoading, setAuthLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
   const navigate = useNavigate();
 
   const handleTabChange = (tab) => {
@@ -27,24 +30,29 @@ const AdminDashboard = () => {
   useEffect(() => {
     document.body.classList.add('admin-mode');
     
-    getMe().then(setUser).catch(() => navigate(ROUTES.AUTH));
+    getMe()
+      .then(setUser)
+      .catch(() => navigate(ROUTES.AUTH))
+      .finally(() => setAuthLoading(false));
 
-    // Fetch real stats from new API
-    getDashboardStats().then((data) => {
-      setStats({
-        programs: data.programs || 0,
-        categories: data.categories || 0,
-        posts: data.posts || 0,
-        enrollments: data.enrollments || 0,
-        contacts: data.contacts || 0,
-        sliders: data.sliders || 0,
-        testimonials: data.testimonials || 0,
-        chiefs: data.chiefs || 0,
-        orders: data.orders || 0
-      });
-    }).catch(err => {
-      console.error('Failed to load dashboard stats', err);
-    });
+    getDashboardStats()
+      .then((data) => {
+        setStats({
+          programs: data.programs || 0,
+          categories: data.categories || 0,
+          posts: data.posts || 0,
+          enrollments: data.enrollments || 0,
+          contacts: data.contacts || 0,
+          sliders: data.sliders || 0,
+          testimonials: data.testimonials || 0,
+          chiefs: data.chiefs || 0,
+          orders: data.orders || 0
+        });
+      })
+      .catch(err => {
+        console.error('Failed to load dashboard stats', err);
+      })
+      .finally(() => setStatsLoading(false));
     const handleHash = () => {
       const hash = window.location.hash.replace('#', '');
       if (hash) setActiveTab(hash);
@@ -63,7 +71,7 @@ const AdminDashboard = () => {
     navigate(ROUTES.AUTH);
   };
 
-  if (!user) return null;
+  if (authLoading || !user) return <div className="admin-loading-page"><AdminOverviewLoading /></div>;
 
   const pendingEnrollments = stats.enrollments;
 
@@ -94,6 +102,10 @@ const AdminDashboard = () => {
         return <AdminSettings />;
       case 'overview':
       default:
+        if (statsLoading) {
+          return <AdminOverviewLoading />;
+        }
+
         return (
           <>
             <div className="admin-content-header">

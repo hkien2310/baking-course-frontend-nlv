@@ -57,7 +57,6 @@ const AdminPosts = () => {
         columns={columns} 
         data={posts} 
         loading={loading}
-        loadingTitle="Đang tải bài viết và công thức..."
         onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}

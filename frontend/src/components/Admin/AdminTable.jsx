@@ -4,7 +4,7 @@ import AdminConfirmModal from './AdminConfirmModal';
 import AdminButton from './Shared/AdminButton';
 import AdminLoadingBlock from './AdminLoadingBlock';
 
-const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPerPage = 10, loading = false, loadingTitle }) => {
+const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPerPage = 10, loading = false }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
@@ -24,7 +24,7 @@ const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPer
       </div>
 
       {loading ? (
-        <AdminLoadingBlock title={loadingTitle || `Đang tải ${title?.toLowerCase() || 'dữ liệu'}...`} compact />
+        <AdminLoadingBlock compact />
       ) : (
         <>
           <div className="table-responsive">

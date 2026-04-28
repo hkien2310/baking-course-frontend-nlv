@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getPrograms, toggleProgramFeature } from '../../services/api';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import AdminLoadingBlock from './AdminLoadingBlock';
 
 const AdminSliders = () => {
   const [programs, setPrograms] = useState([]);
@@ -85,11 +85,15 @@ const AdminSliders = () => {
           <hr />
           <h5 className="mt-4"><i className="fa fa-list mr-2"></i> Available Programs</h5>
           <div className="row mt-3">
-            {loading && <p className="col-12">Loading programs...</p>}
+            {loading && (
+              <div className="col-12">
+                <AdminLoadingBlock compact rows={4} />
+              </div>
+            )}
             {!loading && unfeaturedPrograms.length === 0 && <p className="col-12 text-muted">All loaded programs are already featured.</p>}
-            {limitReached && <div className="col-12 alert alert-warning">You have reached the maximum limit of 3 featured programs. Please remove one before adding another.</div>}
+            {!loading && limitReached && <div className="col-12 alert alert-warning">You have reached the maximum limit of 3 featured programs. Please remove one before adding another.</div>}
             
-            {unfeaturedPrograms.map(prog => {
+            {!loading && unfeaturedPrograms.map(prog => {
               const eligible = isUpComing(prog);
               return (
                 <div key={prog.id} className="col-md-3 col-sm-6 mb-4">

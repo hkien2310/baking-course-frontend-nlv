@@ -33,9 +33,19 @@ export const SiteConfigProvider = ({ children }) => {
   return (
     <SiteConfigContext.Provider value={{ siteConfig, updateConfig }}>
       {loading ? (
-        <div className="text-center" style={{ padding: '150px 0' }}>
-          <h2>Đang tải dữ liệu...</h2>
-          <div className="spinner-border" role="status"></div>
+        <div className="admin-loading-page">
+          <div className="admin-loading-block">
+            <div className="admin-loading-block-header" aria-hidden="true">
+              <div className="admin-loading-heading-shell shimmer"></div>
+              <div className="admin-inline-spinner" aria-hidden="true"></div>
+            </div>
+            <div className="admin-loading-table-shell" aria-hidden="true">
+              <div className="admin-loading-table-head shimmer"></div>
+              <div className="admin-loading-table-row shimmer"></div>
+              <div className="admin-loading-table-row shimmer"></div>
+              <div className="admin-loading-table-row shimmer"></div>
+            </div>
+          </div>
         </div>
       ) : children}
     </SiteConfigContext.Provider>

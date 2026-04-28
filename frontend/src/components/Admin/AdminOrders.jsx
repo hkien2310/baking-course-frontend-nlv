@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getAllOrders, confirmOrder, rejectOrder } from '../../services/api';
 import { formatPrice, getOrderStatusBadge } from '../../utils/formatters';
-import AdminTable from './AdminTable';
+import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminButton from './Shared/AdminButton';
 
 const AdminOrders = () => {
@@ -76,7 +76,7 @@ const AdminOrders = () => {
     REJECTED: orders.filter(o => o.status === 'REJECTED').length,
   };
 
-  if (loading) return <div className="text-center p-5"><div className="spinner-border"></div></div>;
+  if (loading) return <AdminLoadingBlock rows={6} />;
 
   return (
     <div>

@@ -101,9 +101,9 @@ const AdminImageUpload = ({ label, value, onChange, name }) => {
         />
 
         {uploading ? (
-          <div style={{ color: '#3b82f6', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ color: '#3b82f6', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             <i className="fa fa-spinner fa-spin" style={{ fontSize: '36px', marginBottom: '16px' }}></i>
-            <span style={{ fontWeight: 500, letterSpacing: '0.5px' }}>Uploading Image...</span>
+            <div className="admin-loading-heading-shell shimmer" style={{ width: '160px', height: '12px' }}></div>
           </div>
         ) : imgSrc ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px', width: '100%', padding: '0 12px' }}>

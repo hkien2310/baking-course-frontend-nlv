@@ -4,6 +4,7 @@ import AdminConfirmModal from './AdminConfirmModal';
 import AdminModal from './AdminModal';
 import AdminButton from './Shared/AdminButton';
 import { getContacts, deleteContact } from '../../services/api';
+import AdminPageShell from './AdminPageShell';
 
 const AdminContacts = () => {
   const [contacts, setContacts] = useState([]);
@@ -39,7 +40,7 @@ const AdminContacts = () => {
     }
   };
 
-  if (loading) return <div>Đang tải tin nhắn...</div>;
+  if (loading) return <AdminPageShell loading loadingRows={5} />;
 
   return (
     <>

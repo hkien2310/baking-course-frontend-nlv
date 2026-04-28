@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import AdminConfirmModal from './AdminConfirmModal';
 import AdminButton from './Shared/AdminButton';
 import { getEnrollments, updateEnrollmentStatus, deleteEnrollment } from '../../services/api';
+import AdminPageShell from './AdminPageShell';
 
 const AdminEnrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -45,7 +46,7 @@ const AdminEnrollments = () => {
     }
   };
 
-  if (loading) return <div>Đang tải dữ liệu ghi danh...</div>;
+  if (loading) return <AdminPageShell loading loadingRows={5} />;
 
   return (
     <>
