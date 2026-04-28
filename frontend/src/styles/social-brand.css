@@ -3,16 +3,35 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  vertical-align: middle;
+  width: 2.9em;
+  height: 2.9em;
+}
+
+.widget_social_icons .social-link .social-icon-inner {
+  width: 17px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .widget_social_icons .social-link i,
 .widget_social_icons .social-link .social-icon-svg {
   transition: inherit;
+  display: block;
+  line-height: 1;
+}
+
+.widget_social_icons .social-link i {
+  font-size: 15px;
 }
 
 .widget_social_icons .social-link .social-icon-svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
 }
 
 .widget_social_icons .social-link-facebook {
@@ -32,6 +51,7 @@
 }
 
 .widget_social_icons .social-link-tiktok .social-icon-svg {
+  transform: translateY(-0.25px);
   filter: drop-shadow(1px 0 0 rgba(254, 44, 85, 0.7)) drop-shadow(-1px 0 0 rgba(37, 244, 238, 0.7));
 }
 
@@ -42,6 +62,10 @@
 .widget_social_icons .social-link:hover i,
 .widget_social_icons .social-link:hover .social-icon-svg {
   transform: scale(1.05);
+}
+
+.widget_social_icons .social-link-tiktok:hover .social-icon-svg {
+  transform: translateY(-0.25px) scale(1.05);
 }
 
 .widget_social_icons .social-link-facebook:hover {

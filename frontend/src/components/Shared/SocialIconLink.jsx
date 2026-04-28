@@ -9,11 +9,13 @@ const SocialIconLink = ({ platform, href, title, className = '' }) => {
 
   return (
     <a href={href} className={classes} title={title || platform} target="_blank" rel="noopener noreferrer">
-      {platform === 'tiktok' ? (
-        <TikTokIcon className="social-icon-svg social-icon-tiktok" size={16} />
-      ) : (
-        <i className={`fa ${getSocialIconClass(platform)}`}></i>
-      )}
+      <span className="social-icon-inner" aria-hidden="true">
+        {platform === 'tiktok' ? (
+          <TikTokIcon className="social-icon-svg social-icon-tiktok" size={14} />
+        ) : (
+          <i className={`fa ${getSocialIconClass(platform)}`}></i>
+        )}
+      </span>
     </a>
   );
 };
