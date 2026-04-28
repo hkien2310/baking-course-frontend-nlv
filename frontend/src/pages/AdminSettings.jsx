@@ -69,8 +69,20 @@ const AdminSettings = () => {
   };
 
   if (!formData) return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
-      <div className="spinner-border text-primary" role="status"></div>
+    <div className="admin-paper p-4">
+      <div className="d-flex align-items-center justify-content-between mb-3">
+        <div>
+          <h4 style={{ margin: 0 }}>Đang tải cấu hình website...</h4>
+          <small className="text-muted">Dữ liệu cấu hình đang được đồng bộ từ máy chủ.</small>
+        </div>
+        <div className="admin-inline-spinner" aria-hidden="true"></div>
+      </div>
+      <div className="admin-loading-table-shell">
+        <div className="admin-loading-table-head shimmer"></div>
+        <div className="admin-loading-table-row shimmer"></div>
+        <div className="admin-loading-table-row shimmer"></div>
+        <div className="admin-loading-table-row shimmer"></div>
+      </div>
     </div>
   );
 

@@ -8,11 +8,17 @@ import { formatPrice } from '../../utils/formatters';
 
 const AdminPrograms = () => {
   const [programs, setPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    const data = await getPrograms();
-    setPrograms(data.data || data || []);
+    setLoading(true);
+    try {
+      const data = await getPrograms();
+      setPrograms(data.data || data || []);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -70,6 +76,8 @@ const AdminPrograms = () => {
         title="Quản lý Khóa học" 
         columns={columns} 
         data={programs} 
+        loading={loading}
+        loadingTitle="Đang tải danh sách khóa học..."
         onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}

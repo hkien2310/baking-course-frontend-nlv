@@ -1,5 +1,87 @@
 /* AdminDesign.css - Modern UI for Admin Editor */
 
+.admin-loading-block {
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(249,246,240,0.96));
+  border: 1px solid rgba(193,154,91,0.18);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(33, 39, 55, 0.06);
+  padding: 22px;
+}
+
+.admin-loading-block.compact {
+  padding: 16px;
+}
+
+.admin-loading-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.admin-loading-block-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2430;
+  margin-bottom: 6px;
+}
+
+.admin-loading-block-subtitle {
+  color: #7b8494;
+  font-size: 13px;
+}
+
+.admin-inline-spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(193,154,91,0.25);
+  border-top-color: #c19a5b;
+  animation: adminSpin 0.8s linear infinite;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.admin-loading-table-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-loading-table-head,
+.admin-loading-table-row {
+  position: relative;
+  overflow: hidden;
+  background: rgba(193,154,91,0.12);
+  border-radius: 12px;
+}
+
+.admin-loading-table-head {
+  height: 44px;
+}
+
+.admin-loading-table-row {
+  height: 58px;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+  animation: adminShimmer 1.4s infinite;
+}
+
+@keyframes adminShimmer {
+  100% { transform: translateX(100%); }
+}
+
+@keyframes adminSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* Tabs Navigation */
 .admin-tabs {
   display: flex;

@@ -9,11 +9,17 @@ import { ROUTES } from '../../constants/routes';
 
 const AdminPosts = () => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    const data = await getPosts();
-    setPosts(data.data || data || []);
+    setLoading(true);
+    try {
+      const data = await getPosts();
+      setPosts(data.data || data || []);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -50,6 +56,8 @@ const AdminPosts = () => {
         title="Quản lý Bài viết & Công thức" 
         columns={columns} 
         data={posts} 
+        loading={loading}
+        loadingTitle="Đang tải bài viết và công thức..."
         onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}

@@ -7,18 +7,22 @@ import AdminButton from './Shared/AdminButton';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('PROGRAM');
   const [formData, setFormData] = useState({ id: null, name: '', slug: '', sortOrder: 0, isActive: true });
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const data = await getCategories({ includeInactive: true, type: activeTab });
       const sortedData = data.sort((a, b) => a.sortOrder - b.sortOrder);
       setCategories(sortedData);
     } catch (err) {
       toast.error('Lỗi khi tải danh mục');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,6 +133,8 @@ const AdminCategories = () => {
         title={activeTab === 'PROGRAM' ? "Danh mục Khóa học" : "Danh mục Bài viết"} 
         columns={columns} 
         data={categories} 
+        loading={loading}
+        loadingTitle={activeTab === 'PROGRAM' ? 'Đang tải danh mục khóa học...' : 'Đang tải danh mục bài viết...'}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onCreate={() => setIsModalOpen(true)}
