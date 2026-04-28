@@ -277,8 +277,8 @@ const AdminOrders = () => {
                     />
                   </div>
                   <div className="d-flex justify-content-end" style={{ gap: '10px' }}>
-                    <AdminButton variant="danger" icon="times" label="Từ chối" onClick={handleReject} disabled={processing} />
-                    <AdminButton variant="success" icon="check" label="Xác nhận Thanh toán" onClick={handleConfirm} disabled={processing} />
+                    <AdminButton variant="danger" icon="times" label="Từ chối" onClick={handleReject} loading={processing} loadingLabel="Đang xử lý" disabled={processing} />
+                    <AdminButton variant="success" icon="check" label="Xác nhận Thanh toán" onClick={handleConfirm} loading={processing} loadingLabel="Đang xử lý" disabled={processing} />
                   </div>
                 </>
               )}

@@ -6,6 +6,7 @@ import AdminButton from './Shared/AdminButton';
 import { AdminInput, AdminTextarea } from './Shared/AdminFormControls';
 import { getChiefs, createChief, updateChief, deleteChief } from '../../services/api';
 import { toast } from 'react-toastify';
+import usePendingAction from './usePendingAction';
 
 const EMPTY_FORM = {
   name: '', role: '', image: '',
@@ -20,6 +21,7 @@ const AdminChiefs = () => {
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState({ isOpen: false, item: null });
   const [form, setForm] = useState(EMPTY_FORM);
+  const { isPending, withPending, hasPending } = usePendingAction();
 
   const fetchData = async () => {
     setLoading(true);
@@ -59,24 +61,27 @@ const AdminChiefs = () => {
     e.preventDefault();
     try {
       const payload = { ...form, skills: JSON.stringify(form.skills) };
-      if (modal.item) {
-        await updateChief(modal.item.id, payload);
-        toast.success('Cập nhật giảng viên thành công!');
-      } else {
-        await createChief(payload);
-        toast.success('Thêm giảng viên thành công!');
-      }
-      closeModal();
-      fetchData();
+      await withPending('submit-chief', async () => {
+        if (modal.item) {
+          await updateChief(modal.item.id, payload);
+          toast.success('Cập nhật giảng viên thành công!');
+        } else {
+          await createChief(payload);
+          toast.success('Thêm giảng viên thành công!');
+        }
+        closeModal();
+        await fetchData();
+      });
     } catch { toast.error('Lỗi lưu giảng viên.'); }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Xóa giảng viên này?')) return;
     try {
-      await deleteChief(id);
-      toast.success('Đã xóa!');
-      fetchData();
+      await withPending(`delete-${id}`, async () => {
+        await deleteChief(id);
+        toast.success('Đã xóa!');
+        await fetchData();
+      });
     } catch { toast.error('Lỗi khi xóa.'); }
   };
 
@@ -98,6 +103,9 @@ const AdminChiefs = () => {
         loading={loading} 
         onEdit={openModal}
         onDelete={handleDelete}
+        deletingId={data.find((item) => isPending(`delete-${item.id}`))?.id || null}
+        deleteConfirmTitle="Xóa giảng viên"
+        deleteConfirmMessage="Bạn có chắc chắn muốn xóa giảng viên này không? Hành động này không thể hoàn tác."
         emptyMessage="Chưa có giảng viên nào." 
         onCreate={() => openModal()}
       />
@@ -171,8 +179,8 @@ const AdminChiefs = () => {
           </div>
 
           <div className="mt-4 text-right">
-            <AdminButton variant="secondary" onClick={closeModal} label="Hủy" className="mr-2" />
-            <AdminButton type="submit" variant="primary" icon="save" label="Lưu Giảng Viên" />
+            <AdminButton variant="secondary" onClick={closeModal} label="Hủy" className="mr-2" disabled={hasPending} />
+            <AdminButton type="submit" variant="primary" icon="save" label="Lưu Giảng Viên" loading={isPending('submit-chief')} loadingLabel="Đang lưu" />
           </div>
         </form>
       </AdminModal>

@@ -4,7 +4,7 @@ import AdminConfirmModal from './AdminConfirmModal';
 import AdminButton from './Shared/AdminButton';
 import AdminLoadingBlock from './AdminLoadingBlock';
 
-const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPerPage = 10, loading = false }) => {
+const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPerPage = 10, loading = false, deletingId = null, deleteConfirmTitle = 'Xác nhận Xóa', deleteConfirmMessage = 'Bạn có chắc chắn muốn xóa mục này? Hành động này không thể hoàn tác.' }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
@@ -53,11 +53,11 @@ const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPer
                         </td>
                       ))}
                       <td className="text-center">
-                        <button onClick={() => onEdit(row)} className="admin-btn-icon edit" title="Sửa">
+                        <button onClick={() => onEdit(row)} className="admin-btn-icon edit" title="Sửa" disabled={deletingId === row.id}>
                           <i className="fa fa-pencil"></i>
                         </button>
-                        <button onClick={() => setDeleteTarget(row)} className="admin-btn-icon delete" title="Xóa">
-                          <i className="fa fa-trash"></i>
+                        <button onClick={() => setDeleteTarget(row)} className="admin-btn-icon delete" title="Xóa" disabled={deletingId === row.id}>
+                          <i className={`fa ${deletingId === row.id ? 'fa-spinner fa-spin' : 'fa-trash'}`}></i>
                         </button>
                       </td>
                     </tr>
@@ -80,9 +80,12 @@ const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPer
       <AdminConfirmModal
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
-        onConfirm={() => { onDelete(deleteTarget.id); setDeleteTarget(null); }}
-        title="Xác nhận Xóa"
-        message={`Bạn có chắc chắn muốn xóa mục này? Hành động này không thể hoàn tác.`}
+        onConfirm={() => onDelete(deleteTarget.id)}
+        title={deleteConfirmTitle}
+        message={deleteConfirmMessage}
+        loading={deletingId === deleteTarget?.id}
+        confirmLabel="Xóa"
+        cancelLabel="Hủy"
       />
     </div>
   );

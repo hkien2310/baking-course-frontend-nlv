@@ -5,11 +5,13 @@ import { toast } from 'react-toastify';
 import { getPrograms, deleteProgram } from '../../services/api';
 import { ROUTES } from '../../constants/routes';
 import { formatPrice } from '../../utils/formatters';
+import usePendingAction from './usePendingAction';
 
 const AdminPrograms = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { isPending, withPending } = usePendingAction();
 
   const fetchData = async () => {
     setLoading(true);
@@ -32,11 +34,12 @@ const AdminPrograms = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa khóa học này không?")) return;
     try {
-      await deleteProgram(id);
-      toast.success('Xóa khóa học thành công!');
-      fetchData();
+      await withPending(`delete-${id}`, async () => {
+        await deleteProgram(id);
+        toast.success('Xóa khóa học thành công!');
+        await fetchData();
+      });
     } catch (err) {
       toast.error('Lỗi khi xóa khóa học');
     }
@@ -80,6 +83,9 @@ const AdminPrograms = () => {
         onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}
+        deletingId={programs.find((item) => isPending(`delete-${item.id}`))?.id || null}
+        deleteConfirmTitle="Xóa khóa học"
+        deleteConfirmMessage="Bạn có chắc chắn muốn xóa khóa học này không? Hành động này không thể hoàn tác."
       />
     </div>
   );

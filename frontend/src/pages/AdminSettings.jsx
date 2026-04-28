@@ -79,7 +79,7 @@ const AdminSettings = () => {
         </div>
         <button className="btn btn-save-main" onClick={handleSubmit} disabled={loading}>
           {loading ? <i className="fa fa-spinner fa-spin mr-2"></i> : <i className="fa fa-save mr-2"></i>}
-          Lưu Thay Đổi
+          {loading ? 'Đang lưu...' : 'Lưu Thay Đổi'}
         </button>
       </div>
 

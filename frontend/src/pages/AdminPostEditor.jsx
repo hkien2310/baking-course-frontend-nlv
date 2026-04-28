@@ -16,6 +16,7 @@ const AdminPostEditor = () => {
 
   const [loading, setLoading] = useState(isEditing);
   const [categories, setCategories] = useState([]);
+  const [saving, setSaving] = useState(false);
 
   
   const [formData, setFormData] = useState({
@@ -61,6 +62,7 @@ const AdminPostEditor = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
       const payload = { ...formData };
       if (isEditing) {
@@ -73,6 +75,8 @@ const AdminPostEditor = () => {
       navigate(ROUTES.ADMIN + "#posts");
     } catch (err) {
       toast.error("Lỗi lưu bài viết");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -86,14 +90,14 @@ const AdminPostEditor = () => {
       {/* Top Navbar */}
       <div className="admin-paper-header" style={{ position: 'sticky', top: 0, zIndex: 100, borderRadius: 0, padding: '15px 30px', backgroundColor: 'var(--admin-paper-bg)', borderBottom: '1px solid var(--admin-border-light)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <div className="d-flex align-items-center">
-          <button className="btn btn-dark mr-3" onClick={() => navigate(ROUTES.ADMIN + "#posts")}>
+          <button className="btn btn-dark mr-3" onClick={() => navigate(ROUTES.ADMIN + "#posts")} disabled={saving}>
             <i className="fa fa-arrow-left"></i> Quay lại
           </button>
           <h4 style={{ margin: 0 }}>{isEditing ? 'Sửa Bài Viết' : 'Tạo Bài Viết Mới'}</h4>
         </div>
         <div>
-          <button type="submit" form="admin-post-form" className="admin-btn-save">
-            <i className="fa fa-save mr-2"></i> Lưu Bài Viết
+          <button type="submit" form="admin-post-form" className="admin-btn-save" disabled={saving}>
+            <i className={`fa ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-2`}></i> {saving ? 'Đang lưu...' : 'Lưu Bài Viết'}
           </button>
         </div>
       </div>

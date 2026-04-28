@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AdminConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+const AdminConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading = false, confirmLabel = 'Delete', cancelLabel = 'Cancel' }) => {
   if (!isOpen) return null;
 
   return (
@@ -77,6 +77,7 @@ const AdminConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
           <button 
             onClick={onClose} 
+            disabled={loading}
             style={{
               padding: '10px 28px',
               borderRadius: '8px',
@@ -91,10 +92,11 @@ const AdminConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
             onMouseEnter={(e) => { e.target.style.background = '#f8fafc'; }}
             onMouseLeave={(e) => { e.target.style.background = '#fff'; }}
           >
-            Cancel
+            {cancelLabel}
           </button>
           <button 
-            onClick={() => { onConfirm(); onClose(); }}
+            onClick={onConfirm}
+            disabled={loading}
             style={{
               padding: '10px 28px',
               borderRadius: '8px',
@@ -109,8 +111,8 @@ const AdminConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
             onMouseEnter={(e) => { e.target.style.background = '#dc2626'; }}
             onMouseLeave={(e) => { e.target.style.background = '#ef4444'; }}
           >
-            <i className="fa fa-trash" style={{ marginRight: '6px' }}></i>
-            Delete
+            <i className={`fa ${loading ? 'fa-spinner fa-spin' : 'fa-trash'}`} style={{ marginRight: '6px' }}></i>
+            {loading ? 'Đang xử lý...' : confirmLabel}
           </button>
         </div>
       </div>

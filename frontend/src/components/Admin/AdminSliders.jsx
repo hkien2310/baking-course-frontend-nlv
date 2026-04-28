@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { getPrograms, toggleProgramFeature } from '../../services/api';
 import { toast } from 'react-toastify';
 import AdminLoadingBlock from './AdminLoadingBlock';
+import usePendingAction from './usePendingAction';
 
 const AdminSliders = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isPending, withPending } = usePendingAction();
 
   const fetchData = async () => {
     try {
@@ -24,9 +26,11 @@ const AdminSliders = () => {
 
   const handleToggle = async (id, currentStatus) => {
     try {
-      await toggleProgramFeature(id, !currentStatus);
-      toast.success(`Program ${!currentStatus ? 'added to' : 'removed from'} Hero Slider`);
-      fetchData();
+      await withPending(`toggle-${id}`, async () => {
+        await toggleProgramFeature(id, !currentStatus);
+        toast.success(`Program ${!currentStatus ? 'added to' : 'removed from'} Hero Slider`);
+        await fetchData();
+      });
     } catch (err) {
       toast.error('Failed to update status');
     }
@@ -71,8 +75,9 @@ const AdminSliders = () => {
                     <button 
                       className="btn btn-danger btn-sm w-100 mt-2" 
                       onClick={() => handleToggle(prog.id, true)}
+                      disabled={isPending(`toggle-${prog.id}`)}
                     >
-                      Remove from Slider
+                      {isPending(`toggle-${prog.id}`) ? 'Processing...' : 'Remove from Slider'}
                     </button>
                   </div>
                 </div>
@@ -106,9 +111,9 @@ const AdminSliders = () => {
                         className="btn btn-outline-success btn-sm w-100 mt-2 text-uppercase" 
                         style={{ fontSize: '12px' }}
                         onClick={() => handleToggle(prog.id, false)}
-                        disabled={!eligible || limitReached}
+                        disabled={!eligible || limitReached || isPending(`toggle-${prog.id}`)}
                       >
-                        Add to Slider
+                        {isPending(`toggle-${prog.id}`) ? 'Processing...' : 'Add to Slider'}
                       </button>
                     </div>
                   </div>

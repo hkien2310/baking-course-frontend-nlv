@@ -4,11 +4,13 @@ import AdminConfirmModal from './AdminConfirmModal';
 import AdminButton from './Shared/AdminButton';
 import { getEnrollments, updateEnrollmentStatus, deleteEnrollment } from '../../services/api';
 import AdminPageShell from './AdminPageShell';
+import usePendingAction from './usePendingAction';
 
 const AdminEnrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const { isPending, withPending } = usePendingAction();
 
   const fetchEnrollments = async () => {
     try {
@@ -28,9 +30,11 @@ const AdminEnrollments = () => {
   const handleStatusChange = async (id, currentStatus) => {
     const newStatus = currentStatus === 'PENDING' ? 'CONFIRMED' : 'PENDING';
     try {
-      await updateEnrollmentStatus(id, newStatus);
-      toast.success(`Đã chuyển trạng thái thành ${newStatus === 'CONFIRMED' ? 'XÁC NHẬN' : 'CHỜ DUYỆT'}`);
-      fetchEnrollments();
+      await withPending(`status-${id}`, async () => {
+        await updateEnrollmentStatus(id, newStatus);
+        toast.success(`Đã chuyển trạng thái thành ${newStatus === 'CONFIRMED' ? 'XÁC NHẬN' : 'CHỜ DUYỆT'}`);
+        await fetchEnrollments();
+      });
     } catch (err) {
       toast.error('Lỗi khi cập nhật trạng thái');
     }
@@ -38,9 +42,12 @@ const AdminEnrollments = () => {
 
   const handleDelete = async (id) => {
     try {
-      await deleteEnrollment(id);
-      toast.success('Xóa ghi danh thành công!');
-      fetchEnrollments();
+      await withPending(`delete-${id}`, async () => {
+        await deleteEnrollment(id);
+        toast.success('Xóa ghi danh thành công!');
+        setDeleteTargetId(null);
+        await fetchEnrollments();
+      });
     } catch (err) {
       toast.error('Lỗi khi xóa ghi danh');
     }
@@ -94,11 +101,11 @@ const AdminEnrollments = () => {
                       }}
                       onClick={() => handleStatusChange(enr.id, enr.status)}
                     >
-                      {enr.status === 'CONFIRMED' ? 'XÁC NHẬN' : 'CHỜ DUYỆT'}
+                      {isPending(`status-${enr.id}`) ? 'ĐANG CẬP NHẬT' : enr.status === 'CONFIRMED' ? 'XÁC NHẬN' : 'CHỜ DUYỆT'}
                     </span>
                   </td>
                   <td>
-                    <AdminButton variant="danger" icon="trash" outline size="sm" onClick={() => setDeleteTargetId(enr.id)} />
+                    <AdminButton variant="danger" icon="trash" outline size="sm" onClick={() => setDeleteTargetId(enr.id)} loading={isPending(`delete-${enr.id}`)} disabled={isPending(`status-${enr.id}`)} />
                   </td>
                 </tr>
               ))
@@ -111,9 +118,12 @@ const AdminEnrollments = () => {
     <AdminConfirmModal
       isOpen={!!deleteTargetId}
       onClose={() => setDeleteTargetId(null)}
-      onConfirm={() => { handleDelete(deleteTargetId); setDeleteTargetId(null); }}
+      onConfirm={() => handleDelete(deleteTargetId)}
       title="Xóa Ghi danh"
       message="Bạn có chắc chắn muốn xóa lượt ghi danh này? Hành động này không thể hoàn tác."
+      loading={isPending(`delete-${deleteTargetId}`)}
+      confirmLabel="Xóa"
+      cancelLabel="Hủy"
     />
     </>
   );

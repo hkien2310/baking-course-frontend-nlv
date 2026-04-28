@@ -28,6 +28,7 @@ const AdminProgramEditor = () => {
   const [chiefsList, setChiefsList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [saving, setSaving] = useState(false);
 
   const TABS = [
     { id: 0, label: 'Thông tin chung' },
@@ -95,6 +96,7 @@ const AdminProgramEditor = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
       const payload = {
         ...formData,
@@ -111,6 +113,8 @@ const AdminProgramEditor = () => {
       navigate(ROUTES.ADMIN + "#programs");
     } catch (err) {
       toast.error("Lỗi lưu khóa học");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -154,14 +158,14 @@ const AdminProgramEditor = () => {
       {/* Top Navbar */}
       <div className="admin-paper-header" style={{ position: 'sticky', top: 0, zIndex: 100, borderRadius: 0, padding: '15px 30px', backgroundColor: 'var(--admin-paper-bg)', borderBottom: '1px solid var(--admin-border-light)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <div className="d-flex align-items-center">
-          <button className="btn btn-dark mr-3" onClick={() => navigate(ROUTES.ADMIN + "#programs")}>
+          <button className="btn btn-dark mr-3" onClick={() => navigate(ROUTES.ADMIN + "#programs")} disabled={saving}>
             <i className="fa fa-arrow-left"></i> Quay lại
           </button>
           <h4 style={{ margin: 0 }}>{isEditing ? 'Sửa Khóa Học' : 'Tạo Khóa Học Mới'}</h4>
         </div>
         <div>
-          <button type="submit" form="admin-program-form" className="admin-btn-save">
-            <i className="fa fa-save mr-2"></i> Lưu Khóa Học
+          <button type="submit" form="admin-program-form" className="admin-btn-save" disabled={saving}>
+            <i className={`fa ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-2`}></i> {saving ? 'Đang lưu...' : 'Lưu Khóa Học'}
           </button>
         </div>
       </div>

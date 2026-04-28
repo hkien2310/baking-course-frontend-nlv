@@ -5,12 +5,14 @@ import AdminModal from './AdminModal';
 import AdminButton from './Shared/AdminButton';
 import { getContacts, deleteContact } from '../../services/api';
 import AdminPageShell from './AdminPageShell';
+import usePendingAction from './usePendingAction';
 
 const AdminContacts = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
+  const { isPending, withPending, hasPending } = usePendingAction();
 
   const fetchContacts = async () => {
     try {
@@ -31,10 +33,13 @@ const AdminContacts = () => {
 
   const handleDelete = async (id) => {
     try {
-      await deleteContact(id);
-      toast.success('Xóa tin nhắn thành công!');
-      if (selectedContact?.id === id) setSelectedContact(null);
-      fetchContacts();
+      await withPending(`delete-${id}`, async () => {
+        await deleteContact(id);
+        toast.success('Xóa tin nhắn thành công!');
+        if (selectedContact?.id === id) setSelectedContact(null);
+        setDeleteTargetId(null);
+        await fetchContacts();
+      });
     } catch (err) {
       toast.error('Lỗi khi xóa tin nhắn');
     }
@@ -81,8 +86,8 @@ const AdminContacts = () => {
                     <button className="admin-btn-icon view" title="Xem chi tiết" onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }}>
                       <i className="fa fa-eye"></i>
                     </button>
-                    <button className="admin-btn-icon delete" title="Xóa" onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }}>
-                      <i className="fa fa-trash"></i>
+                    <button className="admin-btn-icon delete" title="Xóa" disabled={isPending(`delete-${contact.id}`)} onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }}>
+                      <i className={`fa ${isPending(`delete-${contact.id}`) ? 'fa-spinner fa-spin' : 'fa-trash'}`}></i>
                     </button>
                   </td>
                 </tr>
@@ -141,13 +146,14 @@ const AdminContacts = () => {
               type="button" 
               className="btn btn-outline-danger btn-sm"
               onClick={() => setDeleteTargetId(selectedContact.id)}
+              disabled={isPending(`delete-${selectedContact.id}`)}
             >
               <i className="fa fa-trash mr-2"></i>Xóa tin nhắn
             </button>
 
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button type="button" className="btn btn-light" onClick={() => setSelectedContact(null)}>
-                Đóng
+              <button type="button" className="btn btn-light" onClick={() => setSelectedContact(null)} disabled={hasPending}>
+                {hasPending ? 'Đang xử lý...' : 'Đóng'}
               </button>
               <a 
                 href={`mailto:${selectedContact.email}?subject=Re: ${encodeURIComponent(selectedContact.subject || 'Phản hồi từ Muka Bakery')}`}
@@ -165,9 +171,12 @@ const AdminContacts = () => {
     <AdminConfirmModal
       isOpen={!!deleteTargetId}
       onClose={() => setDeleteTargetId(null)}
-      onConfirm={() => { handleDelete(deleteTargetId); setDeleteTargetId(null); }}
+      onConfirm={() => handleDelete(deleteTargetId)}
       title="Xóa Tin nhắn"
       message="Bạn có chắc chắn muốn xóa tin nhắn liên hệ này? Hành động này không thể hoàn tác."
+      loading={isPending(`delete-${deleteTargetId}`)}
+      confirmLabel="Xóa"
+      cancelLabel="Hủy"
     />
     </>
   );

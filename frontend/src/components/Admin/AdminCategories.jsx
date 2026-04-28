@@ -4,6 +4,7 @@ import { getCategories, createCategory, updateCategory, deleteCategory } from '.
 import AdminTable from './AdminTable';
 import AdminModal from './AdminModal';
 import AdminButton from './Shared/AdminButton';
+import usePendingAction from './usePendingAction';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -12,6 +13,7 @@ const AdminCategories = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('PROGRAM');
   const [formData, setFormData] = useState({ id: null, name: '', slug: '', sortOrder: 0, isActive: true });
+  const { isPending, withPending, hasPending } = usePendingAction();
 
   const fetchData = async () => {
     setLoading(true);
@@ -47,9 +49,12 @@ const AdminCategories = () => {
 
   const handleDelete = async (id) => {
     try {
-      await deleteCategory(id);
-      toast.success('Xóa danh mục thành công!');
-      fetchData();
+      await withPending(`delete-${id}`, async () => {
+        await deleteCategory(id);
+        toast.success('Xóa danh mục thành công!');
+        await fetchData();
+        setIsModalOpen(false);
+      });
     } catch (err) {
       toast.error(err.response?.data?.error || 'Lỗi khi xóa danh mục');
     }
@@ -69,15 +74,17 @@ const AdminCategories = () => {
         type: activeTab
       };
 
-      if (isEditing) {
-        await updateCategory(formData.id, payload);
-        toast.success('Cập nhật danh mục thành công!');
-      } else {
-        await createCategory(payload);
-        toast.success('Thêm danh mục mới thành công!');
-      }
-      resetForm();
-      fetchData();
+      await withPending('submit-category', async () => {
+        if (isEditing) {
+          await updateCategory(formData.id, payload);
+          toast.success('Cập nhật danh mục thành công!');
+        } else {
+          await createCategory(payload);
+          toast.success('Thêm danh mục mới thành công!');
+        }
+        resetForm();
+        await fetchData();
+      });
     } catch (err) {
       toast.error(err.response?.data?.error || 'Lỗi lưu danh mục');
     }
@@ -136,6 +143,9 @@ const AdminCategories = () => {
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        deletingId={categories.find((item) => isPending(`delete-${item.id}`))?.id || null}
+        deleteConfirmTitle="Xóa danh mục"
+        deleteConfirmMessage="Bạn có chắc chắn muốn xóa danh mục này không? Hành động này không thể hoàn tác."
         onCreate={() => setIsModalOpen(true)}
       />
 
@@ -173,9 +183,9 @@ const AdminCategories = () => {
           </div>
 
           <div className="d-flex justify-content-end border-top pt-3 mt-3">
-            <button type="button" className="btn btn-light" onClick={resetForm}>Hủy bỏ</button>
-            <button type="submit" className="admin-btn-save ml-2">
-              {isEditing ? 'Lưu Thay Đổi' : 'Tạo Mới'}
+            <button type="button" className="btn btn-light" onClick={resetForm} disabled={hasPending}>Hủy bỏ</button>
+            <button type="submit" className="admin-btn-save ml-2" disabled={isPending('submit-category')}>
+              {isPending('submit-category') ? 'Đang lưu...' : isEditing ? 'Lưu Thay Đổi' : 'Tạo Mới'}
             </button>
           </div>
         </form>

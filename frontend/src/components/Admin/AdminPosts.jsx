@@ -6,11 +6,13 @@ import { toast } from 'react-toastify';
 import { getPosts, deletePost } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
+import usePendingAction from './usePendingAction';
 
 const AdminPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { isPending, withPending } = usePendingAction();
 
   const fetchData = async () => {
     setLoading(true);
@@ -34,9 +36,11 @@ const AdminPosts = () => {
 
   const handleDelete = async (id) => {
     try {
-      await deletePost(id);
-      toast.success('Xóa bài viết thành công!');
-      fetchData();
+      await withPending(`delete-${id}`, async () => {
+        await deletePost(id);
+        toast.success('Xóa bài viết thành công!');
+        await fetchData();
+      });
     } catch (err) {
       toast.error('Lỗi khi xóa bài viết');
     }
@@ -60,6 +64,9 @@ const AdminPosts = () => {
         onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}
+        deletingId={posts.find((item) => isPending(`delete-${item.id}`))?.id || null}
+        deleteConfirmTitle="Xóa bài viết"
+        deleteConfirmMessage="Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác."
       />
 
 
