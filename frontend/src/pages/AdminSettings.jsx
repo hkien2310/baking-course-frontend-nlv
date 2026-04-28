@@ -414,8 +414,7 @@ const AdminSettings = () => {
           font-weight: 600;
           color: #525f7f;
           margin-bottom: 8px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.1px;
         }
         .input-modern {
           width: 100%;
