@@ -3,6 +3,8 @@ import { useSiteConfig } from '../context/SiteConfigContext';
 import { updateSiteConfig } from '../services/api';
 import { toast } from 'react-toastify';
 import Button from '../components/Shared/Button';
+import './AdminDesign.css';
+import AdminLoadingScreen from '../components/Admin/AdminLoadingScreen';
 
 const AdminSettings = () => {
   const { siteConfig, updateConfig } = useSiteConfig();
@@ -68,11 +70,7 @@ const AdminSettings = () => {
     }
   };
 
-  if (!formData) return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
-      <div className="spinner-border text-primary" role="status"></div>
-    </div>
-  );
+  if (!formData) return <AdminLoadingScreen title="Đang tải cấu hình website..." subtitle="Jarvis đang đồng bộ nội dung site, social links và thông tin liên hệ." />;
 
   return (
     <div className="admin-settings-modern">
