@@ -185,7 +185,7 @@ const AdminSettings = () => {
                   <input className="input-modern" value={formData.socials?.youtube || ''} onChange={e => handleChange(e, 'socials', 'youtube')} placeholder="https://youtube.com/..." />
                 </div>
                 <div className="form-group-modern social-input">
-                  <i className="fa fa-paper-plane icon-tk"></i>
+                  <i className="fa fa-music icon-tk"></i>
                   <input className="input-modern" value={formData.socials?.tiktok || ''} onChange={e => handleChange(e, 'socials', 'tiktok')} placeholder="https://tiktok.com/..." />
                 </div>
               </div>
@@ -448,9 +448,15 @@ const AdminSettings = () => {
           padding-left: 45px;
         }
         .icon-fb { color: #1877F2; }
-        .icon-ig { color: #E4405F; }
+        .icon-ig {
+          background: linear-gradient(135deg, #feda75 0%, #fa7e1e 22%, #d62976 50%, #962fbf 78%, #4f5bd5 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: transparent;
+        }
         .icon-yt { color: #FF0000; }
-        .icon-tk { color: #000000; }
+        .icon-tk { color: #010101; }
         
         /* Array Items */
         .array-item-card {
