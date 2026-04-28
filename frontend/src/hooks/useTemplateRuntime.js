@@ -71,19 +71,19 @@ function initTemplateAnimations($) {
   }
 }
 
-export function useTemplateRuntime() {
+export function useTemplateRuntime(enabled = true) {
   const location = useLocation();
 
   useEffect(() => {
+    if (!enabled) return;
+
     const $ = window.jQuery;
     if (!$) return;
 
     const timer = window.setTimeout(() => {
-      // Custom route-change safe reinits
       initHeaderAffix($);
       initTemplateAnimations($);
-      
-      // Global template re-init to trigger sliders and other layout fixes
+
       if (typeof window.windowLoadInit === 'function') {
         window.windowLoadInit();
       }
@@ -95,5 +95,5 @@ export function useTemplateRuntime() {
     return () => {
       window.clearTimeout(timer);
     };
-  }, [location.pathname]);
+  }, [enabled, location.pathname]);
 }

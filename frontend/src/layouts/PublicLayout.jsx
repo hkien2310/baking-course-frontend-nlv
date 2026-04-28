@@ -5,10 +5,14 @@ import { useTemplateRuntime } from '../hooks/useTemplateRuntime';
 import { useSiteConfig } from '../context/SiteConfigContext';
 
 const PublicLayout = () => {
-  useTemplateRuntime();
   const location = useLocation();
   const { ready } = useSiteConfig();
   const isAuthRoute = location.pathname === '/auth';
+  const isAdminPath = location.pathname.startsWith('/admin');
+  const shouldRunTemplateRuntime = !isAuthRoute && !isAdminPath;
+
+  useTemplateRuntime(shouldRunTemplateRuntime);
+
   const shouldHoldForConfig = !ready && !isAuthRoute;
 
   if (shouldHoldForConfig) {
