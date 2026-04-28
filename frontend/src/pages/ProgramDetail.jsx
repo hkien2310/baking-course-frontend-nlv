@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 import { formatPrice, formatStudentCount, calcDiscountPercent } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
-import { imageUrl } from '../utils/imageUrl';
 import Input from '../components/Shared/Input';
 
 const VI_DAYS = {
@@ -133,7 +132,11 @@ const ProgramDetail = () => {
     );
   };
 
-  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
+  const imgSrc = (src) => {
+    if (!src) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
+    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
+    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
+  };
 
   return (
     <>

@@ -6,7 +6,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { formatPrice, getOrderStatusBadge } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
-import { imageUrl } from '../utils/imageUrl';
 
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
@@ -47,7 +46,11 @@ const UserDashboard = () => {
     { key: 'orders', icon: 'fa-shopping-bag', label: t('userDash.tabs.orders') },
   ];
 
-  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
+  const imgSrc = (src) => {
+    if (!src) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
+    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
+    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
+  };
 
   return (
     <>

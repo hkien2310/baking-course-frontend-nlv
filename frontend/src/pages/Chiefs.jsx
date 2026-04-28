@@ -2,7 +2,6 @@ import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
-import { imageUrl } from '../utils/imageUrl';
 import Pagination from '../components/Shared/Pagination';
 import { getChiefs } from '../services/api';
 import { useTranslation } from '../i18n/LanguageContext';
@@ -45,7 +44,11 @@ const Chiefs = () => {
 
   const paginatedChiefs = chiefs;
 
-  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/team/01.jpg`);
+  const imgSrc = (src) => {
+    if (!src) return `${import.meta.env.BASE_URL}images/team/01.jpg`;
+    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
+    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
+  };
 
   return (
     <>
