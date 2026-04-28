@@ -2,12 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
+import { imageUrl } from '../../utils/imageUrl';
 
-const imgSrc = (path) => {
-	if (!path) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
-	if (path.startsWith('http') || path.startsWith(import.meta.env.BASE_URL) || path.startsWith("/uploads/")) return path;
-	return `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
-};
+const imgSrc = (path) => imageUrl(path, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
 
 const HomeBlog = ({ posts = [] }) => {
 	const { t } = useTranslation();

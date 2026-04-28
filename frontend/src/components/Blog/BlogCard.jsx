@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
+import { imageUrl } from '../../utils/imageUrl';
 
 const BlogCard = ({ post }) => {
   const { t } = useTranslation();
@@ -9,7 +10,7 @@ const BlogCard = ({ post }) => {
     <article className="text-center text-md-left vertical-item content-padding post type-post status-publish format-standard has-post-thumbnail bordered">
       <div className="item-media post-thumbnail">
         <Link to={ROUTES.POST_DETAIL(post.slug || 'sample-post')}>
-          <img src={post.thumbnail} alt="" />
+          <img src={imageUrl(post.thumbnail, `${import.meta.env.BASE_URL}images/gallery/09.jpg`)} alt="" />
         </Link>
         <div className="text-md-left entry-meta small-text bg-dark-transpatent">
           <span className="byline">

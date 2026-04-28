@@ -6,6 +6,7 @@ import { useTranslation } from '../../i18n/LanguageContext';
 import { getPosts, submitContact } from '../../services/api';
 import { toast } from 'react-toastify';
 import Input from '../Shared/Input';
+import { imageUrl } from '../../utils/imageUrl';
 
 const Footer = () => {
   const { siteConfig } = useSiteConfig();
@@ -15,11 +16,7 @@ const Footer = () => {
   const [submitting, setSubmitting] = useState(false);
 
   // Helper for image src
-  const imgSrc = (src) => {
-    if (!src) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
-    if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL) || src.startsWith("/uploads/")) return src;
-    return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
-  };
+  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
 
   useEffect(() => {
     getPosts().then(res => {

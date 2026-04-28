@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { formatPrice, formatStudentCount, calcDiscountPercent } from '../../utils/formatters';
+import { imageUrl } from '../../utils/imageUrl';
 import Button from './Button';
 
 const ProgramCard = ({ cls }) => {
@@ -29,7 +30,7 @@ const ProgramCard = ({ cls }) => {
           <span className="pc3-category-pill">{getCategoryLabel()}</span>
         )}
         <Link to={ROUTES.PROGRAM_DETAIL(cls.slug)}>
-          <img src={cls.thumbnail} alt={cls.title} />
+          <img src={imageUrl(cls.thumbnail, `${import.meta.env.BASE_URL}images/gallery/09.jpg`)} alt={cls.title} />
         </Link>
       </div>
 
