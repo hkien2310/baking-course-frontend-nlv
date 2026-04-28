@@ -12,12 +12,9 @@ import AdminSettings from './AdminSettings';
 import { getMe, getDashboardStats } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
-import './AdminDesign.css';
-import AdminLoadingScreen from '../components/Admin/AdminLoadingScreen';
 
 const AdminDashboard = () => {
   const [user, setUser] = useState(null);
-  const [bootLoading, setBootLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(window.location.hash.replace('#', '') || 'overview');
   const [stats, setStats] = useState({ programs: 0, categories: 0, posts: 0, enrollments: 0, contacts: 0, sliders: 0, testimonials: 0, orders: 0 });
   const navigate = useNavigate();
@@ -30,23 +27,24 @@ const AdminDashboard = () => {
   useEffect(() => {
     document.body.classList.add('admin-mode');
     
-    Promise.all([getMe(), getDashboardStats()])
-      .then(([me, data]) => {
-        setUser(me);
-        setStats({
-          programs: data.programs || 0,
-          categories: data.categories || 0,
-          posts: data.posts || 0,
-          enrollments: data.enrollments || 0,
-          contacts: data.contacts || 0,
-          sliders: data.sliders || 0,
-          testimonials: data.testimonials || 0,
-          chiefs: data.chiefs || 0,
-          orders: data.orders || 0
-        });
-      })
-      .catch(() => navigate(ROUTES.AUTH))
-      .finally(() => setBootLoading(false));
+    getMe().then(setUser).catch(() => navigate(ROUTES.AUTH));
+
+    // Fetch real stats from new API
+    getDashboardStats().then((data) => {
+      setStats({
+        programs: data.programs || 0,
+        categories: data.categories || 0,
+        posts: data.posts || 0,
+        enrollments: data.enrollments || 0,
+        contacts: data.contacts || 0,
+        sliders: data.sliders || 0,
+        testimonials: data.testimonials || 0,
+        chiefs: data.chiefs || 0,
+        orders: data.orders || 0
+      });
+    }).catch(err => {
+      console.error('Failed to load dashboard stats', err);
+    });
     const handleHash = () => {
       const hash = window.location.hash.replace('#', '');
       if (hash) setActiveTab(hash);
@@ -65,7 +63,6 @@ const AdminDashboard = () => {
     navigate(ROUTES.AUTH);
   };
 
-  if (bootLoading) return <AdminLoadingScreen />;
   if (!user) return null;
 
   const pendingEnrollments = stats.enrollments;

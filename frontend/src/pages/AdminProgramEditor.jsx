@@ -8,7 +8,6 @@ import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shar
 import { ROUTES } from '../constants/routes';
 import { priceToDollars, dollarsToCents } from '../utils/formatters';
 import './AdminDesign.css';
-import AdminLoadingScreen from '../components/Admin/AdminLoadingScreen';
 
 const AdminProgramEditor = () => {
   const { id } = useParams();
@@ -146,7 +145,7 @@ const AdminProgramEditor = () => {
 
   useInitOnLoaded(loading);
 
-  if (loading) return <AdminLoadingScreen title="Đang mở trình biên tập khóa học..." subtitle="Jarvis đang nạp dữ liệu khóa học, danh mục và cấu hình biên tập." />;
+  if (loading) return <div className="p-5 text-center text-white">Đang tải dữ liệu...</div>;
 
   return (
     <div className="admin-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
