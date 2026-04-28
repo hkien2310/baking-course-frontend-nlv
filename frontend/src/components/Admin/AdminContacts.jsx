@@ -120,14 +120,14 @@ const AdminContacts = () => {
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <h6 style={{ color: 'var(--admin-text-muted)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>Chủ đề</h6>
+            <h6 style={{ color: 'var(--admin-text-muted)', fontSize: '13px', letterSpacing: '0.2px', marginBottom: '10px' }}>Chủ đề</h6>
             <div style={{ fontWeight: 600, fontSize: '16px', color: 'var(--admin-heading)' }}>
               {selectedContact.subject || 'Không có chủ đề'}
             </div>
           </div>
 
           <div style={{ marginBottom: '30px' }}>
-            <h6 style={{ color: 'var(--admin-text-muted)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>Nội dung tin nhắn</h6>
+            <h6 style={{ color: 'var(--admin-text-muted)', fontSize: '13px', letterSpacing: '0.2px', marginBottom: '10px' }}>Nội dung tin nhắn</h6>
             <div style={{ 
               background: 'var(--admin-bg)', 
               padding: '20px', 

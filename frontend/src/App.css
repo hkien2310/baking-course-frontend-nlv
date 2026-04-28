@@ -183,6 +183,32 @@
   }
 }
 
+/* Global form text casing fix */
+#canvas input[type="text"],
+#canvas input[type="email"],
+#canvas input[type="url"],
+#canvas input[type="password"],
+#canvas input[type="search"],
+#canvas input[type="tel"],
+#canvas input[type="number"],
+#canvas textarea,
+#canvas select,
+#canvas .form-control {
+  text-transform: none !important;
+}
+
+#canvas input[type="text"]::placeholder,
+#canvas input[type="email"]::placeholder,
+#canvas input[type="url"]::placeholder,
+#canvas input[type="password"]::placeholder,
+#canvas input[type="search"]::placeholder,
+#canvas input[type="tel"]::placeholder,
+#canvas input[type="number"]::placeholder,
+#canvas textarea::placeholder,
+#canvas .form-control::placeholder {
+  text-transform: none !important;
+}
+
 /* ═══ Program Card V3 — caogiang.vn exact style ═══ */
 /* Fix Owl Carousel equal height and hover clipping */
 .program-carousel .owl-stage-outer {

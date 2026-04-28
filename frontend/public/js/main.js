@@ -1560,10 +1560,17 @@ function windowLoadInit() {
 	}
 
 	//page preloader
-	$(".preloaderimg").fadeOut(150);
-	$(".preloader").fadeOut(150).delay(50, function(){
-		$(this).remove();
-	});
+	var hidePreloaderWhenReady = function() {
+		if (document.body.getAttribute('data-site-config-ready') !== 'true') {
+			setTimeout(hidePreloaderWhenReady, 100);
+			return;
+		}
+		$(".preloaderimg").fadeOut(150);
+		$(".preloader").fadeOut(150).delay(50, function(){
+			$(this).remove();
+		});
+	};
+	hidePreloaderWhenReady();
 }//eof windowLoadInit
 
 $(document).ready(function() {

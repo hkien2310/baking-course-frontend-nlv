@@ -22,7 +22,7 @@ const HomeAbout = () => {
 				<div className="col-12 col-lg-6 order-lg-2  animate" data-animation="slideInRight">
 					<div className="d-none d-lg-block divider-90"></div>
 					<div className="item-content">
-						<h6 className="fs-14 color-main text-uppercase">{t('home.about.subtitle')}</h6>
+						<h6 className="fs-14 color-main">{t('home.about.subtitle')}</h6>
 						<h3>{t('home.about.title')}</h3>
 						<div className="icon-image">
 							<img src={`${import.meta.env.BASE_URL}images/icon-3.png`} alt="" />

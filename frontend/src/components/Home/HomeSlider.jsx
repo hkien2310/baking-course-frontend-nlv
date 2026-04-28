@@ -105,7 +105,7 @@ const HomeSlider = ({ slides }) => {
                     <div className="intro_layers_wrapper">
                       <div className="intro_layers">
                         <div className="intro_layer" data-animation="fadeInUp">
-                          <h6 className="text-uppercase intro_after_featured_word color-main">
+                          <h6 className="intro_after_featured_word color-main">
                             {'Khóa học sắp tới'}
                           </h6>
                         </div>

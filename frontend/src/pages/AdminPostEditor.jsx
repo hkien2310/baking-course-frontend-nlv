@@ -211,7 +211,7 @@ const AdminPostEditor = () => {
                     <img src={formData.thumbnail.startsWith('http') ? formData.thumbnail : `${(import.meta.env.VITE_API_BASE_URL || '').replace(/\/api$/, '')}${formData.thumbnail.startsWith('/') ? '' : '/'}${formData.thumbnail}`} alt="" style={{ width: '100%', height: '350px', objectFit: 'cover', borderRadius: '12px', marginBottom: '25px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
                   )}
                   
-                  <div style={{ color: 'var(--admin-primary)', fontWeight: '700', textTransform: 'uppercase', fontSize: '13px', marginBottom: '12px', letterSpacing: '0.5px' }}>
+                  <div style={{ color: 'var(--admin-primary)', fontWeight: '700', fontSize: '13px', marginBottom: '12px', letterSpacing: '0.15px' }}>
                     {formData.category || 'CHUYÊN MỤC'} • {formData.dateString || 'MỚI NHẤT'}
                   </div>
                   

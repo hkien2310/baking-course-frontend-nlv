@@ -21,6 +21,7 @@ export const useSiteConfig = () => {
 export const SiteConfigProvider = ({ children }) => {
   const [siteConfig, setSiteConfig] = useState(DEFAULT_SITE_CONFIG);
   const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const fetchConfig = async () => {
@@ -28,21 +29,25 @@ export const SiteConfigProvider = ({ children }) => {
         const config = await getSiteConfig();
         setSiteConfig(config);
       } catch (error) {
-        console.error("Failed to load site config:", error);
+        console.error('Failed to load site config:', error);
       } finally {
         setLoading(false);
+        setReady(true);
       }
     };
     fetchConfig();
   }, []);
 
-  // Update context dynamically if admin updates it
+  useEffect(() => {
+    document.body.setAttribute('data-site-config-ready', ready ? 'true' : 'false');
+  }, [ready]);
+
   const updateConfig = (newConfig) => {
     setSiteConfig(newConfig);
   };
 
   return (
-    <SiteConfigContext.Provider value={{ siteConfig, updateConfig, loading }}>
+    <SiteConfigContext.Provider value={{ siteConfig, updateConfig, loading, ready }}>
       {children}
     </SiteConfigContext.Provider>
   );

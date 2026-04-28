@@ -415,6 +415,30 @@ const AdminSettings = () => {
           color: #525f7f;
           margin-bottom: 8px;
           letter-spacing: 0.1px;
+          text-transform: none !important;
+        }
+        .admin-settings-modern input,
+        .admin-settings-modern textarea,
+        .admin-settings-modern select,
+        .admin-settings-modern option,
+        .admin-settings-modern .input-modern,
+        .admin-settings-modern .form-control,
+        .admin-settings-modern .custom-select,
+        .admin-settings-modern .help-text,
+        .admin-settings-modern small,
+        .admin-settings-modern p,
+        .admin-settings-modern h3,
+        .admin-settings-modern h6,
+        .admin-settings-modern button,
+        .admin-settings-modern .btn,
+        .admin-settings-modern .settings-nav li {
+          text-transform: none !important;
+          font-variant: normal;
+        }
+        .admin-settings-modern input::placeholder,
+        .admin-settings-modern textarea::placeholder,
+        .admin-settings-modern .input-modern::placeholder {
+          text-transform: none !important;
         }
         .input-modern {
           width: 100%;
@@ -426,6 +450,7 @@ const AdminSettings = () => {
           transition: all 0.2s ease;
           background-color: #fff;
           box-shadow: 0 1px 2px rgba(0,0,0,0.01);
+          text-transform: none !important;
         }
         .input-modern:focus {
           outline: none;
