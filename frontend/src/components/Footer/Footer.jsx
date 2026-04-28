@@ -7,7 +7,7 @@ import { getPosts, submitContact } from '../../services/api';
 import { toast } from 'react-toastify';
 import Input from '../Shared/Input';
 import { imageUrl } from '../../utils/imageUrl';
-import { getSocialIconClass, getSocialLinkClass } from '../../utils/socialIcon';
+import SocialIconLink from '../Shared/SocialIconLink';
 
 const Footer = () => {
   const { siteConfig } = useSiteConfig();
@@ -93,10 +93,10 @@ const Footer = () => {
                   <span><Link to={ROUTES.HOME}>{siteConfig.contact.website}</Link></span>
                 </p>
                 <div className="widget_social_icons mt-4">
-                  {siteConfig.socials?.facebook && <a href={siteConfig.socials.facebook} className={`fa ${getSocialIconClass('facebook')} bg-icon border-icon mr-2 ${getSocialLinkClass('facebook')}`} title="facebook" target="_blank" rel="noopener noreferrer"></a>}
-                  {siteConfig.socials?.instagram && <a href={siteConfig.socials.instagram} className={`fa ${getSocialIconClass('instagram')} bg-icon border-icon mr-2 ${getSocialLinkClass('instagram')}`} title="instagram" target="_blank" rel="noopener noreferrer"></a>}
-                  {siteConfig.socials?.tiktok && <a href={siteConfig.socials.tiktok} className={`fa ${getSocialIconClass('tiktok')} bg-icon border-icon mr-2 ${getSocialLinkClass('tiktok')}`} title="tiktok" target="_blank" rel="noopener noreferrer"></a>}
-                  {siteConfig.socials?.youtube && siteConfig.socials.youtube !== '#' && <a href={siteConfig.socials.youtube} className={`fa ${getSocialIconClass('youtube')} bg-icon border-icon mr-2 ${getSocialLinkClass('youtube')}`} title="youtube" target="_blank" rel="noopener noreferrer"></a>}
+                  <SocialIconLink platform="facebook" href={siteConfig.socials?.facebook} title="facebook" />
+                  <SocialIconLink platform="instagram" href={siteConfig.socials?.instagram} title="instagram" />
+                  <SocialIconLink platform="tiktok" href={siteConfig.socials?.tiktok} title="tiktok" />
+                  <SocialIconLink platform="youtube" href={siteConfig.socials?.youtube} title="youtube" />
                 </div>
               </div>
             </div>
