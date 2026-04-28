@@ -1,0 +1,31 @@
+.widget_social_icons .social-link {
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+}
+
+.widget_social_icons .social-link:hover {
+  transform: translateY(-2px);
+}
+
+.widget_social_icons .social-link-facebook:hover {
+  color: #1877f2 !important;
+  border-color: rgba(24, 119, 242, 0.35) !important;
+  background-color: rgba(24, 119, 242, 0.08) !important;
+}
+
+.widget_social_icons .social-link-instagram:hover {
+  color: #d62976 !important;
+  border-color: rgba(214, 41, 118, 0.35) !important;
+  background: linear-gradient(135deg, rgba(254, 218, 117, 0.18) 0%, rgba(250, 126, 30, 0.16) 22%, rgba(214, 41, 118, 0.14) 50%, rgba(150, 47, 191, 0.14) 78%, rgba(79, 91, 213, 0.14) 100%) !important;
+}
+
+.widget_social_icons .social-link-tiktok:hover {
+  color: #000000 !important;
+  border-color: rgba(37, 244, 238, 0.42) !important;
+  background: linear-gradient(135deg, rgba(37, 244, 238, 0.14) 0%, rgba(254, 44, 85, 0.14) 100%) !important;
+}
+
+.widget_social_icons .social-link-youtube:hover {
+  color: #ff0000 !important;
+  border-color: rgba(255, 0, 0, 0.35) !important;
+  background-color: rgba(255, 0, 0, 0.08) !important;
+}

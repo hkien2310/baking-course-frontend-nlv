@@ -3,6 +3,7 @@ import { LanguageProvider } from './i18n/LanguageContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import './styles/social-brand.css';
 import PublicLayout from './layouts/PublicLayout';
 import Home from './pages/Home';
 import About from './pages/About';

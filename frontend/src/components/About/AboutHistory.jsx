@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from '../../i18n/LanguageContext';
 import { useSiteConfig } from '../../context/SiteConfigContext';
+import { getSocialIconClass, getSocialLinkClass } from '../../utils/socialIcon';
 
 const AboutHistory = ({ history }) => {
   const { siteConfig } = useSiteConfig();
@@ -27,10 +28,10 @@ const AboutHistory = ({ history }) => {
             </ul>
             <div className="widget_social_icons mt-4">
               <span className="mr-3 font-weight-bold">Kết nối với chúng tôi:</span>
-              {siteConfig.socials?.facebook && <a href={siteConfig.socials.facebook} className="fa fa-facebook bg-icon border-icon mr-2" title="facebook" target="_blank" rel="noopener noreferrer"></a>}
-              {siteConfig.socials?.instagram && <a href={siteConfig.socials.instagram} className="fa fa-instagram bg-icon border-icon mr-2" title="instagram" target="_blank" rel="noopener noreferrer"></a>}
-              {siteConfig.socials?.tiktok && <a href={siteConfig.socials.tiktok} className="fa fa-paper-plane bg-icon border-icon mr-2" title="tiktok" target="_blank" rel="noopener noreferrer"></a>}
-              {siteConfig.socials?.youtube && siteConfig.socials.youtube !== '#' && <a href={siteConfig.socials.youtube} className="fa fa-youtube-play bg-icon border-icon mr-2" title="youtube" target="_blank" rel="noopener noreferrer"></a>}
+              {siteConfig.socials?.facebook && <a href={siteConfig.socials.facebook} className={`fa ${getSocialIconClass('facebook')} bg-icon border-icon mr-2 ${getSocialLinkClass('facebook')}`} title="facebook" target="_blank" rel="noopener noreferrer"></a>}
+              {siteConfig.socials?.instagram && <a href={siteConfig.socials.instagram} className={`fa ${getSocialIconClass('instagram')} bg-icon border-icon mr-2 ${getSocialLinkClass('instagram')}`} title="instagram" target="_blank" rel="noopener noreferrer"></a>}
+              {siteConfig.socials?.tiktok && <a href={siteConfig.socials.tiktok} className={`fa ${getSocialIconClass('tiktok')} bg-icon border-icon mr-2 ${getSocialLinkClass('tiktok')}`} title="tiktok" target="_blank" rel="noopener noreferrer"></a>}
+              {siteConfig.socials?.youtube && siteConfig.socials.youtube !== '#' && <a href={siteConfig.socials.youtube} className={`fa ${getSocialIconClass('youtube')} bg-icon border-icon mr-2 ${getSocialLinkClass('youtube')}`} title="youtube" target="_blank" rel="noopener noreferrer"></a>}
             </div>
           </div>
           <div className="col-lg-6 border-none">
