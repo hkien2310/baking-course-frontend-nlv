@@ -37,6 +37,24 @@
 /* Tab Content Transitions */
 .admin-tab-content {
   animation: fadeIn 0.3s ease;
+  overflow: visible;
+}
+
+.admin-layout {
+  min-height: 100vh;
+}
+
+.admin-editor-form {
+  min-height: 0;
+}
+
+@media (max-height: 900px) {
+  .admin-tab-content {
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 8px;
+  }
 }
 
 @keyframes fadeIn {

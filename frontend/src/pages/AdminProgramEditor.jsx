@@ -165,7 +165,7 @@ const AdminProgramEditor = () => {
         </div>
       </div>
 
-      <form id="admin-program-form" onSubmit={handleSave} className="container p-4" style={{ flexGrow: 1, maxWidth: '1000px' }}>
+      <form id="admin-program-form" onSubmit={handleSave} className="container p-4 admin-editor-form" style={{ flexGrow: 1, maxWidth: '1000px' }}>
         
         {/* Tabs Navigation */}
         <div className="admin-tabs">
