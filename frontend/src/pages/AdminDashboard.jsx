@@ -18,7 +18,6 @@ const AdminDashboard = () => {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState(window.location.hash.replace('#', '') || 'overview');
   const [stats, setStats] = useState({ programs: 0, categories: 0, posts: 0, enrollments: 0, contacts: 0, sliders: 0, testimonials: 0, orders: 0 });
-  const [authLoading, setAuthLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -32,8 +31,7 @@ const AdminDashboard = () => {
     
     getMe()
       .then(setUser)
-      .catch(() => navigate(ROUTES.AUTH))
-      .finally(() => setAuthLoading(false));
+      .catch(() => navigate(ROUTES.AUTH));
 
     getDashboardStats()
       .then((data) => {
@@ -71,7 +69,9 @@ const AdminDashboard = () => {
     navigate(ROUTES.AUTH);
   };
 
-  if (authLoading || !user) return <div className="admin-loading-page"><AdminOverviewLoading /></div>;
+  const isOverviewLoading = activeTab === 'overview' && statsLoading;
+
+  if (!user) return null;
 
   const pendingEnrollments = stats.enrollments;
 
@@ -255,7 +255,7 @@ const AdminDashboard = () => {
 
       {/* Main Dynamic Content */}
       <div className="admin-content" style={{ flexGrow: 1 }}>
-        {renderContent()}
+        {isOverviewLoading ? <AdminOverviewLoading /> : renderContent()}
       </div>
     </div>
   );

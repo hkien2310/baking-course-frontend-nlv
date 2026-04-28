@@ -5,17 +5,17 @@ import { toast } from 'react-toastify';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
 
 const AdminSettings = () => {
-  const { siteConfig, updateConfig } = useSiteConfig();
+  const { siteConfig, updateConfig, loading: configLoading } = useSiteConfig();
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [activeTab, setActiveTab] = useState('general');
 
   useEffect(() => {
-    if (siteConfig) {
+    if (siteConfig && !configLoading) {
       setFormData(JSON.parse(JSON.stringify(siteConfig)));
     }
-  }, [siteConfig]);
+  }, [siteConfig, configLoading]);
 
   const handleChange = (e, section, field, index, subField) => {
     const { name, value } = e.target;
@@ -68,7 +68,7 @@ const AdminSettings = () => {
     }
   };
 
-  if (!formData) return <AdminLoadingBlock rows={4} />;
+  if (configLoading || !formData) return <AdminLoadingBlock rows={4} />;
 
   return (
     <div className="admin-settings-modern">
