@@ -8,6 +8,7 @@ import Pagination from '../components/Shared/Pagination';
 import { getPosts } from '../services/api';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
+import PageLoading from '../components/Shared/PageLoading';
 
 const ITEMS_PER_PAGE = 3;
 
@@ -47,12 +48,7 @@ const Receipt = () => {
   useInitOnLoaded(loading);
 
   if (loading) {
-    return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('receipt.loading') || 'Đang tải bài viết...'}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   const paginatedPosts = posts;

@@ -7,6 +7,7 @@ import AboutVideo from '../components/About/AboutVideo';
 import TestimonialsSlider from '../components/Shared/TestimonialsSlider';
 import { getTestimonials } from '../services/api';
 import { useSiteConfig } from '../context/SiteConfigContext';
+import PageLoading from '../components/Shared/PageLoading';
 
 const About = () => {
   const { siteConfig } = useSiteConfig();
@@ -29,12 +30,7 @@ const About = () => {
   useInitOnLoaded(loading);
 
   if (loading) {
-    return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('common.loading') || 'Đang tải dữ liệu...'}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   return (

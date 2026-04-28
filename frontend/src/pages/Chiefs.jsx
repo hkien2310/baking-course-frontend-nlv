@@ -7,6 +7,7 @@ import { getChiefs } from '../services/api';
 import { useTranslation } from '../i18n/LanguageContext';
 import { ROUTES } from '../constants/routes';
 import { imageUrl } from '../utils/imageUrl';
+import PageLoading from '../components/Shared/PageLoading';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -35,12 +36,7 @@ const Chiefs = () => {
   useInitOnLoaded(loading);
 
   if (loading) {
-    return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('chiefs.loading') || 'Đang tải danh sách giảng viên...'}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   const paginatedChiefs = chiefs;

@@ -7,6 +7,7 @@ import { getPostBySlug, getPosts } from '../services/api';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 import { imageUrl } from '../utils/imageUrl';
+import PageLoading from '../components/Shared/PageLoading';
 
 const PostDetail = () => {
   const { t } = useTranslation();
@@ -31,12 +32,7 @@ const PostDetail = () => {
   useInitOnLoaded(loading);
 
   if (loading) {
-    return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('postDetail.loading') || 'Đang tải bài viết...'}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
-    );
+    return <PageLoading />;
   }
 
   if (!post) {

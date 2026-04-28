@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { getMe } from '../../services/api';
+import PageLoading from '../Shared/PageLoading';
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const [user, setUser] = useState(null);
@@ -20,12 +21,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>Authenticating...</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
-    );
+    return <PageLoading compact />;
   }
 
   if (!user) {

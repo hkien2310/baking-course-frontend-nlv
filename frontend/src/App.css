@@ -209,6 +209,62 @@
   text-transform: none !important;
 }
 
+.page-loading-shell {
+  background: #fff;
+  border: 1px solid #f1f1f1;
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.04);
+}
+
+.page-loading-header,
+.page-loading-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.page-loading-body {
+  margin-top: 24px;
+}
+
+.page-loading-line,
+.page-loading-block {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f2f2f2 25%, #fafafa 50%, #f2f2f2 75%);
+  background-size: 200% 100%;
+  animation: pageLoadingShimmer 1.4s ease-in-out infinite;
+}
+
+.page-loading-line-sm {
+  width: 120px;
+  height: 12px;
+}
+
+.page-loading-line-lg {
+  width: min(340px, 75%);
+  height: 26px;
+}
+
+.page-loading-block {
+  width: 100%;
+  height: 16px;
+}
+
+.page-loading-block-short {
+  width: 72%;
+}
+
+@keyframes pageLoadingShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 /* ═══ Program Card V3 — caogiang.vn exact style ═══ */
 /* Fix Owl Carousel equal height and hover clipping */
 .program-carousel .owl-stage-outer {

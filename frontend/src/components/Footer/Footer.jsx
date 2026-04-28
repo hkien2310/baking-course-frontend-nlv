@@ -116,7 +116,13 @@ const Footer = () => {
                       </div>
                     </li>
                   )) : (
-                    <li>Đang tải...</li>
+                    <li className="media">
+                      <div className="media-image" aria-hidden="true" style={{ width: '80px', height: '80px', borderRadius: '10px', background: 'linear-gradient(90deg, #f2f2f2 25%, #fafafa 50%, #f2f2f2 75%)', backgroundSize: '200% 100%', animation: 'pageLoadingShimmer 1.4s ease-in-out infinite' }}></div>
+                      <div className="media-body" aria-hidden="true">
+                        <p style={{ width: '90%', height: '14px', marginBottom: '10px', borderRadius: '999px', background: 'linear-gradient(90deg, #f2f2f2 25%, #fafafa 50%, #f2f2f2 75%)', backgroundSize: '200% 100%', animation: 'pageLoadingShimmer 1.4s ease-in-out infinite' }}></p>
+                        <h6 className="item-meta" style={{ width: '55%', height: '12px', borderRadius: '999px', background: 'linear-gradient(90deg, #f2f2f2 25%, #fafafa 50%, #f2f2f2 75%)', backgroundSize: '200% 100%', animation: 'pageLoadingShimmer 1.4s ease-in-out infinite' }}></h6>
+                      </div>
+                    </li>
                   )}
                 </ul>
               </div>
