@@ -5,6 +5,7 @@ import AdminButton from './Shared/AdminButton';
 import { AdminInput, AdminTextarea } from './Shared/AdminFormControls';
 import { getTestimonials, createTestimonial, updateTestimonial, deleteTestimonial } from '../../services/api';
 import { toast } from 'react-toastify';
+import usePendingAction from './usePendingAction';
 
 const AdminTestimonials = () => {
   const [data, setData] = useState([]);
@@ -18,6 +19,8 @@ const AdminTestimonials = () => {
     text: '',
     signature: ''
   });
+
+  const { isPending, withPending, hasPending } = usePendingAction();
 
   const fetchData = async () => {
     setLoading(true);
@@ -62,29 +65,31 @@ const AdminTestimonials = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      if (modalState.item) {
-        await updateTestimonial(modalState.item.id, formData);
-        toast.success('Cập nhật đánh giá thành công!');
-      } else {
-        await createTestimonial(formData);
-        toast.success('Thêm đánh giá thành công!');
-      }
-      closeModal();
-      fetchData();
+      await withPending('submit-testimonial', async () => {
+        if (modalState.item) {
+          await updateTestimonial(modalState.item.id, formData);
+          toast.success('Cập nhật đánh giá thành công!');
+        } else {
+          await createTestimonial(formData);
+          toast.success('Thêm đánh giá thành công!');
+        }
+        closeModal();
+        await fetchData();
+      });
     } catch (err) {
       toast.error('Lỗi lưu đánh giá.');
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) {
-      try {
+    try {
+      await withPending(`delete-${id}`, async () => {
         await deleteTestimonial(id);
-        toast.success("Xóa thành công!");
-        fetchData();
-      } catch {
-        toast.error("Lỗi khi xóa đánh giá.");
-      }
+        toast.success('Xóa thành công!');
+        await fetchData();
+      });
+    } catch {
+      toast.error('Lỗi khi xóa đánh giá.');
     }
   };
 
@@ -106,6 +111,9 @@ const AdminTestimonials = () => {
         loading={loading} 
         onEdit={openModal}
         onDelete={handleDelete}
+        deletingId={data.find((item) => isPending(`delete-${item.id}`))?.id || null}
+        deleteConfirmTitle="Xóa đánh giá"
+        deleteConfirmMessage="Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác."
         emptyMessage="Chưa có đánh giá nào. Thêm một số đánh giá để hiển thị trên trang chủ!"
         onCreate={() => openModal()}
       />
@@ -155,8 +163,8 @@ const AdminTestimonials = () => {
           />
           
           <div className="mt-4 text-right">
-            <AdminButton variant="secondary" onClick={closeModal} label="Hủy" className="mr-2" />
-            <AdminButton type="submit" variant="primary" icon="save" label="Lưu Đánh Giá" />
+            <AdminButton variant="secondary" onClick={closeModal} label="Hủy" className="mr-2" disabled={hasPending} />
+            <AdminButton type="submit" variant="primary" icon="save" label="Lưu Đánh Giá" loading={isPending('submit-testimonial')} loadingLabel="Đang lưu" />
           </div>
         </form>
       </AdminModal>
