@@ -105,36 +105,22 @@ const AdminCategories = () => {
 
   return (
     <div className="admin-categories-page">
-      <ul className="nav nav-tabs mb-4">
-        <li className="nav-item">
-          <button 
-            className={`nav-link ${activeTab === 'PROGRAM' ? 'active font-weight-bold' : 'text-muted'}`}
-            onClick={() => setActiveTab('PROGRAM')}
-            style={{ 
-              borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottom: 'none', 
-              background: activeTab === 'PROGRAM' ? '#fff' : 'transparent', 
-              outline: 'none',
-              color: activeTab === 'PROGRAM' ? 'var(--admin-primary)' : ''
-            }}
-          >
-            <i className="fa fa-graduation-cap mr-2"></i> Danh mục Khóa học
-          </button>
-        </li>
-        <li className="nav-item">
-          <button 
-            className={`nav-link ${activeTab === 'POST' ? 'active font-weight-bold' : 'text-muted'}`}
-            onClick={() => setActiveTab('POST')}
-            style={{ 
-              borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottom: 'none', 
-              background: activeTab === 'POST' ? '#fff' : 'transparent', 
-              outline: 'none',
-              color: activeTab === 'POST' ? 'var(--admin-primary)' : ''
-            }}
-          >
-            <i className="fa fa-pencil-square-o mr-2"></i> Danh mục Bài viết
-          </button>
-        </li>
-      </ul>
+      <div className="admin-tabs">
+        <button 
+          type="button"
+          className={`admin-tab-btn ${activeTab === 'PROGRAM' ? 'active' : ''}`}
+          onClick={() => setActiveTab('PROGRAM')}
+        >
+          <i className="fa fa-graduation-cap mr-2"></i> Danh mục Khóa học
+        </button>
+        <button 
+          type="button"
+          className={`admin-tab-btn ${activeTab === 'POST' ? 'active' : ''}`}
+          onClick={() => setActiveTab('POST')}
+        >
+          <i className="fa fa-pencil-square-o mr-2"></i> Danh mục Bài viết
+        </button>
+      </div>
 
       <AdminTable 
         title={activeTab === 'PROGRAM' ? "Danh mục Khóa học" : "Danh mục Bài viết"} 
