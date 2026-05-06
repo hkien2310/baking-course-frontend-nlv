@@ -13,6 +13,7 @@ const Header = () => {
   const { t, language, setLanguage } = useTranslation();
   const hasToken = !!localStorage.getItem('token');
   const [categories, setCategories] = useState([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     getCategories({ type: 'PROGRAM' })
@@ -30,9 +31,14 @@ const Header = () => {
       .catch(() => console.error('Failed to load categories for header'));
   }, []);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className={isHome ? 'header_absolute' : ''} key={isHome ? 'home-header' : 'inner-header'}>
-      <header className={`page_header justify-nav-center ${isHome ? 's-bordertop nav-narrow ds header-main' : 'ls'}`}>
+      <header className={`page_header justify-nav-center ${isHome ? 's-bordertop nav-narrow ds header-main' : 'ls'} ${isMobileMenuOpen ? 'mobile-active' : ''}`}>
         <div className="container-fluid">
           <div className="row align-items-center">
             <div className="col-xl-2 col-lg-3 col-11">
@@ -92,7 +98,10 @@ const Header = () => {
             </div>
           </div>
         </div>
-        <span className="toggle_menu">
+        <span 
+          className={`toggle_menu ${isMobileMenuOpen ? 'mobile-active' : ''}`} 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
           <span></span>
         </span>
       </header>
