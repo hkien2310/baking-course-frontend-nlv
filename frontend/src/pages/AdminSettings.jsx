@@ -3,7 +3,7 @@ import { useSiteConfig } from '../context/SiteConfigContext';
 import { updateSiteConfig } from '../services/api';
 import { toast } from 'react-toastify';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
-import AdminButton from '../components/admin/Shared/AdminButton';
+import AdminButton from '../components/Admin/Shared/AdminButton';
 
 const AdminSettings = () => {
   const { siteConfig, updateConfig, loading: configLoading } = useSiteConfig();
