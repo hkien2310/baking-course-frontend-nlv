@@ -153,56 +153,41 @@ const AdminSliders = () => {
                 Đã đạt giới hạn 3 slider. Gỡ bớt để thêm mới.
               </div>
             )}
-            <div className="table-responsive">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: '50px' }}></th>
-                    <th>Khóa học</th>
-                    <th>Giảng viên</th>
-                    <th style={{ width: '130px', textAlign: 'center' }}>Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {availablePrograms.length === 0 ? (
-                    <tr>
-                      <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
-                        <i>Không còn khóa học nào.</i>
-                      </td>
-                    </tr>
-                  ) : (
-                    availablePrograms.map(prog => (
-                      <tr key={prog.id}>
-                        <td>
-                          <img
-                            src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
-                            alt=""
-                            className="slider-table-thumb"
-                          />
-                        </td>
-                        <td>
-                          <div className="slider-table-title">{prog.title}</div>
-                        </td>
-                        <td>
-                          <span className="slider-table-author">{prog.authorName || '—'}</span>
-                        </td>
-                        <td style={{ textAlign: 'center' }}>
-                          <button
-                            className="slider-add-btn"
-                            onClick={() => handleToggle(prog.id, false)}
-                            disabled={limitReached || isPending(`toggle-${prog.id}`)}
-                          >
-                            {isPending(`toggle-${prog.id}`)
-                              ? <><i className="fa fa-spinner fa-spin"></i></>
-                              : <><i className="fa fa-plus"></i> Thêm</>
-                            }
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+
+            <div style={{ padding: '20px 24px' }}>
+              {availablePrograms.length === 0 ? (
+                <div className="slider-empty-state">
+                  <i className="fa fa-inbox"></i>
+                  <p>Không còn khóa học nào</p>
+                </div>
+              ) : (
+                <div className="slider-available-grid">
+                  {availablePrograms.map(prog => (
+                    <div key={prog.id} className={`slider-available-card ${limitReached ? 'disabled' : ''}`}>
+                      <div className="slider-available-img">
+                        <img
+                          src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
+                          alt={prog.title}
+                        />
+                      </div>
+                      <div className="slider-available-body">
+                        <h6>{prog.title}</h6>
+                        <span>{prog.authorName || 'Chưa có giảng viên'}</span>
+                        <button
+                          className="slider-add-btn"
+                          onClick={() => handleToggle(prog.id, false)}
+                          disabled={limitReached || isPending(`toggle-${prog.id}`)}
+                        >
+                          {isPending(`toggle-${prog.id}`)
+                            ? <i className="fa fa-spinner fa-spin"></i>
+                            : <><i className="fa fa-plus"></i> Thêm vào Slider</>
+                          }
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {totalPages > 1 && (
@@ -371,33 +356,63 @@ const AdminSliders = () => {
           font-size: 13px;
         }
 
-        /* ── TABLE STYLES ── */
-        .slider-table-thumb {
-          width: 48px;
-          height: 34px;
-          border-radius: 6px;
+        /* ── AVAILABLE CARDS GRID ── */
+        .slider-available-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 16px;
+        }
+        .slider-available-card {
+          border: 1px solid var(--admin-border-subtle, #ebdcd0);
+          border-radius: 10px;
+          overflow: hidden;
+          background: #fff;
+          transition: all 0.2s ease;
+        }
+        .slider-available-card:hover {
+          border-color: var(--admin-primary, #5fa88a);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .slider-available-card.disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
+        .slider-available-img img {
+          width: 100%;
+          height: 110px;
           object-fit: cover;
           display: block;
         }
-        .slider-table-title {
+        .slider-available-body {
+          padding: 12px;
+        }
+        .slider-available-body h6 {
+          margin: 0 0 4px;
+          font-size: 13px;
           font-weight: 600;
-          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
           color: var(--admin-heading, #0f172a);
         }
-        .slider-table-author {
-          font-size: 13px;
+        .slider-available-body > span {
+          display: block;
+          font-size: 12px;
           color: var(--admin-text-muted, #94a3b8);
+          margin-bottom: 10px;
         }
         .slider-add-btn {
           display: inline-flex;
           align-items: center;
           gap: 6px;
+          width: 100%;
+          justify-content: center;
           background: #f0fdf4 !important;
           color: #16a34a !important;
           border: 1px solid #bbf7d0 !important;
           border-radius: 6px !important;
-          padding: 5px 16px !important;
-          font-size: 13px !important;
+          padding: 6px 12px !important;
+          font-size: 12px !important;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.15s ease;
@@ -422,8 +437,20 @@ const AdminSliders = () => {
         }
 
         /* ── RESPONSIVE ── */
+        @media (max-width: 1200px) {
+          .slider-available-grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
+        }
         @media (max-width: 768px) {
-          .slider-featured-grid {
+          .slider-featured-grid,
+          .slider-available-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 480px) {
+          .slider-featured-grid,
+          .slider-available-grid {
             grid-template-columns: 1fr;
           }
         }
