@@ -247,6 +247,50 @@ body.admin-mode, .admin-layout {
 }
 
 /* ---------------- TABLE DEFAULT STYLES ---------------- */
+.admin-tabs {
+  display: flex;
+  gap: 35px;
+  margin-bottom: 35px;
+  border-bottom: 1px solid var(--admin-border-light);
+  padding: 0 15px;
+}
+
+.admin-tabs .admin-tab-btn {
+  background: transparent !important;
+  border: none !important;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--admin-text-muted) !important;
+  padding: 12px 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.admin-tabs .admin-tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--admin-brand);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.admin-tabs .admin-tab-btn:hover {
+  color: var(--admin-heading) !important;
+}
+
+.admin-tabs .admin-tab-btn.active {
+  color: var(--admin-brand) !important;
+}
+
+.admin-tabs .admin-tab-btn.active::after {
+  transform: scaleX(1);
+}
+
 .table-responsive {
   overflow-y: auto;
   flex-grow: 1;
@@ -327,6 +371,26 @@ body.admin-mode, .admin-layout {
   background-color: var(--admin-primary);
   color: #ffffff;
   transform: scale(1.1);
+}
+
+.admin-btn-outline {
+  background: transparent;
+  border: 1px solid var(--admin-border-dark);
+  color: var(--admin-text-base);
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.admin-btn-outline:hover {
+  border-color: var(--admin-brand);
+  color: var(--admin-brand);
+  background: var(--admin-border-light);
 }
 
 /* ---------------- MODAL OVERRIDES ---------------- */

@@ -156,8 +156,8 @@ const AdminProgramEditor = () => {
       {/* Top Navbar */}
       <div className="admin-paper-header" style={{ position: 'sticky', top: 0, zIndex: 100, borderRadius: 0, padding: '15px 30px', backgroundColor: 'var(--admin-paper-bg)', borderBottom: '1px solid var(--admin-border-light)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <div className="d-flex align-items-center">
-          <button className="btn btn-dark mr-3" onClick={() => navigate(ROUTES.ADMIN + "#programs")} disabled={saving}>
-            <i className="fa fa-arrow-left"></i> Quay lại
+          <button className="admin-btn-outline mr-3" onClick={() => navigate(ROUTES.ADMIN + "#programs")} disabled={saving}>
+            <i className="fa fa-arrow-left mr-2"></i> Quay lại
           </button>
           <h4 style={{ margin: 0 }}>{isEditing ? 'Sửa Khóa Học' : 'Tạo Khóa Học Mới'}</h4>
         </div>
