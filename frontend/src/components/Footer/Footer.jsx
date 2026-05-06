@@ -132,12 +132,12 @@ const Footer = () => {
               <div className="widget widget_mailchimp footer_mailchimp">
                 <h3 className="widget-title">{siteConfig.footer.newsletterTitle}</h3>
                 <p>{siteConfig.footer.newsletterDescription}</p>
-                <form className="newsletter-signup" onSubmit={handleSubscribe}>
+                <form className="newsletter-custom-form" onSubmit={handleSubscribe}>
                   <Input
                     id="mailchimp_email"
                     name="email"
                     type="email"
-                    inputClassName="mailchimp_email ds"
+                    inputClassName="newsletter_email ds"
                     placeholder={t('footer.emailPlaceholder') || 'Nhập địa chỉ Email'}
                     value={email}
                     onChange={e => setEmail(e.target.value)}
@@ -147,7 +147,6 @@ const Footer = () => {
                   <button type="submit" className="btn btn-maincolor" disabled={submitting}>
                     {submitting ? (t('common.sending') || 'Đang gửi...') : t('footer.subscribe')}
                   </button>
-                  <div className="response"></div>
                 </form>
               </div>
             </div>

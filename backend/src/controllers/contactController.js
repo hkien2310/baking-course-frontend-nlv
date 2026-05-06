@@ -17,27 +17,27 @@ exports.getAllContacts = async (req, res) => {
 exports.submitContact = async (req, res) => {
   try {
     const { fullName, email, subject, message } = req.body;
-    
-    // Basic validation
-    if (!fullName || !email || !message) {
-      return res.status(400).json({ error: 'Full name, email, and message are required fields.' });
+
+    // Basic validation: only email is strictly required for things like newsletter
+    if (!email) {
+      return res.status(400).json({ error: 'Email is a required field.' });
     }
 
     const contact = await prisma.contact.create({
       data: {
-        fullName,
+        fullName: fullName || 'Subscriber',
         email,
-        subject,
-        message
+        subject: subject || 'Contact Form Submission',
+        message: message || 'No message provided.'
       }
     });
 
     res.status(201).json({ message: 'Your message has been sent successfully. We will get back to you soon!', contact });
   } catch (error) {
+    console.error('Contact submission error:', error);
     res.status(500).json({ error: 'An error occurred while submitting your message.' });
   }
 };
-
 // DELETE contact message (Admin)
 exports.deleteContact = async (req, res) => {
   try {

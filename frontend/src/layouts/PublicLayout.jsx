@@ -9,7 +9,7 @@ const PublicLayout = () => {
   const { ready } = useSiteConfig();
   const isAuthRoute = location.pathname === '/auth';
   const isAdminPath = location.pathname.startsWith('/admin');
-  const shouldRunTemplateRuntime = !isAuthRoute && !isAdminPath;
+  const shouldRunTemplateRuntime = !isAuthRoute && !isAdminPath && ready;
 
   useTemplateRuntime(shouldRunTemplateRuntime);
 
