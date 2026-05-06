@@ -48,10 +48,7 @@ const StudentWork = () => {
 
 
               {loading ? (
-                <div className="text-center py-5">
-                  <div className="spinner-border" role="status"></div>
-                  <p className="mt-2">Đang tải sản phẩm...</p>
-                </div>
+                <PageLoading compact />
               ) : works.length === 0 ? (
                 <div className="text-center py-5">
                   <i className="fa fa-image" style={{ fontSize: '60px', color: '#ddd' }}></i>
@@ -101,6 +98,20 @@ const StudentWork = () => {
                       currentPage={page} 
                       totalPages={totalPages} 
                       onPageChange={(p) => setPage(p)} 
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default StudentWork;
+onPageChange={(p) => setPage(p)} 
                     />
                   </div>
                 </div>
