@@ -6,6 +6,7 @@ import { ROUTES } from '../constants/routes';
 import { Link } from 'react-router-dom';
 import { imageUrl } from '../utils/imageUrl';
 import Pagination from '../components/Shared/Pagination';
+import PageLoading from '../components/Shared/PageLoading';
 
 const StudentWork = () => {
   const [works, setWorks] = useState([]);
@@ -98,20 +99,6 @@ const StudentWork = () => {
                       currentPage={page} 
                       totalPages={totalPages} 
                       onPageChange={(p) => setPage(p)} 
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-};
-
-export default StudentWork;
-onPageChange={(p) => setPage(p)} 
                     />
                   </div>
                 </div>

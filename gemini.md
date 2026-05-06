@@ -47,3 +47,10 @@ This file (`gemini.md`) acts as the persistent project-level context for Gemini/
 - **Verification**: After significant changes, I will update the graph if requested to ensure the "brain" stays in sync with the code.
 
 **The test:** Can I explain how this change affects the rest of the graph? If no, I haven't researched enough.
+
+## 6. Verification & Build
+**Always verify locally before deployment.**
+
+- **Mandatory Build Check**: BEFORE any `git commit` or `git push`, I MUST run `npm run build` in the relevant directory (e.g., `cd frontend && npm run build`) to ensure there are no syntax errors or unresolved imports.
+- **Test Before Push**: If tests exist, I will run them.
+- **Self-Correction**: If a build fails locally, I will fix it before ever mentioning it to the user or pushing code.
