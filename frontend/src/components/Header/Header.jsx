@@ -1,8 +1,10 @@
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSiteConfig } from '../../context/SiteConfigContext';
 import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
 import Button from '../Shared/Button';
+import { getCategories } from '../../services/api';
 
 const Header = () => {
   const { siteConfig } = useSiteConfig();
@@ -10,6 +12,23 @@ const Header = () => {
   const isHome = location.pathname === '/';
   const { t, language, setLanguage } = useTranslation();
   const hasToken = !!localStorage.getItem('token');
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    getCategories({ type: 'PROGRAM' })
+      .then(res => {
+        const cats = res?.data || res || [];
+        setCategories(cats.filter(c => c.isActive));
+        
+        // Re-init superfish plugin after categories are loaded to bind dropdown events
+        setTimeout(() => {
+          if (typeof window.documentReadyInit === 'function') {
+            window.documentReadyInit();
+          }
+        }, 50);
+      })
+      .catch(() => console.error('Failed to load categories for header'));
+  }, []);
 
   return (
     <div className={isHome ? 'header_absolute' : ''} key={isHome ? 'home-header' : 'inner-header'}>
@@ -35,6 +54,18 @@ const Header = () => {
                   </li>
                   <li className={location.pathname.startsWith("/program") ? "active" : ""}>
                     <Link to={ROUTES.PROGRAM}>{t('header.programs')}</Link>
+                    {categories.length > 0 && (
+                      <ul>
+                        <li><Link to={ROUTES.PROGRAM}>Tất cả khóa học</Link></li>
+                        {categories.map(cat => (
+                          <li key={cat.id}>
+                            <Link to={`${ROUTES.PROGRAM}?category=${encodeURIComponent(cat.name)}`}>
+                              {cat.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </li>
                   {/* [HIDDEN] Ẩn menu Giảng viên theo yêu cầu khách hàng
                   <li className={location.pathname === "/chiefs" ? "active" : ""}>
