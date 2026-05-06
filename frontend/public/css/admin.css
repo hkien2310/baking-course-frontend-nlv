@@ -458,3 +458,30 @@ body.admin-mode {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ---------------- TEMPLATE OVERRIDE: FORM TEXT CASING ---------------- */
+/* Template main.css (line ~554) forces text-transform:uppercase on ALL inputs.
+   Override for admin layout so form values display normally. */
+.admin-layout input[type="text"],
+.admin-layout input[type="email"],
+.admin-layout input[type="url"],
+.admin-layout input[type="password"],
+.admin-layout input[type="search"],
+.admin-layout input[type="tel"],
+.admin-layout input[type="number"],
+.admin-layout textarea,
+.admin-layout select,
+.admin-layout .form-control {
+  text-transform: none;
+}
+
+.admin-layout input::placeholder,
+.admin-layout textarea::placeholder,
+.admin-layout select::placeholder,
+.admin-layout .form-control::placeholder {
+  text-transform: none;
+}
+
+.admin-layout label {
+  text-transform: none;
+}
