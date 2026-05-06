@@ -44,6 +44,9 @@ function initHeaderAffix($) {
 function initTemplateAnimations($) {
   const $body = $('body');
   const initAnimateElement = (self, index) => {
+    // Nếu đã animated rồi thì bỏ qua
+    if (self.hasClass('animated')) return;
+
     const animationClass = self.data('animation') || 'fadeInUp';
     const animationDelay = self.data('delay') || 150;
     setTimeout(() => {
@@ -69,6 +72,16 @@ function initTemplateAnimations($) {
       initAnimateElement($(this), index);
     });
   }
+
+  // FAILSAFE: Sau 1.5s nếu vẫn chưa hiện thì force hiện luôn
+  // Tránh trường hợp plugin appear không trigger làm ẩn nội dung
+  setTimeout(() => {
+    $('.animate').each(function() {
+      if (!$(this).hasClass('animated')) {
+        $(this).addClass('animated fadeInUp');
+      }
+    });
+  }, 1500);
 }
 
 export function useTemplateRuntime(enabled = true) {
@@ -77,17 +90,23 @@ export function useTemplateRuntime(enabled = true) {
   // Animations phải luôn chạy trên MỌI route (kể cả /auth)
   // vì class .animate set opacity:0 mặc định — nếu không trigger thì element ẩn vĩnh viễn
   useEffect(() => {
+    if (!enabled) return;
+
     const $ = window.jQuery;
     if (!$) return;
 
+    // Tăng delay lên một chút để React kịp render Outlet
     const animTimer = window.setTimeout(() => {
       initTemplateAnimations($);
-    }, 50);
+      
+      // Force trigger scroll event để "đánh thức" plugin appear
+      window.dispatchEvent(new Event('scroll'));
+    }, 300);
 
     return () => {
       window.clearTimeout(animTimer);
     };
-  }, [location.pathname]);
+  }, [location.pathname, enabled]);
 
   // Header affix + full template scripts chỉ chạy trên các trang public (không phải auth/admin)
   useEffect(() => {
@@ -105,7 +124,7 @@ export function useTemplateRuntime(enabled = true) {
       if (typeof window.documentReadyInit === 'function') {
         window.documentReadyInit();
       }
-    }, 50);
+    }, 400);
 
     return () => {
       window.clearTimeout(timer);
