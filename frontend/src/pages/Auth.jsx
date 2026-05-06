@@ -72,6 +72,27 @@ const Auth = () => {
     }
   };
 
+  useEffect(() => {
+    if (!checkingAuth) {
+      // Manually trigger animations once the form is rendered
+      const timer = setTimeout(() => {
+        if (typeof window.documentReadyInit === 'function') {
+          window.documentReadyInit();
+        }
+        // Force trigger animation
+        if (window.jQuery && window.jQuery.fn.appear) {
+          window.jQuery('.animate').each(function() {
+            if (window.jQuery(this).is(':appeared')) {
+               window.jQuery(this).trigger('appear', [window.jQuery(this)]);
+            }
+          });
+        }
+        window.dispatchEvent(new Event('scroll'));
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [checkingAuth]);
+
   if (checkingAuth) {
     return (
       <div className="text-center" style={{ padding: '150px 0' }}>
