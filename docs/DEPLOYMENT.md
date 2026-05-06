@@ -52,10 +52,10 @@ VITE_API_BASE_URL="https://your-api-domain.com/api"
    - Build Command: `cd backend && npm install && npx prisma generate`
    - Start Command: `cd backend && node src/index.js`
    - Add Environment Variables.
-3. **Frontend**:
+3. **Frontend (Vercel)**:
    - Connect your GitHub repo.
-   - Build Command: `cd frontend && npm install && npm run build`
-   - Output Directory: `frontend/dist`
+   - Vercel will automatically detect the root `vercel.json` which handles the subdirectory build.
+   - **Root Directory**: Ensure it is set to `.` (the default) because the root `vercel.json` manages the `cd frontend` command.
    - Add Environment Variables.
 
 ### Option B: VPS (Ubuntu + NGINX + PM2)

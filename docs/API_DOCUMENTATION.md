@@ -102,8 +102,17 @@ All protected endpoints require the header: `Authorization: Bearer <valid_jwt_to
 
 ---
 
-## 9. Legacy / Public Modules
+## 9. Contacts & Feedback
+
+| Method | Endpoint | Auth | Request Body | Description |
+|--------|----------|------|--------------|-------------|
+| POST | `/contacts` | No | `{ email, fullName?, subject?, message? }` | Submit contact form or newsletter registration. Only `email` is strictly required. |
+| GET | `/contacts` | Yes (Admin) | — | List all contact submissions |
+| DELETE | `/contacts/:id` | Yes (Admin) | — | Delete a submission |
+
+---
+
+## 10. Legacy / Public Modules
 - **Chiefs**: `GET /chiefs`
 - **Testimonials**: `GET /testimonials`
-- **Contacts**: `POST /contacts` (Public), `GET /contacts` (Admin)
 - **Enrollments**: Legacy course signup (replaced by Orders flow but still active)
