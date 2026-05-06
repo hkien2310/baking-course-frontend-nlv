@@ -1,10 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-const generateSlug = (title) => {
-  if (!title) return `program-${Date.now()}`;
-  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') + '-' + Math.floor(1000 + Math.random() * 9000);
-};
+const { generateSlug } = require('../utils/slugify');
 
 exports.getAllPrograms = async (req, res) => {
   try {
