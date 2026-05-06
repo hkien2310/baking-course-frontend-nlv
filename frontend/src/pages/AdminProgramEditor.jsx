@@ -137,9 +137,7 @@ const AdminProgramEditor = () => {
     setFormData({ ...formData, learningGoals: [...formData.learningGoals, { skill: '', percent: 0 }] });
   };
 
-  const addClassInclude = () => {
-    setFormData({ ...formData, classIncludes: [...formData.classIncludes, ''] });
-  };
+
 
   const addCurriculum = () => {
     setFormData({ ...formData, curriculum: [...formData.curriculum, { title: '', content: '' }] });
@@ -398,40 +396,9 @@ const AdminProgramEditor = () => {
         </div>
         )}
 
-        {/* JSON ARRAY: Learning Goals */}
-        <h5 className="mt-5 mb-3" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Mục tiêu khóa học (Thanh Kỹ Năng)</h5>
-        {formData.learningGoals.map((goal, i) => (
-          <div key={i} className="admin-array-card compact-array-row">
-            <div className="flex-grow-1" style={{ flex: 2 }}>
-              <input type="text" className="admin-form-control shadow-none w-100" value={goal.skill || ''} onChange={e => handleArrayChange('learningGoals', i, 'skill', e.target.value)} placeholder="Tên kỹ năng" />
-            </div>
-            <div className="flex-grow-1" style={{ flex: 1 }}>
-              <input className="admin-form-control shadow-none w-100" type="number" value={goal.percent || ''} onChange={e => handleArrayChange('learningGoals', i, 'percent', parseInt(e.target.value) || 0)} placeholder="Phần trăm (%)" min="0" max="100" />
-            </div>
-            <button type="button" className="btn-remove-array" onClick={() => removeArrayItem('learningGoals', i)}>
-              <i className="fa fa-trash"></i>
-            </button>
-          </div>
-        ))}
-        <button type="button" className="btn-add-array mt-3" onClick={addLearningGoal}>
-          <i className="fa fa-plus"></i> Thêm Kỹ Năng Mới
-        </button>
 
-        {/* JSON ARRAY: Class Includes */}
-        <h5 className="mt-5 mb-3" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Lợi ích khóa học</h5>
-        {formData.classIncludes.map((item, i) => (
-          <div key={i} className="admin-array-card compact-array-row">
-            <div className="flex-grow-1">
-              <input type="text" className="admin-form-control shadow-none w-100" value={item} onChange={e => handleArrayChange('classIncludes', i, null, e.target.value)} placeholder="Nội dung lợi ích..." />
-            </div>
-            <button type="button" className="btn-remove-array" onClick={() => removeArrayItem('classIncludes', i)}>
-              <i className="fa fa-trash"></i>
-            </button>
-          </div>
-        ))}
-        <button type="button" className="btn-add-array mt-3" onClick={addClassInclude}>
-          <i className="fa fa-plus"></i> Thêm Lợi Ích Mới
-        </button>
+
+
       </div>
       )}
 
