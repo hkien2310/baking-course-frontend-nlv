@@ -73,7 +73,7 @@ exports.createPaymentUrl = async (req, res) => {
     res.json({ paymentUrl });
   } catch (error) {
     console.error('VNPay createPaymentUrl error:', error);
-    res.status(500).json({ error: 'Failed to create payment URL.' });
+    res.status(500).json({ error: error.message || 'Failed to create payment URL.' });
   }
 };
 

@@ -34,6 +34,11 @@ const VNPAY_CONFIG = {
  * @returns {{ paymentUrl: string, txnRef: string, expireDate: Date }}
  */
 function createPaymentUrl(order, ipAddress, bankCode) {
+  if (!VNPAY_CONFIG.tmnCode || !VNPAY_CONFIG.hashSecret) {
+    console.error('VNPay configuration is missing (VNPAY_TMN_CODE or VNPAY_HASH_SECRET).');
+    throw new Error('VNPay is not configured on this server.');
+  }
+
   const txnRef = generateTxnRef(order.orderCode);
   const now = new Date();
   const expireDate = new Date(now.getTime() + 15 * 60 * 1000); // 15 minutes
