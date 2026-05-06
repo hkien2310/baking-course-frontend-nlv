@@ -17,6 +17,9 @@ const Auth = () => {
   const [regForm, setRegForm] = useState({ fullName: '', email: '', password: '' });
   const [regError, setRegError] = useState('');
 
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) { setCheckingAuth(false); return; }
@@ -39,6 +42,7 @@ const Auth = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoginError('');
+    setIsLoggingIn(true);
     try {
       const data = await loginUser(loginForm);
       localStorage.setItem('token', data.token);
@@ -47,19 +51,22 @@ const Auth = () => {
       else navigate(ROUTES.MY_ACCOUNT);
     } catch (err) {
       setLoginError(err.response?.data?.error || t('auth.loginFailed') || 'Đăng nhập thất bại. Vui lòng thử lại.');
+      setIsLoggingIn(false);
     }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setRegError('');
+    setIsRegistering(true);
     try {
       const data = await registerUser(regForm);
       localStorage.setItem('token', data.token);
       if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
       navigate(ROUTES.MY_ACCOUNT);
     } catch (err) {
-      setRegError(err.response?.data?.error || t('auth.regFailed') || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.');
+      setRegError(err.response?.data?.error || t('auth.regFailed') || 'Đăng ký thất bại. Email có thể đã tồn tại.');
+      setIsRegistering(false);
     }
   };
 
@@ -109,7 +116,9 @@ const Auth = () => {
                   required
                 />
                 <div className="form-group mb-0 mt-4">
-                  <button type="submit" className="btn btn-maincolor">{t('auth.loginBtn') || 'Đăng nhập'}</button>
+                  <button type="submit" className="btn btn-maincolor" disabled={isLoggingIn}>
+                    {isLoggingIn ? <><i className="fa fa-spinner fa-spin mr-2"></i> {t('auth.loginBtn') || 'Đăng nhập'}...</> : (t('auth.loginBtn') || 'Đăng nhập')}
+                  </button>
                 </div>
               </form>
             </div>
@@ -154,7 +163,9 @@ const Auth = () => {
                   minLength="6"
                 />
                 <div className="form-group mb-0 mt-4">
-                  <button type="submit" className="btn btn-maincolor2">{t('auth.registerBtn') || 'Đăng ký ngay'}</button>
+                  <button type="submit" className="btn btn-maincolor2" disabled={isRegistering}>
+                    {isRegistering ? <><i className="fa fa-spinner fa-spin mr-2"></i> {t('auth.registerBtn') || 'Đăng ký ngay'}...</> : (t('auth.registerBtn') || 'Đăng ký ngay')}
+                  </button>
                 </div>
               </form>
             </div>
