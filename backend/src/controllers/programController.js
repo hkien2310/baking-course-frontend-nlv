@@ -10,7 +10,7 @@ exports.getAllPrograms = async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit) || 10;
-    const { dayOfWeek, chiefId, search, category, minPrice, maxPrice, sortBy } = req.query;
+    const { dayOfWeek, chiefId, search, category, minPrice, maxPrice, sortBy, isFeatured } = req.query;
 
     const where = {};
     if (dayOfWeek) {
@@ -28,6 +28,9 @@ exports.getAllPrograms = async (req, res) => {
       // Support multiple categories by splitting commas
       const categories = category.split(',').map(c => c.trim());
       where.category = { in: categories };
+    }
+    if (isFeatured !== undefined) {
+      where.isFeatured = isFeatured === 'true';
     }
     if (minPrice !== undefined || maxPrice !== undefined) {
       const min = !isNaN(parseInt(minPrice)) ? parseInt(minPrice) : 0;

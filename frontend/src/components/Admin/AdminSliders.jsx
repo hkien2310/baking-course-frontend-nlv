@@ -17,25 +17,23 @@ const AdminSliders = () => {
   const { isPending, withPending } = usePendingAction();
 
   // Lấy danh sách featured (không phân trang, luôn lấy hết vì tối đa 3)
+  // Lấy featured (server filter isFeatured=true, tối đa 3)
   const fetchFeatured = useCallback(async () => {
     try {
-      // Không truyền page → backend trả full array (không paginate)
-      const data = await getPrograms({ limit: 200 });
+      const data = await getPrograms({ isFeatured: true });
       const all = Array.isArray(data) ? data : (data.data || []);
-      setFeaturedPrograms(all.filter(p => p.isFeatured));
+      setFeaturedPrograms(all);
     } catch (err) {
       // silent
     }
   }, []);
 
-  // Lấy danh sách available (server-side pagination)
+  // Lấy available (server filter isFeatured=false + server-side pagination)
   const fetchAvailable = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const data = await getPrograms({ page, limit: ITEMS_PER_PAGE });
-      // Filter bỏ featured ra khỏi danh sách available
-      const filtered = (data.data || []).filter(p => !p.isFeatured);
-      setAvailablePrograms(filtered);
+      const data = await getPrograms({ page, limit: ITEMS_PER_PAGE, isFeatured: false });
+      setAvailablePrograms(data.data || []);
       setTotalPages(data.totalPages || 1);
       setTotalItems(data.totalItems || 0);
       setCurrentPage(data.currentPage || page);
@@ -105,7 +103,7 @@ const AdminSliders = () => {
                   <span>{prog.authorName || 'Chưa có giảng viên'}</span>
                 </div>
                 <button
-                  className="slider-remove-btn"
+                  className="btn slider-remove-btn"
                   onClick={() => handleToggle(prog.id, true)}
                   disabled={isPending(`toggle-${prog.id}`)}
                   title="Gỡ khỏi Slider"
@@ -174,7 +172,7 @@ const AdminSliders = () => {
                         <h6>{prog.title}</h6>
                         <span>{prog.authorName || 'Chưa có giảng viên'}</span>
                         <button
-                          className="slider-add-btn"
+                          className="btn slider-add-btn"
                           onClick={() => handleToggle(prog.id, false)}
                           disabled={limitReached || isPending(`toggle-${prog.id}`)}
                         >
