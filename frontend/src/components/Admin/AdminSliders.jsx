@@ -4,15 +4,18 @@ import { toast } from 'react-toastify';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import usePendingAction from './usePendingAction';
 
+const ITEMS_PER_PAGE = 8;
+
 const AdminSliders = () => {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const { isPending, withPending } = usePendingAction();
 
   const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await getPrograms({ page: 1, limit: 100 });
+      const data = await getPrograms({ page: 1, limit: 200 });
       setPrograms(data.data || []);
     } catch (err) {
       toast.error('Không thể tải danh sách khóa học');
@@ -39,131 +42,437 @@ const AdminSliders = () => {
   const unfeaturedPrograms = programs.filter(p => !p.isFeatured);
   const limitReached = featuredPrograms.length >= 3;
 
+  // Pagination
+  const totalPages = Math.ceil(unfeaturedPrograms.length / ITEMS_PER_PAGE);
+  const safePage = Math.min(currentPage, Math.max(1, totalPages));
+  const paginatedPrograms = unfeaturedPrograms.slice(
+    (safePage - 1) * ITEMS_PER_PAGE,
+    safePage * ITEMS_PER_PAGE
+  );
+
   return (
-    <div className="admin-paper fade-in" style={{ overflow: 'auto' }}>
-      <div className="admin-paper-header">
-        <div>
-          <h4>Hero Slider</h4>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>
-            Chọn khóa học hiển thị trên slider trang chủ (tối đa 3).
-          </p>
+    <>
+      {/* FEATURED SECTION */}
+      <div className="slider-featured-section">
+        <div className="slider-section-header">
+          <div className="slider-section-title">
+            <i className="fa fa-star"></i>
+            <span>Đang hiển thị trên Slider</span>
+          </div>
+          <span className="slider-counter">{featuredPrograms.length} / 3</span>
         </div>
-        <a href="#programs" className="btn btn-outline-secondary btn-sm">
-          <i className="fa fa-book mr-2"></i> Quản lý khóa học
-        </a>
-      </div>
 
-      <div style={{ padding: '20px 30px' }}>
-        {/* FEATURED SECTION */}
-        <h5 style={{ marginBottom: '16px' }}>
-          <i className="fa fa-star" style={{ color: '#f59e0b', marginRight: '8px' }}></i>
-          Đang hiển thị ({featuredPrograms.length}/3)
-        </h5>
-
-        {featuredPrograms.length === 0 && (
-          <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa có khóa học nào được chọn.</p>
-        )}
-
-        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '30px' }}>
-          {featuredPrograms.map(prog => (
-            <div key={prog.id} style={{
-              flex: '1 1 calc(33.333% - 12px)',
-              minWidth: '220px',
-              maxWidth: '350px',
-              border: '2px solid #5fa88a',
-              borderRadius: '10px',
-              overflow: 'hidden',
-              background: '#fff',
-            }}>
-              <img
-                src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
-                alt={prog.title}
-                style={{ width: '100%', height: '160px', objectFit: 'cover' }}
-              />
-              <div style={{ padding: '14px' }}>
-                <h6 style={{ margin: '0 0 4px', fontSize: '15px' }}>{prog.title}</h6>
-                <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#94a3b8' }}>
-                  {prog.authorName || 'Chưa có giảng viên'}
-                </p>
+        {featuredPrograms.length === 0 ? (
+          <div className="slider-empty-state">
+            <i className="fa fa-image"></i>
+            <p>Chưa có khóa học nào trên Slider</p>
+            <small>Chọn khóa học bên dưới để thêm vào trang chủ</small>
+          </div>
+        ) : (
+          <div className="slider-featured-grid">
+            {featuredPrograms.map((prog, idx) => (
+              <div key={prog.id} className="slider-featured-card">
+                <div className="slider-featured-badge">{idx + 1}</div>
+                <div className="slider-featured-img">
+                  <img
+                    src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
+                    alt={prog.title}
+                  />
+                </div>
+                <div className="slider-featured-info">
+                  <h6>{prog.title}</h6>
+                  <span>{prog.authorName || 'Chưa có giảng viên'}</span>
+                </div>
                 <button
-                  className="btn btn-danger btn-sm"
-                  style={{ width: '100%' }}
+                  className="slider-remove-btn"
                   onClick={() => handleToggle(prog.id, true)}
                   disabled={isPending(`toggle-${prog.id}`)}
+                  title="Gỡ khỏi Slider"
                 >
-                  {isPending(`toggle-${prog.id}`) ? 'Đang xử lý...' : 'Gỡ khỏi Slider'}
+                  {isPending(`toggle-${prog.id}`)
+                    ? <i className="fa fa-spinner fa-spin"></i>
+                    : <i className="fa fa-times"></i>
+                  }
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* AVAILABLE SECTION — compact table */}
-        <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0 0 20px' }} />
-        <h5 style={{ marginBottom: '16px' }}>
-          <i className="fa fa-list" style={{ marginRight: '8px' }}></i>
-          Khóa học có thể thêm ({unfeaturedPrograms.length})
-        </h5>
-
-        {loading && <AdminLoadingBlock compact rows={4} />}
-
-        {!loading && limitReached && (
-          <div style={{
-            background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: '8px',
-            padding: '12px 16px', marginBottom: '16px', fontSize: '14px', color: '#92400e'
-          }}>
-            <i className="fa fa-exclamation-triangle mr-2"></i>
-            Đã đạt giới hạn 3 slider. Gỡ bớt để thêm mới.
-          </div>
-        )}
-
-        {!loading && unfeaturedPrograms.length === 0 && (
-          <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Tất cả khóa học đã được chọn.</p>
-        )}
-
-        {!loading && unfeaturedPrograms.length > 0 && (
-          <div style={{ borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-              <thead>
-                <tr style={{ background: '#f8fafc' }}>
-                  <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 600, color: '#64748b', fontSize: '12px', letterSpacing: '0.5px' }}>KHÓA HỌC</th>
-                  <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 600, color: '#64748b', fontSize: '12px', width: '140px' }}>THAO TÁC</th>
-                </tr>
-              </thead>
-              <tbody>
-                {unfeaturedPrograms.map(prog => (
-                  <tr key={prog.id} style={{ borderTop: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '10px 14px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <img
-                          src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
-                          alt={prog.title}
-                          style={{ width: '50px', height: '36px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }}
-                        />
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{prog.title}</div>
-                          <div style={{ fontSize: '12px', color: '#94a3b8' }}>{prog.authorName || '—'}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '10px 14px', textAlign: 'center' }}>
-                      <button
-                        className="btn btn-outline-success btn-sm"
-                        style={{ fontSize: '12px', padding: '4px 14px' }}
-                        onClick={() => handleToggle(prog.id, false)}
-                        disabled={limitReached || isPending(`toggle-${prog.id}`)}
-                      >
-                        {isPending(`toggle-${prog.id}`) ? '...' : '+ Thêm'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            ))}
+            {/* Empty slots */}
+            {Array.from({ length: 3 - featuredPrograms.length }).map((_, i) => (
+              <div key={`empty-${i}`} className="slider-featured-card empty">
+                <div className="slider-featured-badge empty">{featuredPrograms.length + i + 1}</div>
+                <div className="slider-empty-slot">
+                  <i className="fa fa-plus"></i>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
-    </div>
+
+      {/* AVAILABLE PROGRAMS TABLE */}
+      <div className="admin-paper fade-in" style={{ overflow: 'hidden' }}>
+        <div className="admin-paper-header">
+          <div>
+            <h4>Chọn khóa học</h4>
+            <p style={{ margin: 0, color: '#94a3b8', fontSize: '13px' }}>
+              {unfeaturedPrograms.length} khóa học khả dụng
+            </p>
+          </div>
+        </div>
+
+        {loading ? (
+          <div style={{ padding: '20px 30px' }}>
+            <AdminLoadingBlock compact rows={4} />
+          </div>
+        ) : (
+          <>
+            {limitReached && (
+              <div className="slider-limit-banner">
+                <i className="fa fa-info-circle"></i>
+                Đã đạt giới hạn 3 slider. Gỡ bớt để thêm mới.
+              </div>
+            )}
+            <div className="table-responsive">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: '50px' }}></th>
+                    <th>Khóa học</th>
+                    <th>Giảng viên</th>
+                    <th style={{ width: '130px', textAlign: 'center' }}>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedPrograms.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                        <i>Không còn khóa học nào.</i>
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedPrograms.map(prog => (
+                      <tr key={prog.id}>
+                        <td>
+                          <img
+                            src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
+                            alt=""
+                            className="slider-table-thumb"
+                          />
+                        </td>
+                        <td>
+                          <div className="slider-table-title">{prog.title}</div>
+                        </td>
+                        <td>
+                          <span className="slider-table-author">{prog.authorName || '—'}</span>
+                        </td>
+                        <td style={{ textAlign: 'center' }}>
+                          <button
+                            className="slider-add-btn"
+                            onClick={() => handleToggle(prog.id, false)}
+                            disabled={limitReached || isPending(`toggle-${prog.id}`)}
+                          >
+                            {isPending(`toggle-${prog.id}`)
+                              ? <><i className="fa fa-spinner fa-spin"></i></>
+                              : <><i className="fa fa-plus"></i> Thêm</>
+                            }
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="slider-pagination">
+                <button
+                  className="slider-page-btn"
+                  disabled={safePage <= 1}
+                  onClick={() => setCurrentPage(p => p - 1)}
+                >
+                  <i className="fa fa-chevron-left"></i>
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    className={`slider-page-btn ${page === safePage ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  className="slider-page-btn"
+                  disabled={safePage >= totalPages}
+                  onClick={() => setCurrentPage(p => p + 1)}
+                >
+                  <i className="fa fa-chevron-right"></i>
+                </button>
+                <span className="slider-page-info">
+                  {(safePage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(safePage * ITEMS_PER_PAGE, unfeaturedPrograms.length)} / {unfeaturedPrograms.length}
+                </span>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <style>{`
+        /* ── FEATURED SECTION ── */
+        .slider-featured-section {
+          background: var(--admin-paper-bg, #fff);
+          border: 1px solid var(--admin-border-subtle, #ebdcd0);
+          border-radius: 10px;
+          padding: 24px;
+          margin-bottom: 24px;
+        }
+        .slider-section-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 20px;
+        }
+        .slider-section-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--admin-heading, #0f172a);
+        }
+        .slider-section-title i {
+          color: #f59e0b;
+          font-size: 18px;
+        }
+        .slider-counter {
+          background: #f0fdf4;
+          color: #16a34a;
+          font-weight: 700;
+          font-size: 13px;
+          padding: 4px 14px;
+          border-radius: 20px;
+          border: 1px solid #bbf7d0;
+        }
+
+        /* ── FEATURED GRID ── */
+        .slider-featured-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+        .slider-featured-card {
+          position: relative;
+          border: 2px solid var(--admin-primary, #5fa88a);
+          border-radius: 12px;
+          overflow: hidden;
+          background: #fff;
+          transition: box-shadow 0.2s ease;
+        }
+        .slider-featured-card:hover {
+          box-shadow: 0 4px 20px rgba(95, 168, 138, 0.15);
+        }
+        .slider-featured-card.empty {
+          border: 2px dashed var(--admin-border-subtle, #ebdcd0);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 180px;
+        }
+        .slider-featured-badge {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: var(--admin-primary, #5fa88a);
+          color: #fff;
+          font-size: 12px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 2;
+        }
+        .slider-featured-badge.empty {
+          background: var(--admin-border-subtle, #ebdcd0);
+          color: var(--admin-text-muted, #94a3b8);
+        }
+        .slider-featured-img img {
+          width: 100%;
+          height: 140px;
+          object-fit: cover;
+          display: block;
+        }
+        .slider-featured-info {
+          padding: 12px 14px;
+        }
+        .slider-featured-info h6 {
+          margin: 0 0 4px;
+          font-size: 14px;
+          font-weight: 600;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .slider-featured-info span {
+          font-size: 12px;
+          color: var(--admin-text-muted, #94a3b8);
+        }
+        .slider-remove-btn {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: rgba(239, 68, 68, 0.9) !important;
+          color: #fff !important;
+          border: none !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-size: 12px;
+          z-index: 2;
+          padding: 0 !important;
+        }
+        .slider-remove-btn:hover {
+          background: #dc2626 !important;
+          transform: scale(1.1);
+        }
+        .slider-empty-slot {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          color: var(--admin-text-muted, #94a3b8);
+          font-size: 24px;
+        }
+        .slider-empty-state {
+          text-align: center;
+          padding: 40px 20px;
+          color: var(--admin-text-muted, #94a3b8);
+        }
+        .slider-empty-state i {
+          font-size: 40px;
+          margin-bottom: 12px;
+          opacity: 0.4;
+        }
+        .slider-empty-state p {
+          margin: 0 0 4px;
+          font-weight: 600;
+          color: var(--admin-text-base, #334155);
+        }
+        .slider-empty-state small {
+          font-size: 13px;
+        }
+
+        /* ── TABLE STYLES ── */
+        .slider-table-thumb {
+          width: 48px;
+          height: 34px;
+          border-radius: 6px;
+          object-fit: cover;
+          display: block;
+        }
+        .slider-table-title {
+          font-weight: 600;
+          font-size: 14px;
+          color: var(--admin-heading, #0f172a);
+        }
+        .slider-table-author {
+          font-size: 13px;
+          color: var(--admin-text-muted, #94a3b8);
+        }
+        .slider-add-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #f0fdf4 !important;
+          color: #16a34a !important;
+          border: 1px solid #bbf7d0 !important;
+          border-radius: 6px !important;
+          padding: 5px 16px !important;
+          font-size: 13px !important;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .slider-add-btn:hover:not(:disabled) {
+          background: #dcfce7 !important;
+          border-color: #86efac !important;
+        }
+        .slider-add-btn:disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
+        }
+        .slider-limit-banner {
+          background: #fffbeb;
+          border-bottom: 1px solid #fde68a;
+          padding: 10px 30px;
+          font-size: 13px;
+          color: #92400e;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        /* ── PAGINATION ── */
+        .slider-pagination {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          padding: 16px 30px;
+          border-top: 1px solid var(--admin-border-subtle, #ebdcd0);
+        }
+        .slider-page-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 6px !important;
+          border: 1px solid var(--admin-border-subtle, #ebdcd0) !important;
+          background: #fff !important;
+          color: var(--admin-text-base, #334155) !important;
+          font-size: 13px !important;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 !important;
+        }
+        .slider-page-btn:hover:not(:disabled):not(.active) {
+          background: #f8fafc !important;
+          border-color: var(--admin-primary, #5fa88a) !important;
+        }
+        .slider-page-btn.active {
+          background: var(--admin-primary, #5fa88a) !important;
+          color: #fff !important;
+          border-color: var(--admin-primary, #5fa88a) !important;
+        }
+        .slider-page-btn:disabled {
+          opacity: 0.35;
+          cursor: not-allowed;
+        }
+        .slider-page-info {
+          font-size: 12px;
+          color: var(--admin-text-muted, #94a3b8);
+          margin-left: 12px;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+          .slider-featured-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+    </>
   );
 };
 
