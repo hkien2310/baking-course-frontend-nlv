@@ -45,6 +45,16 @@ const Program = () => {
       .catch(() => console.error('Failed to load categories'));
   }, []);
 
+  // Sync URL params to local state (needed if user clicks header menu while already on /program)
+  useEffect(() => {
+    setLocalSearch(searchParams.get('search') || '');
+    setLocalMinPrice(searchParams.get('minPrice') || '');
+    setLocalMaxPrice(searchParams.get('maxPrice') || '10000000');
+    
+    const catParam = searchParams.get('category') || '';
+    setLocalCategories(catParam ? catParam.split(',') : []);
+  }, [searchParams]);
+
   useEffect(() => {
     setLoading(true);
     const filter = { page: currentPage, limit: ITEMS_PER_PAGE };
