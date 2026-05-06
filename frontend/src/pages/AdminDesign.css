@@ -164,7 +164,10 @@
 /* Tab Content Transitions */
 .admin-tab-content {
   animation: fadeIn 0.3s ease;
-  overflow: visible;
+  overflow-y: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  display: block !important;
 }
 
 .admin-layout {
@@ -177,10 +180,8 @@
 
 @media (max-height: 900px) {
   .admin-tab-content {
-    max-height: calc(100vh - 220px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-right: 8px;
+    max-height: none;
+    overflow-y: visible;
   }
 }
 
