@@ -69,12 +69,15 @@ const AdminProgramEditor = () => {
             learningGoals: Array.isArray(prog.learningGoals) ? prog.learningGoals.map(g => typeof g === 'string' ? { skill: g, percent: 50 } : g) : [],
             classIncludes: Array.isArray(prog.classIncludes) ? prog.classIncludes : [],
             curriculum: Array.isArray(prog.curriculum) ? prog.curriculum : [],
-            classSessions: Array.isArray(prog.classSessions) ? prog.classSessions.map(cs => ({
-              ...cs,
-              startDate: cs.startDate ? new Date(cs.startDate).toISOString().slice(0, 16) : '',
-              endDate: cs.endDate ? new Date(cs.endDate).toISOString().slice(0, 16) : '',
-              enrollmentDeadline: cs.enrollmentDeadline ? new Date(cs.enrollmentDeadline).toISOString().slice(0, 16) : ''
-            })) : [],
+            classSessions: Array.isArray(prog.classSessions) ? prog.classSessions.map(cs => {
+              const safeIso = (dateStr) => (dateStr && !isNaN(new Date(dateStr))) ? new Date(dateStr).toISOString().slice(0, 16) : '';
+              return {
+                ...cs,
+                startDate: safeIso(cs.startDate),
+                endDate: safeIso(cs.endDate),
+                enrollmentDeadline: safeIso(cs.enrollmentDeadline)
+              };
+            }) : [],
             students: prog.students || 0,
             reviews: prog.reviews || 0,
             premiumContent: prog.premiumContent || { videos: [], resources: [], guides: '' }
@@ -82,7 +85,8 @@ const AdminProgramEditor = () => {
           setLoading(false);
         })
         .catch(err => {
-          toast.error("Lỗi khi tải dữ liệu khóa học");
+          console.error("DEBUG FETCH ERROR:", err);
+          toast.error("Lỗi khi tải dữ liệu khóa học: " + (err.response?.data?.error || err.message));
           setLoading(false);
         });
     }
