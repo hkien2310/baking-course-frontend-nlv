@@ -23,8 +23,8 @@ const AdminEditorLayout = ({
           <h4 style={{ margin: 0 }}>{title}</h4>
         </div>
         <div>
-          <button type="submit" form={formId} className="admin-btn-save" disabled={saving}>
-            <i className={`fa ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-2`}></i> {saving ? 'Đang lưu...' : saveLabel}
+          <button type="submit" form={formId} className="admin-btn-save-pro" disabled={saving}>
+            <i className={`fa ${saving ? 'fa-spinner fa-spin' : 'fa-save'}`}></i> {saving ? 'Đang lưu...' : saveLabel}
           </button>
         </div>
       </div>
