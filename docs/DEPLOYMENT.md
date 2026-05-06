@@ -73,5 +73,9 @@ VITE_API_BASE_URL="https://your-api-domain.com/api"
 
 ## 3. Post-Deployment Steps
 1. **Seed Data**: Run `node backend/src/seed.js` to populate initial categories and admin user.
-2. **SSL**: Always use HTTPS (Certbot for VPS or automatic for Render).
-3. **VNPay White-listing**: Ensure your `VNPAY_RETURN_URL` is registered in the VNPay Merchant Portal.
+2. **Seed Student Works**: To populate or reset only student work data (without affecting programs/users), run:
+   ```bash
+   cd backend && npm run seed:student-works
+   ```
+3. **SSL**: Always use HTTPS (Certbot for VPS or automatic for Render).
+4. **VNPay White-listing**: Ensure your `VNPAY_RETURN_URL` is registered in the VNPay Merchant Portal.
