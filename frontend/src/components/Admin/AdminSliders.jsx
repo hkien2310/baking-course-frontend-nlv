@@ -12,11 +12,10 @@ const AdminSliders = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // We pass limit=100 to get a good chunk of programs for the admin to select from
       const data = await getPrograms({ page: 1, limit: 100 });
       setPrograms(data.data || []);
     } catch (err) {
-      toast.error('Failed to load programs for slider management');
+      toast.error('Không thể tải danh sách khóa học');
     } finally {
       setLoading(false);
     }
@@ -28,11 +27,11 @@ const AdminSliders = () => {
     try {
       await withPending(`toggle-${id}`, async () => {
         await toggleProgramFeature(id, !currentStatus);
-        toast.success(`Program ${!currentStatus ? 'added to' : 'removed from'} Hero Slider`);
+        toast.success(currentStatus ? 'Đã gỡ khỏi Slider' : 'Đã thêm vào Slider');
         await fetchData();
       });
     } catch (err) {
-      toast.error('Failed to update status');
+      toast.error('Thao tác thất bại');
     }
   };
 
@@ -40,88 +39,129 @@ const AdminSliders = () => {
   const unfeaturedPrograms = programs.filter(p => !p.isFeatured);
   const limitReached = featuredPrograms.length >= 3;
 
-  const isUpComing = (program) => {
-    if (!program || !program.classSessions || program.classSessions.length === 0) return false;
-    return program.classSessions.some(cs => cs.startDate && new Date(cs.startDate) > new Date());
-  };
-
   return (
-    <div className="admin-paper fade-in">
+    <div className="admin-paper fade-in" style={{ overflow: 'auto' }}>
       <div className="admin-paper-header">
         <div>
-          <h4>Hero Slider Manager</h4>
+          <h4>Hero Slider</h4>
           <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>
-            Select which programs to feature on the homepage hero slider.
+            Chọn khóa học hiển thị trên slider trang chủ (tối đa 3).
           </p>
         </div>
         <a href="#programs" className="btn btn-outline-secondary btn-sm">
-          <i className="fa fa-book mr-2"></i> Manage Content
+          <i className="fa fa-book mr-2"></i> Quản lý khóa học
         </a>
       </div>
 
-      <div className="row" style={{ marginTop: '20px' }}>
-        <div className="col-12 mb-4">
-          <h5><i className="fa fa-star text-warning mr-2"></i> Currently Featured ({featuredPrograms.length})</h5>
-          <div className="row mt-3">
-            {featuredPrograms.length === 0 && <p className="col-12 text-muted">No programs are currently featured on the slider.</p>}
-            {featuredPrograms.map(prog => (
-              <div key={prog.id} className="col-md-4 col-sm-6 mb-4">
-                <div className="card shadow-sm h-100" style={{ border: '2px solid #2ecc71' }}>
-                  <img src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`} className="card-img-top" alt={prog.title} style={{ height: '180px', objectFit: 'cover' }} />
-                  <div className="card-body">
-                    <h6 className="card-title">{prog.title}</h6>
-                    <p className="small text-muted mb-1">{prog.authorName || 'No instructor'}</p>
-                    {!isUpComing(prog) && <span className="badge badge-warning mb-2">Started/No Date</span>}
-                    <button 
-                      className="btn btn-danger btn-sm w-100 mt-2" 
-                      onClick={() => handleToggle(prog.id, true)}
-                      disabled={isPending(`toggle-${prog.id}`)}
-                    >
-                      {isPending(`toggle-${prog.id}`) ? 'Processing...' : 'Remove from Slider'}
-                    </button>
-                  </div>
-                </div>
+      <div style={{ padding: '20px 30px' }}>
+        {/* FEATURED SECTION */}
+        <h5 style={{ marginBottom: '16px' }}>
+          <i className="fa fa-star" style={{ color: '#f59e0b', marginRight: '8px' }}></i>
+          Đang hiển thị ({featuredPrograms.length}/3)
+        </h5>
+
+        {featuredPrograms.length === 0 && (
+          <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa có khóa học nào được chọn.</p>
+        )}
+
+        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '30px' }}>
+          {featuredPrograms.map(prog => (
+            <div key={prog.id} style={{
+              flex: '1 1 calc(33.333% - 12px)',
+              minWidth: '220px',
+              maxWidth: '350px',
+              border: '2px solid #5fa88a',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              background: '#fff',
+            }}>
+              <img
+                src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
+                alt={prog.title}
+                style={{ width: '100%', height: '160px', objectFit: 'cover' }}
+              />
+              <div style={{ padding: '14px' }}>
+                <h6 style={{ margin: '0 0 4px', fontSize: '15px' }}>{prog.title}</h6>
+                <p style={{ margin: '0 0 10px', fontSize: '13px', color: '#94a3b8' }}>
+                  {prog.authorName || 'Chưa có giảng viên'}
+                </p>
+                <button
+                  className="btn btn-danger btn-sm"
+                  style={{ width: '100%' }}
+                  onClick={() => handleToggle(prog.id, true)}
+                  disabled={isPending(`toggle-${prog.id}`)}
+                >
+                  {isPending(`toggle-${prog.id}`) ? 'Đang xử lý...' : 'Gỡ khỏi Slider'}
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
-        <div className="col-12">
-          <hr />
-          <h5 className="mt-4"><i className="fa fa-list mr-2"></i> Available Programs</h5>
-          <div className="row mt-3">
-            {loading && (
-              <div className="col-12">
-                <AdminLoadingBlock compact rows={4} />
-              </div>
-            )}
-            {!loading && unfeaturedPrograms.length === 0 && <p className="col-12 text-muted">All loaded programs are already featured.</p>}
-            {!loading && limitReached && <div className="col-12 alert alert-warning">You have reached the maximum limit of 3 featured programs. Please remove one before adding another.</div>}
-            
-            {!loading && unfeaturedPrograms.map(prog => {
-              const eligible = isUpComing(prog);
-              return (
-                <div key={prog.id} className="col-md-3 col-sm-6 mb-4">
-                  <div className={`card shadow-sm h-100 ${!eligible ? 'opacity-50' : ''}`}>
-                    <img src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`} className="card-img-top" alt={prog.title} style={{ height: '140px', objectFit: 'cover' }} />
-                    <div className="card-body p-3">
-                      <h6 className="card-title" style={{ fontSize: '14px', marginBottom: '5px' }}>{prog.title}</h6>
-                      {!eligible && <small className="text-danger d-block mb-1">Has started or lacks date</small>}
-                      <button 
-                        className="btn btn-outline-success btn-sm w-100 mt-2 text-uppercase" 
-                        style={{ fontSize: '12px' }}
-                        onClick={() => handleToggle(prog.id, false)}
-                        disabled={!eligible || limitReached || isPending(`toggle-${prog.id}`)}
-                      >
-                        {isPending(`toggle-${prog.id}`) ? 'Processing...' : 'Add to Slider'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        {/* AVAILABLE SECTION — compact table */}
+        <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '0 0 20px' }} />
+        <h5 style={{ marginBottom: '16px' }}>
+          <i className="fa fa-list" style={{ marginRight: '8px' }}></i>
+          Khóa học có thể thêm ({unfeaturedPrograms.length})
+        </h5>
+
+        {loading && <AdminLoadingBlock compact rows={4} />}
+
+        {!loading && limitReached && (
+          <div style={{
+            background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: '8px',
+            padding: '12px 16px', marginBottom: '16px', fontSize: '14px', color: '#92400e'
+          }}>
+            <i className="fa fa-exclamation-triangle mr-2"></i>
+            Đã đạt giới hạn 3 slider. Gỡ bớt để thêm mới.
           </div>
-        </div>
+        )}
+
+        {!loading && unfeaturedPrograms.length === 0 && (
+          <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Tất cả khóa học đã được chọn.</p>
+        )}
+
+        {!loading && unfeaturedPrograms.length > 0 && (
+          <div style={{ borderRadius: '8px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+              <thead>
+                <tr style={{ background: '#f8fafc' }}>
+                  <th style={{ padding: '10px 14px', textAlign: 'left', fontWeight: 600, color: '#64748b', fontSize: '12px', letterSpacing: '0.5px' }}>KHÓA HỌC</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 600, color: '#64748b', fontSize: '12px', width: '140px' }}>THAO TÁC</th>
+                </tr>
+              </thead>
+              <tbody>
+                {unfeaturedPrograms.map(prog => (
+                  <tr key={prog.id} style={{ borderTop: '1px solid #f1f5f9' }}>
+                    <td style={{ padding: '10px 14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img
+                          src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
+                          alt={prog.title}
+                          style={{ width: '50px', height: '36px', borderRadius: '6px', objectFit: 'cover', flexShrink: 0 }}
+                        />
+                        <div style={{ minWidth: 0 }}>
+                          <div style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{prog.title}</div>
+                          <div style={{ fontSize: '12px', color: '#94a3b8' }}>{prog.authorName || '—'}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                      <button
+                        className="btn btn-outline-success btn-sm"
+                        style={{ fontSize: '12px', padding: '4px 14px' }}
+                        onClick={() => handleToggle(prog.id, false)}
+                        disabled={limitReached || isPending(`toggle-${prog.id}`)}
+                      >
+                        {isPending(`toggle-${prog.id}`) ? '...' : '+ Thêm'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
