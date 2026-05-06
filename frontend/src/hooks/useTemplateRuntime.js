@@ -74,6 +74,22 @@ function initTemplateAnimations($) {
 export function useTemplateRuntime(enabled = true) {
   const location = useLocation();
 
+  // Animations phải luôn chạy trên MỌI route (kể cả /auth)
+  // vì class .animate set opacity:0 mặc định — nếu không trigger thì element ẩn vĩnh viễn
+  useEffect(() => {
+    const $ = window.jQuery;
+    if (!$) return;
+
+    const animTimer = window.setTimeout(() => {
+      initTemplateAnimations($);
+    }, 50);
+
+    return () => {
+      window.clearTimeout(animTimer);
+    };
+  }, [location.pathname]);
+
+  // Header affix + full template scripts chỉ chạy trên các trang public (không phải auth/admin)
   useEffect(() => {
     if (!enabled) return;
 
@@ -82,7 +98,6 @@ export function useTemplateRuntime(enabled = true) {
 
     const timer = window.setTimeout(() => {
       initHeaderAffix($);
-      initTemplateAnimations($);
 
       if (typeof window.windowLoadInit === 'function') {
         window.windowLoadInit();

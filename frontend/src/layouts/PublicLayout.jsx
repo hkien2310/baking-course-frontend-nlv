@@ -16,15 +16,7 @@ const PublicLayout = () => {
   const shouldHoldForConfig = !ready && !isAuthRoute;
 
   if (shouldHoldForConfig) {
-    return (
-      <div id="canvas">
-        <div id="box_wrapper">
-          <div className="preloader">
-            <div className="preloader_image"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
