@@ -1,54 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getPrograms, toggleProgramFeature } from '../../services/api';
 import { toast } from 'react-toastify';
 import AdminLoadingBlock from './AdminLoadingBlock';
+import Pagination from '../Shared/Pagination';
 import usePendingAction from './usePendingAction';
 
 const ITEMS_PER_PAGE = 8;
 
 const AdminSliders = () => {
-  const [programs, setPrograms] = useState([]);
+  const [featuredPrograms, setFeaturedPrograms] = useState([]);
+  const [availablePrograms, setAvailablePrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const { isPending, withPending } = usePendingAction();
 
-  const fetchData = async () => {
+  // Lấy danh sách featured (không phân trang, luôn lấy hết vì tối đa 3)
+  const fetchFeatured = useCallback(async () => {
+    try {
+      // Không truyền page → backend trả full array (không paginate)
+      const data = await getPrograms({ limit: 200 });
+      const all = Array.isArray(data) ? data : (data.data || []);
+      setFeaturedPrograms(all.filter(p => p.isFeatured));
+    } catch (err) {
+      // silent
+    }
+  }, []);
+
+  // Lấy danh sách available (server-side pagination)
+  const fetchAvailable = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const data = await getPrograms({ page: 1, limit: 200 });
-      setPrograms(data.data || []);
+      const data = await getPrograms({ page, limit: ITEMS_PER_PAGE });
+      // Filter bỏ featured ra khỏi danh sách available
+      const filtered = (data.data || []).filter(p => !p.isFeatured);
+      setAvailablePrograms(filtered);
+      setTotalPages(data.totalPages || 1);
+      setTotalItems(data.totalItems || 0);
+      setCurrentPage(data.currentPage || page);
     } catch (err) {
       toast.error('Không thể tải danh sách khóa học');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    fetchFeatured();
+    fetchAvailable(1);
+  }, [fetchFeatured, fetchAvailable]);
 
   const handleToggle = async (id, currentStatus) => {
     try {
       await withPending(`toggle-${id}`, async () => {
         await toggleProgramFeature(id, !currentStatus);
         toast.success(currentStatus ? 'Đã gỡ khỏi Slider' : 'Đã thêm vào Slider');
-        await fetchData();
+        // Reload cả hai
+        await fetchFeatured();
+        await fetchAvailable(currentPage);
       });
     } catch (err) {
       toast.error('Thao tác thất bại');
     }
   };
 
-  const featuredPrograms = programs.filter(p => p.isFeatured);
-  const unfeaturedPrograms = programs.filter(p => !p.isFeatured);
-  const limitReached = featuredPrograms.length >= 3;
+  const handlePageChange = (page) => {
+    fetchAvailable(page);
+  };
 
-  // Pagination
-  const totalPages = Math.ceil(unfeaturedPrograms.length / ITEMS_PER_PAGE);
-  const safePage = Math.min(currentPage, Math.max(1, totalPages));
-  const paginatedPrograms = unfeaturedPrograms.slice(
-    (safePage - 1) * ITEMS_PER_PAGE,
-    safePage * ITEMS_PER_PAGE
-  );
+  const limitReached = featuredPrograms.length >= 3;
 
   return (
     <>
@@ -115,7 +136,7 @@ const AdminSliders = () => {
           <div>
             <h4>Chọn khóa học</h4>
             <p style={{ margin: 0, color: '#94a3b8', fontSize: '13px' }}>
-              {unfeaturedPrograms.length} khóa học khả dụng
+              {totalItems} khóa học trong hệ thống
             </p>
           </div>
         </div>
@@ -143,14 +164,14 @@ const AdminSliders = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedPrograms.length === 0 ? (
+                  {availablePrograms.length === 0 ? (
                     <tr>
                       <td colSpan="4" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
                         <i>Không còn khóa học nào.</i>
                       </td>
                     </tr>
                   ) : (
-                    paginatedPrograms.map(prog => (
+                    availablePrograms.map(prog => (
                       <tr key={prog.id}>
                         <td>
                           <img
@@ -185,33 +206,12 @@ const AdminSliders = () => {
             </div>
 
             {totalPages > 1 && (
-              <div className="slider-pagination">
-                <button
-                  className="slider-page-btn"
-                  disabled={safePage <= 1}
-                  onClick={() => setCurrentPage(p => p - 1)}
-                >
-                  <i className="fa fa-chevron-left"></i>
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    className={`slider-page-btn ${page === safePage ? 'active' : ''}`}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </button>
-                ))}
-                <button
-                  className="slider-page-btn"
-                  disabled={safePage >= totalPages}
-                  onClick={() => setCurrentPage(p => p + 1)}
-                >
-                  <i className="fa fa-chevron-right"></i>
-                </button>
-                <span className="slider-page-info">
-                  {(safePage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(safePage * ITEMS_PER_PAGE, unfeaturedPrograms.length)} / {unfeaturedPrograms.length}
-                </span>
+              <div className="admin-pagination-wrapper" style={{ borderTop: '1px solid var(--admin-border-subtle)', padding: '15px 30px' }}>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
             )}
           </>
@@ -419,50 +419,6 @@ const AdminSliders = () => {
           display: flex;
           align-items: center;
           gap: 8px;
-        }
-
-        /* ── PAGINATION ── */
-        .slider-pagination {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 4px;
-          padding: 16px 30px;
-          border-top: 1px solid var(--admin-border-subtle, #ebdcd0);
-        }
-        .slider-page-btn {
-          width: 32px;
-          height: 32px;
-          border-radius: 6px !important;
-          border: 1px solid var(--admin-border-subtle, #ebdcd0) !important;
-          background: #fff !important;
-          color: var(--admin-text-base, #334155) !important;
-          font-size: 13px !important;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.15s ease;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 !important;
-        }
-        .slider-page-btn:hover:not(:disabled):not(.active) {
-          background: #f8fafc !important;
-          border-color: var(--admin-primary, #5fa88a) !important;
-        }
-        .slider-page-btn.active {
-          background: var(--admin-primary, #5fa88a) !important;
-          color: #fff !important;
-          border-color: var(--admin-primary, #5fa88a) !important;
-        }
-        .slider-page-btn:disabled {
-          opacity: 0.35;
-          cursor: not-allowed;
-        }
-        .slider-page-info {
-          font-size: 12px;
-          color: var(--admin-text-muted, #94a3b8);
-          margin-left: 12px;
         }
 
         /* ── RESPONSIVE ── */
