@@ -423,7 +423,7 @@ const AdminProgramEditor = () => {
             <AdminTextarea value={mod.content} onChange={e => handleArrayChange('curriculum', i, 'content', e.target.value)} rows="3" placeholder="Nội dung chi tiết chương học..." required minLength={10} />
           </div>
         ))}
-        <button type="button" className="btn-add-array mt-3" onClick={addCurriculum}>
+        <button type="button" className="btn btn-add-array mt-3" onClick={addCurriculum}>
           <i className="fa fa-plus"></i> Thêm Chương Mới
         </button>
       </div>
@@ -479,7 +479,7 @@ const AdminProgramEditor = () => {
               </div>
             </div>
           ))}
-          <button type="button" className="btn-add-array mt-2" onClick={() => {
+          <button type="button" className="btn btn-add-array mt-2" onClick={() => {
             setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: [...(formData.premiumContent?.videos || []), { title: '', url: '' }] } });
           }}><i className="fa fa-plus mr-2"></i> Thêm Video Bài Giảng</button>
         </div>
@@ -521,7 +521,7 @@ const AdminProgramEditor = () => {
               </div>
             </div>
           ))}
-          <button type="button" className="btn-add-array mt-2" onClick={() => {
+          <button type="button" className="btn btn-add-array mt-2" onClick={() => {
             setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: [...(formData.premiumContent?.resources || []), { title: '', url: '' }] } });
           }}><i className="fa fa-plus mr-2"></i> Thêm Tài Liệu</button>
         </div>

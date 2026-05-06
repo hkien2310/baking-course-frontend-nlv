@@ -26,6 +26,7 @@ const AdminEditorLayout = ({
           <button 
             type="submit" 
             form={formId} 
+            className="btn"
             disabled={saving}
             onMouseEnter={(e) => {
               if (!saving) {
