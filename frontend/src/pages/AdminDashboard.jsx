@@ -5,9 +5,10 @@ import AdminContacts from '../components/Admin/AdminContacts';
 import AdminPosts from '../components/Admin/AdminPosts';
 import AdminSliders from '../components/Admin/AdminSliders';
 import AdminEnrollments from '../components/Admin/AdminEnrollments';
-import AdminTestimonials from '../components/Admin/AdminTestimonials';
+
 // [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
+import AdminStudentWorks from '../components/Admin/AdminStudentWorks';
 import AdminSettings from './AdminSettings';
 import AdminOverviewLoading from '../components/Admin/AdminOverviewLoading';
 import { getDashboardStats } from '../services/api';
@@ -79,8 +80,7 @@ const AdminDashboard = ({ user }) => {
         return <AdminPosts />;
       case 'sliders':
         return <AdminSliders />;
-      case 'testimonials':
-        return <AdminTestimonials />;
+
       /* [TEMPORARILY HIDDEN] Ẩn tab giảng viên
       case 'chiefs':
         return <AdminChiefs />;
@@ -91,6 +91,8 @@ const AdminDashboard = ({ user }) => {
         return <AdminContacts />;
       case 'orders':
         return <AdminOrders />;
+      case 'studentWorks':
+        return <AdminStudentWorks />;
       case 'settings':
         return <AdminSettings />;
       case 'overview':
@@ -142,12 +144,7 @@ const AdminDashboard = ({ user }) => {
                   <p>Sliders trang chủ</p>
                 </div>
               </div>
-              <div className="col-md-4 mb-4">
-                <div className="admin-stat-card" onClick={() => setActiveTab('testimonials')} style={{ cursor: 'pointer' }}>
-                  <h3>{stats.testimonials}</h3>
-                  <p>Đánh giá (Testimonials)</p>
-                </div>
-              </div>
+              
               {/* [TEMPORARILY HIDDEN] Ẩn stat card Giảng viên
               <div className="col-md-4 mb-4">
                 <div className="admin-stat-card" onClick={() => setActiveTab('chiefs')} style={{ cursor: 'pointer' }}>
@@ -203,6 +200,11 @@ const AdminDashboard = ({ user }) => {
               <i className="fa fa-credit-card"></i> Đơn hàng
             </a>
           </li>
+          <li className={activeTab === 'studentWorks' ? 'active' : ''}>
+            <a href="#studentWorks" onClick={(e) => { e.preventDefault(); handleTabChange('studentWorks'); }}>
+              <i className="fa fa-camera"></i> Sản phẩm HV
+            </a>
+          </li>
           <li className={activeTab === 'contacts' ? 'active' : ''}>
             <a href="#contacts" onClick={(e) => { e.preventDefault(); handleTabChange('contacts'); }}>
               <i className="fa fa-envelope"></i> Tin nhắn liên hệ
@@ -229,11 +231,7 @@ const AdminDashboard = ({ user }) => {
               <i className="fa fa-image"></i> Sliders trang chủ
             </a>
           </li>
-          <li className={activeTab === 'testimonials' ? 'active' : ''}>
-            <a href="#testimonials" onClick={(e) => { e.preventDefault(); handleTabChange('testimonials'); }}>
-              <i className="fa fa-quote-left"></i> Đánh giá
-            </a>
-          </li>
+          
           <li className={activeTab === 'settings' ? 'active' : ''}>
             <a href="#settings" onClick={(e) => { e.preventDefault(); handleTabChange('settings'); }}>
               <i className="fa fa-cogs"></i> Cấu hình Website

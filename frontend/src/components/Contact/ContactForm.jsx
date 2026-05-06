@@ -123,6 +123,7 @@ const ContactForm = () => {
                 placeholder={t('contact.messagePlaceholder') || 'Your Message...'}
                 value={formData.message}
                 onChange={handleChange}
+                style={{ borderRadius: '5px', padding: '10px 15px' }}
                 required
               ></textarea>
             </div>

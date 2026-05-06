@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
 import { loginUser, registerUser, getMe } from '../services/api';
 import { ROUTES } from '../constants/routes';
@@ -9,6 +9,8 @@ import Input from '../components/Shared/Input';
 const Auth = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect');
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
@@ -27,7 +29,7 @@ const Auth = () => {
       .then(user => {
         if (user.role) localStorage.setItem('role', user.role);
         if (user.role === 'ADMIN') navigate(ROUTES.ADMIN, { replace: true });
-        else navigate(ROUTES.MY_ACCOUNT, { replace: true });
+        else navigate(redirectTo || ROUTES.MY_ACCOUNT, { replace: true });
       })
       .catch(() => {
         localStorage.removeItem('token');
@@ -48,7 +50,7 @@ const Auth = () => {
       localStorage.setItem('token', data.token);
       if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
       if (data.user?.role === 'ADMIN') navigate(ROUTES.ADMIN);
-      else navigate(ROUTES.MY_ACCOUNT);
+      else navigate(redirectTo || ROUTES.MY_ACCOUNT);
     } catch (err) {
       setLoginError(err.response?.data?.error || t('auth.loginFailed') || 'Đăng nhập thất bại. Vui lòng thử lại.');
       setIsLoggingIn(false);
@@ -63,7 +65,7 @@ const Auth = () => {
       const data = await registerUser(regForm);
       localStorage.setItem('token', data.token);
       if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
-      navigate(ROUTES.MY_ACCOUNT);
+      navigate(redirectTo || ROUTES.MY_ACCOUNT);
     } catch (err) {
       setRegError(err.response?.data?.error || t('auth.regFailed') || 'Đăng ký thất bại. Email có thể đã tồn tại.');
       setIsRegistering(false);

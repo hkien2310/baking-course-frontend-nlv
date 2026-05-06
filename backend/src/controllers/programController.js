@@ -326,39 +326,32 @@ exports.toggleFeatured = async (req, res) => {
   try {
     const { id } = req.params;
     const { isFeatured } = req.body;
-    
+
     if (isFeatured) {
-      // 1. Check if the program is upcoming
-      const targetProgram = await prisma.program.findUnique({ 
-        where: { id },
-        include: { classSessions: true }
+      // Check if program exists
+      const targetProgram = await prisma.program.findUnique({
+        where: { id }
       });
       if (!targetProgram) return res.status(404).json({ error: 'Program not found' });
-      
-      const hasUpcomingSession = targetProgram.classSessions && targetProgram.classSessions.some(cs => cs.startDate && new Date(cs.startDate) > new Date());
 
-      if (!hasUpcomingSession) {
-        return res.status(400).json({ error: 'Cannot feature a program that has no upcoming classes.' });
-      }
-
-      // 2. Check if we already have 3 featured programs
+      // Check if we already have 3 featured programs
       const featuredCount = await prisma.program.count({ where: { isFeatured: true } });
       if (featuredCount >= 3) {
         return res.status(400).json({ error: 'Maximum of 3 programs can be featured.' });
       }
     }
-    
+
     const program = await prisma.program.update({
       where: { id },
       data: { isFeatured: Boolean(isFeatured) }
     });
-    
+
     res.json(program);
   } catch (error) {
+    console.error('toggleFeatured error:', error);
     res.status(500).json({ error: 'Failed to toggle featured status' });
   }
 };
-
 exports.getTimetable = async (req, res) => {
   try {
     const classSessions = await prisma.classSession.findMany({

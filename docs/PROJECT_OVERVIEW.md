@@ -13,17 +13,18 @@ The system consists of two independent codebases that communicate over REST APIs
 
 ## 2. Technology Stack
 
-| Concern | Technology | Notes |
+| Concerns | Technology | Notes |
 |---------|-----------|-------|
 | Frontend Framework | React 18 + Vite | Fast HMR, ESM-based bundler |
 | Routing | React Router DOM v6 | Nested layouts, protected routes |
-| HTTP Client | Axios | Interceptor auto-attaches JWT token from `localStorage` |
-| Styling | **Vanilla CSS only** (from original template) | TailwindCSS is **strictly prohibited** |
-| Backend Runtime | Node.js + Express.js | Port 5000 (configurable via `.env`) |
-| ORM | Prisma | Single source of truth: `prisma/schema.prisma` |
+| HTTP Client | Axios | Interceptor auto-attaches JWT token |
+| Styling | **Vanilla CSS only** | TailwindCSS is **strictly prohibited** |
+| Backend Runtime | Node.js + Express.js | Port 5000 |
+| ORM | Prisma | Source of truth: `prisma/schema.prisma` |
 | Database | PostgreSQL | Local DB name: `muka_baking_db` |
-| Authentication | JWT + bcrypt | Token-based, no cookies |
-| File Uploads | Multer | Saves to `/backend/uploads/`, served as static files |
+| Authentication | JWT + bcrypt | Token-based |
+| File Uploads | **Cloudinary** | Stateless storage, no local disk dependency |
+| Payments | **VNPay** + Bank | Integrated payment gateway |
 
 ## 3. Directory Architecture
 
@@ -76,7 +77,7 @@ baking/
 │   │   ├── routes/                 # Express router definitions
 │   │   ├── middleware/             # authMiddleware.js (JWT verification)
 │   │   └── middlewares/            # Additional middleware layer
-│   └── uploads/                    # Disk storage for uploaded images (served at /uploads/*)
+│   └── uploads/                    # (Legacy) Disk storage for uploaded images
 │
 ├── docs/                           # Project documentation
 │   ├── PROJECT_OVERVIEW.md         # This file — start here
@@ -113,16 +114,25 @@ Built three detail page components that accept URL parameters:
 - `ChiefDetail.jsx` — fetches by `:id` via `GET /api/chiefs/:id`
 
 ### Phase 7: Full CRUD & File Uploads
-Implemented complete Create/Read/Update/Delete operations for all entities through the Admin CMS. Built reusable `AdminTable.jsx` and `AdminModal.jsx` components. Configured Multer on the backend to handle image uploads via `POST /api/upload`, storing files to `/backend/uploads/`.
+Implemented complete Create/Read/Update/Delete operations for all entities through the Admin CMS. Built reusable `AdminTable.jsx` and `AdminModal.jsx` components. Configured Multer on the backend to handle image uploads via `POST /api/upload`.
 
 ### Phase 8: CRM — Contacts & Enrollments
 Added two new database tables (`Contact`, `Enrollment`) with corresponding API endpoints. Public users can submit contact messages and enrollment requests. Admin dashboard gained two new management modules: an Inbox for contact messages and an Enrollment tracker with status toggling (`PENDING` → `CONFIRMED`).
 
 ### Phase 9: SPA Navigation Polish
 Fixed critical SPA navigation issues:
-- **ScrollToTop hook**: Forces `window.scrollTo(0, 0)` and dispatches a fake `resize` event on every route change. This is necessary because the Muka template's jQuery calculates header height on page load — without the resize event, the header overlaps content when navigating between pages.
-- **Centralized route constants**: All URL paths moved to `constants/routes.js`. Every `<Link>` and `<Route>` in the app references these constants instead of hardcoded strings. This eliminates broken links and 404 errors.
+- **ScrollToTop hook**: Forces `window.scrollTo(0, 0)` and dispatches a fake `resize` event on every route change.
+- **Centralized route constants**: All URL paths moved to `constants/routes.js`.
 - **404 fallback**: A `NotFound.jsx` page is registered at `path="*"` to catch invalid URLs.
+
+### Phase 10: Cloudinary Migration
+Replaced local disk storage (`/backend/uploads/`) with **Cloudinary**. This transition makes the backend "stateless," allowing for easy deployment on ephemeral platforms like Render or Vercel without risking data loss during server restarts. All image uploads now return persistent URLs hosted on Cloudinary's CDN.
+
+### Phase 11: VNPay Payment Integration
+Integrated **VNPay** as the primary automated payment gateway.
+- **Backend**: Created a dedicated VNPay module with secure hash signing, return URL handling, and IPN (Instant Payment Notification) verification.
+- **Frontend**: Added a full checkout flow including payment method selection, redirect to VNPay, and a dedicated `PaymentResult.jsx` page to handle callback responses.
+- **Order Tracking**: Expanded the `Order` model to track gateway transaction IDs, response codes, and payment timestamps.
 
 ## 5. Critical Architectural Decisions (Must-Know for New Developers)
 
@@ -146,7 +156,7 @@ import { ROUTES } from '../constants/routes';
 ```
 
 ### E. API Token Flow
-The frontend stores the JWT in `localStorage` under the key `token`. The Axios interceptor in `services/api.js` reads it and attaches it as `x-auth-token` header. The backend middleware checks this header.
+The frontend stores the JWT in `localStorage` under the key `token`. The Axios interceptor in `services/api.js` reads it and attaches it as `Authorization: Bearer <token>` header (or legacy `x-auth-token`).
 
 ## 6. How to Run the Project
 
@@ -154,7 +164,7 @@ The frontend stores the JWT in `localStorage` under the key `token`. The Axios i
 ```bash
 cd backend
 npm install
-# Create .env with DATABASE_URL, PORT, JWT_SECRET
+# Create .env with DATABASE_URL, PORT, JWT_SECRET, CLOUDINARY_*, VNPAY_*
 npx prisma db push        # Sync schema to PostgreSQL
 node src/seed.js           # Seed initial data + admin account
 npm run dev                # Starts on http://localhost:5000
@@ -171,17 +181,16 @@ npm run dev                # Starts on http://localhost:5173
 - Email: `admin@muka.com`
 - Password: `admin123`
 
-## 7. Upcoming Work (Phase 10+)
+## 7. Upcoming Work (Phase 12+)
 
 | Task | Description | Scope |
 |------|-------------|-------|
-| Payment Integration | Stripe/PayPal checkout for course enrollments | Backend + Frontend |
-| Cloud Storage | Replace local `/uploads/` with S3 or Cloudinary | Backend |
 | Docker | Containerize backend for deployment | Backend |
-| Production Deploy | Frontend → Vercel, Backend → Render/Railway, DB → Supabase | Both |
-| Input Validation | Add `express-validator` or `Joi` to all API endpoints | Backend |
-| E2E Testing | Cypress test suite for critical user flows | Frontend |
-| Image Optimization | Lazy loading / blur-up placeholders for heavy images | Frontend |
+| Input Validation | Add `zod` or `Joi` to all API endpoints | Backend |
+| E2E Testing | Playwright test suite for critical user flows | Frontend |
+| SEO Optimization | Meta tags and SSR considerations | Frontend |
+| Mobile App | React Native or Flutter companion app | Mobile |
+| Analytics | Integrated dashboard for sales and traffic | Admin |
 
 ## 8. Engineering Standards
 

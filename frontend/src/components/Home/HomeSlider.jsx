@@ -106,7 +106,10 @@ const HomeSlider = ({ slides }) => {
                       <div className="intro_layers">
                         <div className="intro_layer" data-animation="fadeInUp">
                           <h6 className="intro_after_featured_word color-main">
-                            {'Khóa học sắp tới'}
+                            {(() => {
+                              const hasUpcoming = slide.classSessions && slide.classSessions.some(cs => new Date(cs.startDate) > new Date());
+                              return hasUpcoming ? 'Khóa học sắp tới' : 'Khóa học tiêu biểu';
+                            })()}
                           </h6>
                         </div>
                         <div className="intro_layer" data-animation="fadeInUp">
@@ -116,16 +119,19 @@ const HomeSlider = ({ slides }) => {
                             </h2>
                           </div>
                         </div>
-                        <div className="intro_layer flex-countdown" data-animation="fadeInUp">
-                          <div
-                            id={`flex-countdown${index === 0 ? '' : index + 1}`}
-                            data-date={(() => {
-                              const firstUpcomingSession = slide.classSessions && slide.classSessions.find(cs => new Date(cs.startDate) > new Date());
-                              const targetDate = firstUpcomingSession ? firstUpcomingSession.startDate : null;
-                              return targetDate ? new Date(targetDate).toISOString() : undefined;
-                            })()}
-                          ></div>
-                        </div>
+                        {(() => {
+                          const firstUpcomingSession = slide.classSessions && slide.classSessions.find(cs => new Date(cs.startDate) > new Date());
+                          const targetDate = firstUpcomingSession ? firstUpcomingSession.startDate : null;
+                          if (!targetDate) return null;
+                          return (
+                            <div className="intro_layer flex-countdown" data-animation="fadeInUp">
+                              <div
+                                id={index === 0 ? 'flex-countdown' : `flex-countdown${index + 1}`}
+                                data-date={new Date(targetDate).toISOString()}
+                              ></div>
+                            </div>
+                          );
+                        })()}
                         <div className="intro_layer flex-btn" data-animation="fadeInUp">
                           <div className="d-inline-flex" style={{ gap: '15px' }}>
                             <Button to={`/program/${slide.slug}`} variant="main">{t('home.slider.enrollNow')}</Button>

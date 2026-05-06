@@ -4,7 +4,8 @@
  * @returns {string} Formatted price string (e.g. "$550.00")
  */
 export const formatPrice = (priceInCents) => {
-  if (priceInCents == null || priceInCents === 0 || priceInCents === '0') return 'Miễn phí';
+  if (priceInCents === null) return 'Liên hệ';
+  if (priceInCents === 0 || priceInCents === '0' || priceInCents == null) return 'Miễn phí';
   return `${Number(priceInCents).toLocaleString('vi-VN')}đ`;
 };
 

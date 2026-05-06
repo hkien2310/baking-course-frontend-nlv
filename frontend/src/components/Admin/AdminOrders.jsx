@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import Pagination from '../Shared/Pagination';
 import { toast } from 'react-toastify';
 import { getAllOrders, confirmOrder, rejectOrder } from '../../services/api';
 import { formatPrice, getOrderStatusBadge } from '../../utils/formatters';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminButton from './Shared/AdminButton';
+import AdminActionBtn from './Shared/AdminActionBtn';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -12,11 +14,14 @@ const AdminOrders = () => {
   const [adminNote, setAdminNote] = useState('');
   const [processing, setProcessing] = useState(false);
   const [filter, setFilter] = useState('ALL');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchOrders = async () => {
     try {
       const data = await getAllOrders();
-      setOrders(data);
+      const sortedData = (data || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setOrders(sortedData);
     } catch (err) {
       toast.error('Lỗi khi tải danh sách đơn hàng');
     } finally {
@@ -68,6 +73,21 @@ const AdminOrders = () => {
     ? orders 
     : orders.filter(o => o.status === filter);
 
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage) || 1;
+  const safePage = Math.min(currentPage, totalPages);
+  const startIndex = (safePage - 1) * itemsPerPage;
+  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
+
+  const displayStatus = (status) => {
+    switch(status) {
+      case 'PENDING': return 'Đang chờ';
+      case 'AWAITING_CONFIRM': return 'Chờ đối soát';
+      case 'CONFIRMED': return 'Thành công';
+      case 'REJECTED': return 'Thất bại';
+      default: return status;
+    }
+  };
+
   const statusCounts = {
     ALL: orders.length,
     PENDING: orders.filter(o => o.status === 'PENDING').length,
@@ -79,7 +99,7 @@ const AdminOrders = () => {
   if (loading) return <AdminLoadingBlock rows={6} />;
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <div className="admin-content-header">
         <h2>Quản Lý Đơn Hàng</h2>
         <p style={{ color: '#88929e' }}>Kiểm tra và quản lý thanh toán Premium Content</p>
@@ -88,38 +108,39 @@ const AdminOrders = () => {
       {/* Filter Tabs */}
       <div className="d-flex mb-4" style={{ gap: '8px', flexWrap: 'wrap' }}>
         {Object.entries(statusCounts).map(([key, count]) => (
-          <button
+          <AdminButton
             key={key}
-            className={`btn btn-sm ${filter === key ? 'btn-dark' : 'btn-outline-secondary'}`}
-            onClick={() => setFilter(key)}
+            variant={filter === key ? 'dark' : 'secondary'}
+            outline={filter !== key}
+            size="sm"
+            onClick={() => { setFilter(key); setCurrentPage(1); }}
             style={{ borderRadius: '20px', padding: '6px 16px' }}
-          >
-            {key === 'ALL' ? 'All' : key.replace('_', ' ')} ({count})
-          </button>
+            label={`${key === 'ALL' ? 'Tất cả' : displayStatus(key)} (${count})`}
+          />
         ))}
       </div>
 
       {/* Orders Table */}
-      <div className="admin-paper">
+      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <div className="table-responsive">
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Order Code</th>
-                <th>User</th>
-                <th>Course</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Method</th>
-                <th>Date</th>
-                <th>Actions</th>
+                <th>Mã Đơn</th>
+                <th>Người Dùng</th>
+                <th>Khóa Học</th>
+                <th>Số Tiền</th>
+                <th>Trạng Thái</th>
+                <th>Phương Thức</th>
+                <th>Ngày</th>
+                <th>Thao Tác</th>
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.length === 0 ? (
-                <tr><td colSpan="8" className="text-center py-4" style={{ color: '#88929e' }}>No orders found</td></tr>
+              {paginatedOrders.length === 0 ? (
+                <tr><td colSpan="8" className="text-center py-4" style={{ color: '#88929e' }}>Không tìm thấy đơn hàng nào</td></tr>
               ) : (
-                filteredOrders.map(order => {
+                paginatedOrders.map(order => {
                   const badge = getOrderStatusBadge(order.status);
                   return (
                     <tr key={order.id}>
@@ -132,7 +153,7 @@ const AdminOrders = () => {
                       <td style={{ fontWeight: '600' }}>{formatPrice(order.amount)}</td>
                       <td>
                         <span className={`badge ${badge.className}`} style={{ fontSize: '11px' }}>
-                          {badge.label}
+                          {displayStatus(order.status)}
                         </span>
                       </td>
                       <td>
@@ -147,13 +168,12 @@ const AdminOrders = () => {
                         )}
                       </td>
                       <td><small>{new Date(order.createdAt).toLocaleDateString()}</small></td>
-                      <td>
-                        <button 
-                          className="btn btn-sm btn-outline-info rounded-pill"
-                          onClick={() => { setSelectedOrder(order); setAdminNote(''); }}
-                        >
-                          <i className="fa fa-eye"></i> View
-                        </button>
+                      <td className="text-right">
+                        <AdminActionBtn 
+                          variant="view" 
+                          onClick={() => { setSelectedOrder(order); setAdminNote(''); }} 
+                          title="Xem chi tiết" 
+                        />
                       </td>
                     </tr>
                   );
@@ -162,6 +182,16 @@ const AdminOrders = () => {
             </tbody>
           </table>
         </div>
+        
+        {totalPages > 1 && (
+          <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
+            <Pagination 
+              currentPage={safePage} 
+              totalPages={totalPages} 
+              onPageChange={(p) => setCurrentPage(p)} 
+            />
+          </div>
+        )}
       </div>
 
       {/* Order Detail Modal */}
@@ -198,7 +228,7 @@ const AdminOrders = () => {
                   <small style={{ color: '#88929e' }}>Trạng thái</small>
                   <div>
                     <span className={`badge ${getOrderStatusBadge(selectedOrder.status).className}`}>
-                      {getOrderStatusBadge(selectedOrder.status).label}
+                      {displayStatus(selectedOrder.status)}
                     </span>
                   </div>
                 </div>
@@ -257,6 +287,46 @@ const AdminOrders = () => {
                     <div className="col-6 mb-1">
                       <small style={{ color: '#88929e' }}>Thời gian thanh toán</small>
                       <div>{selectedOrder.paidAt ? new Date(selectedOrder.paidAt).toLocaleString() : '—'}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* VAT Invoice Request Info */}
+              {selectedOrder.requiresInvoice && (
+                <div className="mb-3 p-3" style={{ backgroundColor: '#fff3cd', borderRadius: '8px', border: '1px solid #ffeeba' }}>
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <span style={{ color: '#856404', fontWeight: '600' }}><i className="fa fa-file-text-o mr-1"></i> Yêu cầu xuất hóa đơn VAT</span>
+                    <AdminButton 
+                      variant="dark" 
+                      outline 
+                      size="sm"
+                      onClick={() => {
+                        const txt = `Mã số thuế: ${selectedOrder.taxCode}\nTên công ty: ${selectedOrder.companyName}\nĐịa chỉ: ${selectedOrder.companyAddress}\nEmail: ${selectedOrder.invoiceEmail}`;
+                        navigator.clipboard.writeText(txt);
+                        toast.success('Đã copy thông tin hóa đơn');
+                      }}
+                      icon="copy"
+                      label="Copy"
+                      style={{ padding: '0 8px', height: '24px' }}
+                    />
+                  </div>
+                  <div className="row mt-2" style={{ fontSize: '13px', color: '#856404' }}>
+                    <div className="col-6 mb-1">
+                      <small style={{ opacity: 0.8 }}>Mã số thuế</small>
+                      <div style={{ fontWeight: '600' }}>{selectedOrder.taxCode}</div>
+                    </div>
+                    <div className="col-6 mb-1">
+                      <small style={{ opacity: 0.8 }}>Tên công ty</small>
+                      <div style={{ fontWeight: '600' }}>{selectedOrder.companyName}</div>
+                    </div>
+                    <div className="col-12 mb-1">
+                      <small style={{ opacity: 0.8 }}>Địa chỉ</small>
+                      <div style={{ fontWeight: '600' }}>{selectedOrder.companyAddress}</div>
+                    </div>
+                    <div className="col-12 mb-1">
+                      <small style={{ opacity: 0.8 }}>Email nhận hóa đơn</small>
+                      <div style={{ fontWeight: '600' }}>{selectedOrder.invoiceEmail}</div>
                     </div>
                   </div>
                 </div>

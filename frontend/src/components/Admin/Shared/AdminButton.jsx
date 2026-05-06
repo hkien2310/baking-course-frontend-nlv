@@ -12,36 +12,27 @@ const AdminButton = ({
   loading = false,
   loadingLabel,
   size = 'md', // sm, md, lg
-  style = {}
+  style = {},
+  ...rest
 }) => {
-  // Map variant to Bootstrap classes or custom CSS classes
   const getVariantClass = () => {
-    if (variant === 'primary') return outline ? 'btn-outline-maincolor' : 'btn-maincolor';
-    return outline ? `btn-outline-${variant}` : `btn-${variant}`;
+    return outline ? `admin-btn-outline-${variant}` : `admin-btn-${variant}`;
   };
 
   const getSizeClass = () => {
-    if (size === 'sm') return 'btn-sm';
-    if (size === 'lg') return 'btn-lg';
-    return '';
+    if (size === 'sm') return 'admin-btn-sm';
+    if (size === 'lg') return 'admin-btn-lg';
+    return 'admin-btn-md';
   };
 
   return (
     <button
       type={type}
-      className={`btn ${getVariantClass()} ${getSizeClass()} ${className}`}
+      className={`admin-btn ${getVariantClass()} ${getSizeClass()} ${className}`}
       onClick={onClick}
       disabled={disabled || loading}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '6px',
-        fontWeight: '500',
-        borderRadius: '3px',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        ...style
-      }}
+      style={style}
+      {...rest}
     >
       {loading ? <i className="fa fa-spinner fa-spin"></i> : icon ? <i className={`fa fa-${icon}`}></i> : null}
       {(label || loadingLabel) && <span>{loading ? (loadingLabel || label) : label}</span>}

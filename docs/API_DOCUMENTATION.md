@@ -2,7 +2,7 @@
 
 Base URL: `http://localhost:5000/api`
 
-All protected endpoints require the header: `x-auth-token: <valid_jwt_token>`
+All protected endpoints require the header: `Authorization: Bearer <valid_jwt_token>` (Note: some legacy endpoints might still use `x-auth-token`).
 
 ---
 
@@ -14,126 +14,96 @@ All protected endpoints require the header: `x-auth-token: <valid_jwt_token>`
 | POST | `/auth/login` | No | `{ email, password }` | `{ token, user }` |
 | GET | `/auth/me` | Yes | — | `{ id, email, fullName, role }` |
 
-### Login Example
-```
-POST /api/auth/login
-Content-Type: application/json
-
-{ "email": "admin@muka.com", "password": "admin123" }
-```
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": { "id": "uuid", "fullName": "System Administrator", "role": "ADMIN" }
-}
-```
-
 ---
 
 ## 2. Programs
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/programs` | No | List all programs |
+| GET | `/programs` | No | List all programs (supports query params for filtering) |
 | GET | `/programs/:slug` | No | Get single program by slug |
 | POST | `/programs` | Yes | Create a program |
 | PUT | `/programs/:id` | Yes | Update a program |
 | DELETE | `/programs/:id` | Yes | Delete a program |
 
-**Create/Update Body:** `{ slug, title, description, price, reviews, students, thumbnail, authorName, authorImage }`
+**New Fields:** `salePrice`, `programType`, `learningGoals`, `classIncludes`, `curriculum`, `premiumContent`, `isFeatured`.
 
 ---
 
-## 3. Posts
+## 3. Categories
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/posts` | No | List all posts |
-| GET | `/posts/:slug` | No | Get single post by slug |
-| POST | `/posts` | Yes | Create a post |
-| PUT | `/posts/:id` | Yes | Update a post |
-| DELETE | `/posts/:id` | Yes | Delete a post |
-
-**Create/Update Body:** `{ slug, title, content, desc, category, type, thumbnail, authorName, dateString }`
+| GET | `/categories` | No | List all active categories |
+| GET | `/categories/admin` | Yes | List all categories for management |
+| POST | `/categories` | Yes | Create a category |
+| PUT | `/categories/:id` | Yes | Update a category |
+| DELETE | `/categories/:id` | Yes | Delete a category |
 
 ---
 
-## 4. Chiefs
+## 4. Orders & Payments
 
+### Orders
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/chiefs` | No | List all chefs |
-| GET | `/chiefs/:id` | No | Get single chef by ID |
+| POST | `/orders` | Yes | Create a new order |
+| GET | `/orders/my-orders` | Yes | List orders for the current user |
+| GET | `/orders/:id` | Yes | Get order details |
+| PATCH | `/orders/:id/proof` | Yes | Upload manual payment proof |
+| GET | `/orders` | Yes (Admin) | List all orders |
+| PATCH | `/orders/:id/status` | Yes (Admin) | Update order status |
+
+### VNPay Integration
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/vnpay/create-payment-url` | Yes | Generate VNPay redirect URL for an order |
+| GET | `/vnpay/return` | No | VNPay return URL (UI landing) |
+| GET | `/vnpay/ipn` | No | VNPay IPN URL (Server-to-server) |
 
 ---
 
-## 5. Testimonials
+## 5. File Upload (Cloudinary)
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/testimonials` | No | List all testimonials |
+| POST | `/upload` | Yes | Upload image file to Cloudinary |
+
+**Request:** `multipart/form-data` with field name `image`  
+**Response:** `{ url: "https://res.cloudinary.com/..." }`
 
 ---
 
-## 6. Sliders
+## 6. Settings
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/sliders` | No | List all sliders |
-| POST | `/sliders` | Yes | Create a slider |
-| PUT | `/sliders/:id` | Yes | Update a slider |
-| DELETE | `/sliders/:id` | Yes | Delete a slider |
-
-**Create/Update Body:** `{ titleHighlight, titleMain, btnLink, btnText, image, isActive }`
+| GET | `/settings/:key` | No | Get setting value by key (e.g., `HOME_SLIDER`) |
+| POST | `/settings` | Yes | Update or create a setting |
 
 ---
 
-## 7. Timetables
+## 7. Student Work
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| GET | `/timetables` | No | List all schedules |
-| POST | `/timetables` | Yes | Create a schedule |
-| PUT | `/timetables/:id` | Yes | Update a schedule |
-| DELETE | `/timetables/:id` | Yes | Delete a schedule |
-
-**Create/Update Body:** `{ dayOfWeek, title, dateRange, timeRange, instructor, image }`
+| GET | `/student-work` | No | List approved student works |
+| POST | `/student-work` | Yes | Submit student work |
+| GET | `/student-work/admin` | Yes | List all for moderation |
+| PATCH | `/student-work/:id/status` | Yes | Approve/Reject work |
 
 ---
 
-## 8. Contacts
+## 8. Stats (Admin)
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| POST | `/contacts` | **No** | Submit a contact message (public form) |
-| GET | `/contacts` | Yes | List all contact messages (admin inbox) |
-| DELETE | `/contacts/:id` | Yes | Delete a contact message |
-
-**Submit Body:** `{ fullName, email, subject, message }`
+| GET | `/stats/dashboard` | Yes | Get overview statistics (revenue, orders, students) |
 
 ---
 
-## 9. Enrollments
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/enrollments` | **No** | Submit enrollment request (public form) |
-| GET | `/enrollments` | Yes | List all enrollments (admin view) |
-| PATCH | `/enrollments/:id` | Yes | Update enrollment status |
-| DELETE | `/enrollments/:id` | Yes | Delete an enrollment |
-
-**Submit Body:** `{ programId, fullName, email, phone }`  
-**Status Update Body:** `{ status }` (values: `PENDING`, `CONFIRMED`, `CANCELLED`)
-
----
-
-## 10. File Upload
-
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/upload` | Yes | Upload image file |
-
-**Request:** `multipart/form-data` with field name `file`  
-**Response:** `{ url: "/uploads/1712345678-filename.jpg" }`
-
-The returned URL can be used as the `thumbnail` or `image` field when creating/updating entities.
+## 9. Legacy / Public Modules
+- **Chiefs**: `GET /chiefs`
+- **Testimonials**: `GET /testimonials`
+- **Contacts**: `POST /contacts` (Public), `GET /contacts` (Admin)
+- **Enrollments**: Legacy course signup (replaced by Orders flow but still active)

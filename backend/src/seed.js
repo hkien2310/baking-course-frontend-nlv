@@ -5,21 +5,21 @@ const prisma = new PrismaClient({ errorFormat: 'minimal' });
 const MOCK_DATA = {
   slider: [
     {
-      image: '/baking/images/slide01.jpg',
+      image: '/images/gallery/10.jpg',
       titleHighlight: 'Học Nấu Ăn Chuyên Nghiệp Tại Nhà',
       titleMain: 'Khóa Học Tiếp Theo Bắt Đầu Trong:',
       btnLink: '#',
       btnText: 'Đăng ký ngay'
     },
     {
-      image: '/baking/images/slide02.jpg',
+      image: '/images/gallery/11.jpg',
       titleHighlight: 'Nâng Tầm Kỹ Năng Bếp Của Bạn',
       titleMain: 'Khóa Học Tiếp Theo Bắt Đầu Trong:',
       btnLink: '#',
       btnText: 'Đăng ký ngay'
     },
     {
-      image: '/baking/images/slide03.jpg',
+      image: '/images/gallery/12.jpg',
       titleHighlight: 'Từ Người Mới Đến Đầu Bếp Chuyên Nghiệp',
       titleMain: 'Khóa Học Tiếp Theo Bắt Đầu Trong:',
       btnLink: '#',
@@ -38,7 +38,7 @@ const MOCK_DATA = {
       isFeatured: true,
       programType: 'VIDEO_COURSE',
       description: 'Đắm mình trong men và bột mì. Khóa học hướng dẫn từ cơ bản đến nâng cao: đánh trứng và nướng bánh vàng ươm, làm kem bơ, tạo hình fondant chuyên nghiệp.',
-      thumbnail: '/baking/images/service/01.jpg',
+      thumbnail: '/images/gallery/01.jpg',
       learningGoals: [
         { skill: 'Nướng bánh mì, croissant chuẩn Pháp', percent: 90 },
         { skill: 'Tạo hình fondant và trang trí kem', percent: 85 },
@@ -61,7 +61,7 @@ const MOCK_DATA = {
       isFeatured: true,
       programType: 'VIDEO_COURSE',
       description: 'Hướng dẫn tách xương cá nghệ thuật, ướp thịt bò bít tết đúng chuẩn và cách quay da ngỗng giòn rụm. Từ chọn nguyên liệu đến trình bày đĩa ăn chuyên nghiệp.',
-      thumbnail: '/baking/images/service/02.jpg',
+      thumbnail: '/images/gallery/02.jpg',
       learningGoals: [
         { skill: 'Kỹ thuật phi lê cá chuyên nghiệp', percent: 88 },
         { skill: 'Ướp và nướng thịt bò hoàn hảo', percent: 92 },
@@ -84,7 +84,7 @@ const MOCK_DATA = {
       isFeatured: true,
       programType: 'VIDEO_COURSE',
       description: 'Du hành hương vị qua các quốc gia với những món ăn đầy sắc màu gia vị từ vùng Caribbean đến Trung Đông. Học cách nấu Pad Thai, Paella, Tagine và nhiều hơn nữa.',
-      thumbnail: '/baking/images/service/03.jpg',
+      thumbnail: '/images/gallery/03.jpg',
       learningGoals: [
         { skill: 'Nấu các món Á: Pad Thai, Sushi, Ramen', percent: 85 },
         { skill: 'Ẩm thực Địa Trung Hải & Trung Đông', percent: 80 },
@@ -108,7 +108,7 @@ const MOCK_DATA = {
       isFeatured: false,
       programType: 'VIDEO_COURSE',
       description: 'Món tráng miệng thanh mát, béo ngậy, với những sợi chè lọt xanh mướt dẻo dai, hòa quyện cùng nước cốt dừa thơm béo. Học cách làm sương sa hạt lựu trong veo chuẩn vị.',
-      thumbnail: '/baking/images/service/04.jpg',
+      thumbnail: '/images/gallery/04.jpg',
       learningGoals: [
         { skill: 'Làm sợi chè lọt dẻo dai xanh mướt', percent: 95 },
         { skill: 'Nấu nước cốt dừa thơm béo chuẩn vị', percent: 90 },
@@ -131,7 +131,7 @@ const MOCK_DATA = {
       isFeatured: false,
       programType: 'VIDEO_COURSE',
       description: 'Tự tay làm bánh Trung Thu nhân thập cẩm và nhân đậu xanh trứng muối. Mỗi học viên mang về 4 chiếc bánh thành phẩm. Học từ khâu làm vỏ đến ép khuôn chuyên nghiệp.',
-      thumbnail: '/baking/images/service/05.jpg',
+      thumbnail: '/images/gallery/05.jpg',
       learningGoals: [
         { skill: 'Làm vỏ bánh nướng mềm mịn', percent: 90 },
         { skill: 'Chế biến nhân thập cẩm truyền thống', percent: 88 },
@@ -154,7 +154,7 @@ const MOCK_DATA = {
       isFeatured: false,
       programType: 'VIDEO_COURSE',
       description: 'Học trực tiếp với đầu bếp Nhật Bản: Kỹ thuật cắt cá sashimi, cuộn sushi maki/nigiri, pha trộn giấm sushi. Trải nghiệm thực hành 100% tại xưởng bếp chuyên nghiệp.',
-      thumbnail: '/baking/images/service/06.jpg',
+      thumbnail: '/images/gallery/06.jpg',
       learningGoals: [
         { skill: 'Cắt cá sashimi chuẩn Nhật', percent: 92 },
         { skill: 'Cuộn sushi maki và nigiri đẹp mắt', percent: 88 },
@@ -177,7 +177,7 @@ const MOCK_DATA = {
       isFeatured: false,
       programType: 'VIDEO_COURSE',
       description: 'Bí quyết làm bánh mì vỏ giòn ruột xốp đúng kiểu Sài Gòn. Từ cách ủ bột, nướng lò đến các loại nhân: pate gan, chả lụa, thịt nguội và đồ chua.',
-      thumbnail: '/baking/images/gallery/01.jpg',
+      thumbnail: '/images/gallery/01.jpg',
       learningGoals: [
         { skill: 'Ủ bột và nướng bánh mì giòn xốp', percent: 95 },
         { skill: 'Làm pate gan và chả lụa tại nhà', percent: 85 },
@@ -200,7 +200,7 @@ const MOCK_DATA = {
       isFeatured: false,
       programType: 'VIDEO_COURSE',
       description: 'Học cách phủ fondant mượt mà, tạo hoa hồng, lá và các chi tiết trang trí bánh kem. Từ bánh sinh nhật đơn giản đến bánh cưới nhiều tầng sang trọng.',
-      thumbnail: '/baking/images/gallery/02.jpg',
+      thumbnail: '/images/gallery/02.jpg',
       learningGoals: [
         { skill: 'Phủ fondant mượt mà không nứt', percent: 90 },
         { skill: 'Tạo hoa hồng và chi tiết 3D', percent: 85 },
@@ -223,7 +223,7 @@ const MOCK_DATA = {
       isFeatured: false,
       programType: 'VIDEO_COURSE',
       description: 'Bí quyết nấu nước dùng phở bò trong vắt, thơm nức mũi từ xương ống và gia vị truyền thống. Học cách làm bánh phở tươi tại nhà và trình bày tô phở chuẩn Hà Nội.',
-      thumbnail: '/baking/images/gallery/03.jpg',
+      thumbnail: '/images/gallery/03.jpg',
       learningGoals: [
         { skill: 'Hầm nước dùng xương trong vắt 12 tiếng', percent: 95 },
         { skill: 'Phối gia vị phở chuẩn vị', percent: 92 },
@@ -241,25 +241,25 @@ const MOCK_DATA = {
     {
       name: 'Nguyễn Minh Tuấn',
       role: 'Bếp Trưởng',
-      image: '/baking/images/team/01.jpg',
+      image: '/images/team/01.jpg',
       socialFb: '#', socialTw: '#', socialIn: '#'
     },
     {
       name: 'Trần Thị Hương',
       role: 'Bếp Trưởng Bánh',
-      image: '/baking/images/team/02.jpg',
+      image: '/images/team/02.jpg',
       socialFb: '#', socialTw: '#', socialIn: '#'
     },
     {
       name: 'Lê Văn Đức',
       role: 'Chuyên gia Ẩm thực',
-      image: '/baking/images/team/03.jpg',
+      image: '/images/team/03.jpg',
       socialFb: '#', socialTw: '#', socialIn: '#'
     },
     {
       name: 'Phạm Thị Mai',
       role: 'Giảng viên',
-      image: '/baking/images/team/04.jpg',
+      image: '/images/team/04.jpg',
       socialFb: '#', socialTw: '#', socialIn: '#'
     }
   ],
@@ -268,7 +268,7 @@ const MOCK_DATA = {
       title: 'Bí Quyết Nướng Bánh Mì Giòn Xốp Tại Nhà',
       dateString: '15 Tháng 4, 2026',
       dateIso: '2026-04-15T08:00:00+07:00',
-      image: '/baking/images/img-01.jpg',
+      image: '/images/img-01.jpg',
       authorName: 'Admin',
       category: 'Công thức',
       content: 'Khám phá bí quyết để nướng được ổ bánh mì vỏ giòn tan, ruột xốp mềm ngay tại nhà mà không cần lò nướng chuyên nghiệp.',
@@ -278,7 +278,7 @@ const MOCK_DATA = {
       title: '5 Món Tráng Miệng Không Cần Lò Nướng',
       dateString: '18 Tháng 4, 2026',
       dateIso: '2026-04-18T08:00:00+07:00',
-      image: '/baking/images/img-02.jpg',
+      image: '/images/img-02.jpg',
       authorName: 'Admin',
       category: 'Mẹo vặt',
       content: 'Tổng hợp 5 món tráng miệng siêu dễ làm tại nhà mà không cần sử dụng lò nướng, phù hợp cho mọi bếp gia đình.',
@@ -288,7 +288,7 @@ const MOCK_DATA = {
       title: 'Cách Chọn Nguyên Liệu Tươi Cho Bếp Nhà',
       dateString: '20 Tháng 4, 2026',
       dateIso: '2026-04-20T08:00:00+07:00',
-      image: '/baking/images/img-03.jpg',
+      image: '/images/img-03.jpg',
       authorName: 'Admin',
       category: 'Kiến thức',
       content: 'Hướng dẫn chi tiết cách phân biệt và chọn mua nguyên liệu tươi sống chất lượng cao cho bữa ăn gia đình.',
@@ -314,6 +314,92 @@ const MOCK_DATA = {
       name: 'Phạm Hồng Nhung',
       role: 'Học viên khóa Trang Trí Bánh'
     }
+  ],
+  studentWorks: [
+    {
+      studentName: 'Nguyễn Thị Lan',
+      imageUrl: '/images/gallery/01.jpg',
+      description: 'Lần đầu tiên tôi nướng được ổ bánh mì giòn rụm như thế này. Cảm ơn khóa học đã hướng dẫn rất tận tình từ khâu trộn bột đến canh nhiệt độ lò.',
+      programSlug: 'lam-banh-ngot-pastry',
+      status: 'APPROVED'
+    },
+    {
+      studentName: 'Trần Minh Khoa',
+      imageUrl: '/images/gallery/02.jpg',
+      description: 'Bánh kem fondant đầu tay của tôi làm cho sinh nhật con gái. Lớp học cực kỳ chi tiết, giúp tôi thạo các kỹ thuật khó.',
+      programSlug: 'decorating-cake-fondant',
+      status: 'APPROVED'
+    },
+    {
+      studentName: 'Phạm Hồng Nhung',
+      imageUrl: '/images/gallery/03.jpg',
+      description: 'Tô phở bò nóng hổi từ công thức bí truyền Hà Nội. Chồng tôi bảo ngon hơn cả ngoài tiệm. Thật sự đáng giá từng xu!',
+      programSlug: 'pho-bo-truyen-thong',
+      status: 'APPROVED'
+    },
+    {
+      studentName: 'Lê Hoàng Hải',
+      imageUrl: '/images/gallery/04.jpg',
+      description: 'Bài nộp khóa bánh trung thu. Lần đầu làm nên vỏ bánh hơi nứt một xíu nhưng nhân đậu xanh trứng muối rất ngon.',
+      programSlug: 'banh-trung-thu-handmade',
+      status: 'PENDING'
+    },
+    {
+      studentName: 'Đinh Tuấn Vũ',
+      imageUrl: '/images/gallery/05.jpg',
+      description: 'Sushi nigiri và maki. Cơm hơi nhão xíu nhưng cá thì siêu tươi. Cần luyện tập thêm kỹ thuật cắt cá.',
+      programSlug: 'masterclass-sushi-sashimi',
+      status: 'PENDING'
+    },
+    {
+      studentName: 'Vũ Thị Trà My',
+      imageUrl: '/images/gallery/06.jpg',
+      description: 'Chè lọt Thái xanh mướt. Thơm mùi lá dứa và béo cốt dừa. Rất thành công ngay từ lần đầu!',
+      programSlug: 'che-lot-thai-suong-sa',
+      status: 'PENDING'
+    },
+    {
+      studentName: 'Bùi Anh Tuấn',
+      imageUrl: '/images/gallery/07.jpg',
+      description: 'Đây là bánh gì tôi cũng không biết nữa, làm đại thấy ăn cũng được.',
+      programSlug: 'lam-banh-ngot-pastry',
+      status: 'REJECTED'
+    },
+    {
+      studentName: 'Ngô Thanh Vân',
+      imageUrl: '/images/gallery/08.jpg',
+      description: 'Trang trí bánh cưới 3 tầng. Học thầy xong giờ mình có thể mở tiệm nhận order luôn rồi.',
+      programSlug: 'decorating-cake-fondant',
+      status: 'APPROVED'
+    },
+    {
+      studentName: 'Lý Quốc Bảo',
+      imageUrl: '/images/gallery/09.jpg',
+      description: 'Bánh mì Sài Gòn đặc ruột. Công thức này chuẩn thật sự.',
+      programSlug: 'lam-banh-mi-viet-nam',
+      status: 'APPROVED'
+    },
+    {
+      studentName: 'Hoàng Thùy Linh',
+      imageUrl: '/images/gallery/10.jpg',
+      description: 'Món Paella Tây Ban Nha. Thơm lừng mùi hải sản và nghệ tây.',
+      programSlug: 'am-thuc-ngoai-quoc',
+      status: 'APPROVED'
+    },
+    {
+      studentName: 'Trương Ngọc Ánh',
+      imageUrl: '/images/gallery/11.jpg',
+      description: 'Hình chụp mờ quá mong admin thông cảm. Bò bít tết ngon tuyệt vời.',
+      programSlug: 'xu-ly-thit-ca-gia-cam',
+      status: 'REJECTED'
+    },
+    {
+      studentName: 'Phan Đình Tùng',
+      imageUrl: '/images/gallery/12.jpg',
+      description: 'Phở bò Hà Nội, nước dùng trong vắt, xương ống hầm đủ 12 tiếng.',
+      programSlug: 'pho-bo-truyen-thong',
+      status: 'APPROVED'
+    }
   ]
 };
 
@@ -322,6 +408,7 @@ async function main() {
 
   // Clear existing data
   console.log('  → Xóa dữ liệu cũ...');
+  await prisma.studentWork.deleteMany({});
   await prisma.order.deleteMany({});
   await prisma.enrollment.deleteMany({});
   await prisma.classSession.deleteMany({});
@@ -407,6 +494,24 @@ async function main() {
     await prisma.testimonial.create({ data: t });
   }
   console.log(`✅ Đã seed ${MOCK_DATA.testimonials.length} nhận xét`);
+
+  // Seed Student Works
+  await prisma.studentWork.deleteMany({});
+  for (const sw of MOCK_DATA.studentWorks) {
+    const program = await prisma.program.findUnique({ where: { slug: sw.programSlug } });
+    if (program) {
+      await prisma.studentWork.create({
+        data: {
+          studentName: sw.studentName,
+          imageUrl: sw.imageUrl,
+          description: sw.description,
+          status: sw.status,
+          programId: program.id
+        }
+      });
+    }
+  }
+  console.log(`✅ Đã seed ${MOCK_DATA.studentWorks.length} sản phẩm học viên`);
 
   console.log('\n🎉 Seeding hoàn tất!');
 }

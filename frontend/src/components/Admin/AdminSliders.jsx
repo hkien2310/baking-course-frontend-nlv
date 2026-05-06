@@ -4,8 +4,9 @@ import { toast } from 'react-toastify';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import Pagination from '../Shared/Pagination';
 import usePendingAction from './usePendingAction';
+import { formatPrice } from '../../utils/formatters';
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 10;
 
 const AdminSliders = () => {
   const [featuredPrograms, setFeaturedPrograms] = useState([]);
@@ -70,9 +71,9 @@ const AdminSliders = () => {
   const limitReached = featuredPrograms.length >= 3;
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       {/* FEATURED SECTION */}
-      <div className="slider-featured-section">
+      <div className="slider-featured-section" style={{ flexShrink: 0 }}>
         <div className="slider-section-header">
           <div className="slider-section-title">
             <i className="fa fa-star"></i>
@@ -100,7 +101,7 @@ const AdminSliders = () => {
                 </div>
                 <div className="slider-featured-info">
                   <h6>{prog.title}</h6>
-                  <span>{prog.authorName || 'Chưa có giảng viên'}</span>
+                  <span>{prog.category?.name || 'Khóa học'} • <strong style={{ color: 'var(--admin-primary)' }}>{formatPrice(prog.salePrice || prog.price || 0)}</strong></span>
                 </div>
                 <div
                   className="slider-remove-btn"
@@ -129,7 +130,7 @@ const AdminSliders = () => {
       </div>
 
       {/* AVAILABLE PROGRAMS TABLE */}
-      <div className="admin-paper fade-in" style={{ overflow: 'hidden' }}>
+      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <div className="admin-paper-header">
           <div>
             <h4>Chọn khóa học</h4>
@@ -139,70 +140,74 @@ const AdminSliders = () => {
           </div>
         </div>
 
-        {loading ? (
-          <div style={{ padding: '20px 30px' }}>
-            <AdminLoadingBlock compact rows={4} />
-          </div>
-        ) : (
-          <>
-            {limitReached && (
-              <div className="slider-limit-banner">
-                <i className="fa fa-info-circle"></i>
-                Đã đạt giới hạn 3 slider. Gỡ bớt để thêm mới.
-              </div>
-            )}
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, position: 'relative' }}>
+          {loading && (
+            <div style={{ 
+              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
+              backgroundColor: 'rgba(255,255,255,0.6)', zIndex: 10, 
+              display: 'flex', alignItems: 'flex-start', padding: '20px' 
+            }}>
+              <div style={{ width: '100%' }}><AdminLoadingBlock compact rows={2} /></div>
+            </div>
+          )}
 
-            <div style={{ padding: '20px 24px' }}>
-              {availablePrograms.length === 0 ? (
-                <div className="slider-empty-state">
-                  <i className="fa fa-inbox"></i>
-                  <p>Không còn khóa học nào</p>
-                </div>
-              ) : (
-                <div className="slider-available-grid">
-                  {availablePrograms.map(prog => (
-                    <div key={prog.id} className={`slider-available-card ${limitReached ? 'disabled' : ''}`}>
-                      <div className="slider-available-img">
-                        <img
-                          src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
-                          alt={prog.title}
-                        />
-                      </div>
-                      <div className="slider-available-body">
-                        <h6>{prog.title}</h6>
-                        <span>{prog.authorName || 'Chưa có giảng viên'}</span>
-                        <div
-                          className={`slider-add-btn ${(limitReached || isPending(`toggle-${prog.id}`)) ? 'disabled' : ''}`}
-                          onClick={() => {
-                            if (!limitReached && !isPending(`toggle-${prog.id}`)) {
-                              handleToggle(prog.id, false);
-                            }
-                          }}
-                          role="button"
-                        >
-                          {isPending(`toggle-${prog.id}`)
-                            ? <i className="fa fa-spinner fa-spin"></i>
-                            : <><i className="fa fa-plus"></i> Thêm vào Slider</>
+          {limitReached && (
+            <div className="slider-limit-banner">
+              <i className="fa fa-info-circle"></i>
+              Đã đạt giới hạn 3 slider. Gỡ bớt để thêm mới.
+            </div>
+          )}
+
+          <div style={{ padding: '20px 24px', overflowY: 'auto', flex: 1, minHeight: 0 }}>
+            {availablePrograms.length === 0 && !loading ? (
+              <div className="slider-empty-state">
+                <i className="fa fa-inbox"></i>
+                <p>Không còn khóa học nào</p>
+              </div>
+            ) : (
+              <div className="slider-available-grid">
+                {availablePrograms.map(prog => (
+                  <div key={prog.id} className={`slider-available-card ${limitReached ? 'disabled' : ''}`}>
+                    <div className="slider-available-img">
+                      <img
+                        src={prog.thumbnail || `${import.meta.env.BASE_URL}images/gallery/01.jpg`}
+                        alt={prog.title}
+                      />
+                    </div>
+                    <div className="slider-available-body">
+                      <h6>{prog.title}</h6>
+                      <span>{prog.category?.name || 'Khóa học'} • <strong style={{ color: 'var(--admin-primary)' }}>{formatPrice(prog.salePrice || prog.price || 0)}</strong></span>
+                      <div
+                        className={`slider-add-btn ${(limitReached || isPending(`toggle-${prog.id}`)) ? 'disabled' : ''}`}
+                        onClick={() => {
+                          if (!limitReached && !isPending(`toggle-${prog.id}`)) {
+                            handleToggle(prog.id, false);
                           }
-                        </div>
+                        }}
+                        role="button"
+                      >
+                        {isPending(`toggle-${prog.id}`)
+                          ? <i className="fa fa-spinner fa-spin"></i>
+                          : <><i className="fa fa-plus"></i> Thêm vào Slider</>
+                        }
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {totalPages > 1 && (
-              <div className="admin-pagination-wrapper" style={{ borderTop: '1px solid var(--admin-border-subtle)', padding: '15px 30px' }}>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
+                  </div>
+                ))}
               </div>
             )}
-          </>
-        )}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="admin-pagination-wrapper" style={{ borderTop: '1px solid var(--admin-border-subtle)', padding: '15px 30px', flexShrink: 0 }}>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <style>{`
@@ -360,16 +365,29 @@ const AdminSliders = () => {
 
         /* ── AVAILABLE CARDS GRID ── */
         .slider-available-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          display: flex;
+          overflow-x: auto;
           gap: 16px;
+          padding-bottom: 12px;
+          scrollbar-width: thin;
+          scrollbar-color: var(--admin-border-subtle) transparent;
+        }
+        .slider-available-grid::-webkit-scrollbar {
+          height: 6px;
+        }
+        .slider-available-grid::-webkit-scrollbar-thumb {
+          background-color: var(--admin-border-subtle);
+          border-radius: 4px;
         }
         .slider-available-card {
+          flex: 0 0 240px;
           border: 1px solid var(--admin-border-subtle, #ebdcd0);
           border-radius: 10px;
           overflow: hidden;
           background: #fff;
           transition: all 0.2s ease;
+          display: flex;
+          flex-direction: column;
         }
         .slider-available-card:hover {
           border-color: var(--admin-primary, #5fa88a);
@@ -440,25 +458,18 @@ const AdminSliders = () => {
         }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 1200px) {
-          .slider-available-grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
-        }
         @media (max-width: 768px) {
-          .slider-featured-grid,
-          .slider-available-grid {
+          .slider-featured-grid {
             grid-template-columns: repeat(2, 1fr);
           }
         }
         @media (max-width: 480px) {
-          .slider-featured-grid,
-          .slider-available-grid {
+          .slider-featured-grid {
             grid-template-columns: 1fr;
           }
         }
       `}</style>
-    </>
+    </div>
   );
 };
 

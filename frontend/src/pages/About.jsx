@@ -5,24 +5,24 @@ import AboutHistory from '../components/About/AboutHistory';
 import { useTranslation } from '../i18n/LanguageContext';
 import AboutVideo from '../components/About/AboutVideo';
 import TestimonialsSlider from '../components/Shared/TestimonialsSlider';
-import { getTestimonials } from '../services/api';
+import { getApprovedStudentWorks } from '../services/api';
 import { useSiteConfig } from '../context/SiteConfigContext';
 import PageLoading from '../components/Shared/PageLoading';
 
 const About = () => {
   const { siteConfig } = useSiteConfig();
   const { t } = useTranslation();
-  const [testimonials, setTestimonials] = useState([]);
+  const [works, setWorks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getTestimonials()
-      .then(data => {
-        setTestimonials(data);
+    getApprovedStudentWorks()
+      .then(res => {
+        setWorks(res?.data || res || []);
         setLoading(false);
       })
       .catch(err => {
-        console.error("Failed to fetch testimonials", err);
+        console.error("Failed to fetch student works", err);
         setLoading(false);
       });
   }, []);
@@ -44,7 +44,7 @@ const About = () => {
 			
 			<AboutVideo achievements={siteConfig.about.achievements} />
 
-			<TestimonialsSlider testimonials={testimonials} />
+			<TestimonialsSlider works={works} />
 
 			{/* SVG line at bottom as per template layout */}
 			<div className="gt3_svg_line bottom-line" style={{position: 'relative', marginTop: '-41px', zIndex: 3}}>

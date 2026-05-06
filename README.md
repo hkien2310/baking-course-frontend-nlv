@@ -7,7 +7,7 @@ A production-ready, full-stack application built for a culinary and baking acade
 The project is structured as a decoupled monorepo:
 
 - **Frontend (`/frontend`)**: React 18 Single Page Application (SPA) compiled with Vite. Handles both the public website and the `/admin` CMS dashboard. No TailwindCSS is used; styling is preserved from a premium HTML template.
-- **Backend (`/backend`)**: Node.js / Express API server with PostgreSQL database (managed via Prisma ORM).
+- **Backend (`/backend`)**: Node.js / Express API server with PostgreSQL database (managed via Prisma ORM). Uses **Cloudinary** for stateless file storage and **VNPay** for automated payments.
 
 ## 🚀 Quick Start
 
@@ -19,6 +19,7 @@ npm install
 
 # Setup env variables
 cp .env.example .env
+# Fill in DATABASE_URL, JWT_SECRET, CLOUDINARY_*, VNPAY_*
 
 # Push schema and seed initial data
 npx prisma db push
@@ -27,6 +28,7 @@ node src/seed.js
 # Start server
 npm run dev
 ```
+
 
 ### 2. Frontend
 ```bash

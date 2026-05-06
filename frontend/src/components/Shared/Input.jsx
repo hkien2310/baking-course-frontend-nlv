@@ -42,6 +42,7 @@ const Input = ({
           paddingLeft: icon ? '20px' : '15px',
           ...style 
         }}
+        required={required}
         {...rest}
       />
       {icon && (

@@ -236,12 +236,29 @@ const PaymentResult = () => {
 
                 {/* Order details footer */}
                 {order && (
-                  <div className="mt-4 p-3" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                    <small className="text-muted">
-                      {t('payment.orderInfo.code')}: <strong>{order.orderCode}</strong> • 
-                      {t('payment.orderInfo.amount')}: <strong>{formatPrice(order.amount)}</strong>
-                      {order.paidAt && <> • {t('payment.orderInfo.paidAt')}: <strong>{new Date(order.paidAt).toLocaleString()}</strong></>}
-                    </small>
+                  <div className="mt-5 text-left" style={{ backgroundColor: '#fafafa', borderRadius: '12px', border: '1px solid #eee', padding: '24px 30px' }}>
+                    <ul className="list-unstyled mb-0" style={{ fontSize: '15px', color: '#444' }}>
+                      <li className="d-flex justify-content-between mb-3 pb-3" style={{ borderBottom: '1px dashed #e8e8e8' }}>
+                        <span style={{ color: '#88929e' }}>{t('payment.orderInfo.code') || 'Mã đơn hàng'}</span>
+                        <strong style={{ color: '#222' }}>{order.orderCode}</strong>
+                      </li>
+                      <li className="d-flex justify-content-between mb-3 pb-3" style={{ borderBottom: '1px dashed #e8e8e8' }}>
+                        <span style={{ color: '#88929e' }}>{t('payment.orderInfo.amount') || 'Tổng thanh toán'}</span>
+                        <strong style={{ color: 'var(--color-main)', fontSize: '16px' }}>{formatPrice(order.amount)}</strong>
+                      </li>
+                      <li className="d-flex justify-content-between mb-3 pb-3" style={{ borderBottom: '1px dashed #e8e8e8' }}>
+                        <span style={{ color: '#88929e' }}>Phương thức</span>
+                        <strong style={{ color: '#222' }}>
+                          {order.paymentMethod === 'VNPAY' ? 'VNPay' : (order.paidViaWebhook ? 'Chuyển khoản' : 'Thủ công')}
+                        </strong>
+                      </li>
+                      {order.paidAt && (
+                        <li className="d-flex justify-content-between">
+                          <span style={{ color: '#88929e' }}>{t('payment.orderInfo.paidAt') || 'Thời gian giao dịch'}</span>
+                          <strong style={{ color: '#222' }}>{new Date(order.paidAt).toLocaleString('vi-VN')}</strong>
+                        </li>
+                      )}
+                    </ul>
                   </div>
                 )}
 

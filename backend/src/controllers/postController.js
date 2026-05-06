@@ -7,11 +7,15 @@ exports.getAllPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit) || 10;
+    const category = req.query.category;
+
+    const whereClause = category ? { category } : {};
 
     if (page) {
       const skip = (page - 1) * limit;
-      const totalItems = await prisma.post.count();
+      const totalItems = await prisma.post.count({ where: whereClause });
       const posts = await prisma.post.findMany({
+        where: whereClause,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' }
@@ -25,6 +29,7 @@ exports.getAllPosts = async (req, res) => {
     }
 
     const posts = await prisma.post.findMany({
+      where: whereClause,
       orderBy: { createdAt: 'desc' }
     });
     res.json(posts);

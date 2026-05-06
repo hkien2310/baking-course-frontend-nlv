@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { getMe } from '../../services/api';
 import PageLoading from '../Shared/PageLoading';
 import AdminRouteLoading from '../Admin/AdminRouteLoading';
@@ -7,6 +7,7 @@ import AdminRouteLoading from '../Admin/AdminRouteLoading';
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     getMe()
@@ -26,7 +27,9 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    // Redirect to login but remember where user was trying to go
+    const currentPath = location.pathname + location.search;
+    return <Navigate to={`/auth?redirect=${encodeURIComponent(currentPath)}`} replace />;
   }
 
   if (requireAdmin && user.role !== 'ADMIN') {

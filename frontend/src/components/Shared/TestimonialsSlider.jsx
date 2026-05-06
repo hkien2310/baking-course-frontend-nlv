@@ -1,54 +1,68 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
+import { imageUrl } from '../../utils/imageUrl';
 
-const TestimonialsSlider = ({ testimonials }) => {
+const TestimonialsSlider = ({ works = [] }) => {
   const carouselRef = useRef(null);
 
+  if (!works || works.length === 0) return null;
 
-	return (
-		<section className="ls ms s-pt-lg-130 s-pb-lg-130 c-gutter-100 c-my-0 left-part-bg testimonials-section text-center text-md-left" id="testimonials">
-			<div ref={carouselRef} className="owl-carousel owl-nav-bottom" data-responsive-lg="1" data-responsive-md="1" data-responsive-sm="1" data-responsive-xs="1" data-nav="true" data-loop="true" data-margin="0">
-        {testimonials.map((test, index) => (
-				<div key={test.id} className="owl-section-item">
-					<div className="cover-image s-cover-right">
-						<img src={`images/team/testimonials_0${index + 1}.jpg`} alt="" />
-					</div>
-					<div className="container">
-						<div className="row">
-							<div className="col-lg-6 order-lg-2">
+return (
+	<section className="ls ms s-pt-lg-130 s-pb-lg-130 c-gutter-100 c-my-0 left-part-bg testimonials-section text-center text-md-left" id="san-pham-hoc-vien">
+		<div ref={carouselRef} className="owl-carousel owl-nav-bottom" data-responsive-lg="1" data-responsive-md="1" data-responsive-sm="1" data-responsive-xs="1" data-nav="true" data-loop="true" data-margin="0">
+{works.map((work, index) => (
+			<div key={work.id} className="owl-section-item" style={{ display: 'flex', minHeight: '100%' }}>
+				<div 
+className="cover-image s-cover-right" 
+style={{ 
+backgroundImage: `url(${imageUrl(work.imageUrl, `${import.meta.env.BASE_URL}images/gallery/09.jpg`)})`,
+backgroundPosition: 'center',
+backgroundSize: 'cover',
+height: '100%'
+}}
+>
+					<img 
+src={imageUrl(work.imageUrl, `${import.meta.env.BASE_URL}images/gallery/09.jpg`)} 
+alt={work.studentName} 
+style={{ display: 'none' }}
+/>
+				</div>
+				<div className="container" style={{ display: 'flex', alignItems: 'center' }}>
+					<div className="row w-100">
+						<div className="col-lg-6 order-lg-2">
+						</div>
+						<div className={`col-lg-6 order-lg-1 ${index === 0 ? 'animate' : ''}`} data-animation={index === 0 ? "slideInLeft" : ""}>
+							<div className="d-none d-lg-block divider-120"></div>
+							<div className="item-content" style={{ marginLeft: 0 }}>
+								<header>
+									<div className="icon-image">
+										<img src={`${import.meta.env.BASE_URL}images/icon-4.png`} alt="" />
+									</div>
+									<h6 className="small-text color-main2">
+										Đánh giá
+									</h6>
+									<h3>
+										Sản phẩm của học viên
+									</h3>
+								</header>
+								<p>
+									{work.description}
+								</p>
+								<h4 className="text-left">{work.studentName}</h4>
+								<h6 className="small-text text-left color-main">{work.program?.title}</h6>
 							</div>
-							<div className={`col-lg-6 order-lg-1 ${index === 0 ? 'animate' : ''}`} data-animation={index === 0 ? "slideInLeft" : ""}>
-								<div className="d-none d-lg-block divider-120"></div>
-								<div className="item-content">
-									<header>
-										<div className="icon-image">
-											<img src={`${import.meta.env.BASE_URL}images/icon-4.png`} alt="" />
-										</div>
-										<h6 className="small-text color-main2">
-											Đánh giá
-										</h6>
-										<h3>
-											Cảm nhận học viên
-										</h3>
-									</header>
-									<p className="excerpt">
-										{test.excerpt}
-									</p>
-									<p>
-										{test.text}
-									</p>
-									<span className="media-item float-right">
-										<img src={`${import.meta.env.BASE_URL}images/signature.png`} alt="" />
-									</span>
-									<h4 className="text-left">{test.name}</h4>
-									<h6 className="small-text text-left color-main">{test.role}</h6>
-								</div>
-								<div className="d-none d-lg-block divider-120"></div>
-							</div>
+							<div className="d-none d-lg-block divider-120"></div>
 						</div>
 					</div>
 				</div>
-        ))}
 			</div>
+))}
+		</div>
+<style dangerouslySetInnerHTML={{ __html: `
+#san-pham-hoc-vien .owl-stage { display: flex; }
+#san-pham-hoc-vien .owl-item { display: flex; flex: 1 0 auto; }
+#san-pham-hoc-vien .owl-section-item { width: 100%; }
+`}} />
+...
 			<div className="gt3_svg_line bottom-line">
 				<svg xmlns="http://www.w3.org/2000/svg" version="1.0" width="308px" height="41px" viewBox="0 0 308.000000 41.000000" preserveAspectRatio="xMidYMid meet">
 					<g transform="translate(0.000000,41.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">

@@ -3,7 +3,7 @@ import './ProgramDetail.css';
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
-import { getProgramBySlug } from '../services/api';
+import { getProgramBySlug, submitStudentWork, uploadImage } from '../services/api';
 import { toast } from 'react-toastify';
 import { formatPrice, formatStudentCount, calcDiscountPercent } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
@@ -29,6 +29,11 @@ const ProgramDetail = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSessionId, setSelectedSessionId] = useState('');
   const [premiumTab, setPremiumTab] = useState('videos');
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [submitData, setSubmitData] = useState({ studentName: '', description: '' });
+  const [submitImage, setSubmitImage] = useState(null);
+  const [submitImagePreview, setSubmitImagePreview] = useState('');
+  const [submittingWork, setSubmittingWork] = useState(false);
 
   // Convert regular YouTube/Vimeo URLs to embeddable format + strip overlays
   const toEmbedUrl = (url) => {
@@ -314,6 +319,19 @@ const ProgramDetail = () => {
 
 
               </div>
+
+                {/* Submit Student Work — only for purchased courses */}
+                {hasPurchased && (
+                  <div className="mt-5 p-4" style={{ background: 'linear-gradient(135deg, #fff8f0, #fff)', border: '2px dashed var(--colorMain, #c19a5b)', borderRadius: '12px', textAlign: 'center' }}>
+                    <i className="fa fa-camera" style={{ fontSize: '36px', color: 'var(--colorMain)' }}></i>
+                    <h5 className="mt-2 mb-1">Nộp sản phẩm của bạn</h5>
+                    <p className="text-muted small mb-3">Chia sẻ thành quả học tập của bạn để được trưng bày trên trang "Sản phẩm của học viên"</p>
+                    <button className="btn btn-maincolor" onClick={() => setShowSubmitModal(true)}>
+                      <i className="fa fa-upload mr-1"></i> Trả bài khóa học
+                    </button>
+                  </div>
+                )}
+
             </main>
 
             {!hasPurchased && (
@@ -407,6 +425,127 @@ const ProgramDetail = () => {
           </div>
         </div>
       </section>
+
+      {/* Submit Work Modal */}
+      {showSubmitModal && (
+        <div className="admin-modal-overlay" onClick={() => setShowSubmitModal(false)} style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
+          <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '550px', background: '#fff', borderRadius: '12px', padding: 'clamp(20px, 5vw, 30px)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h5 style={{ margin: 0 }}><i className="fa fa-camera color-main mr-2"></i>Nộp sản phẩm — {program.title}</h5>
+              <button onClick={() => setShowSubmitModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>
+                <i className="fa fa-times"></i>
+              </button>
+            </div>
+
+            <div className="form-group mb-3">
+              <label>Tên của bạn <span className="text-danger">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="VD: Nguyễn Minh Nguyệt"
+                value={submitData.studentName}
+                onChange={e => setSubmitData({...submitData, studentName: e.target.value})}
+              />
+            </div>
+
+            <div className="form-group mb-3">
+              <label>Ảnh sản phẩm <span className="text-danger">*</span></label>
+              <div
+                style={{
+                  border: '2px dashed #ddd',
+                  borderRadius: '8px',
+                  padding: submitImagePreview ? '0' : '30px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  minHeight: '150px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onClick={() => document.getElementById('work-image-input').click()}
+              >
+                {submitImagePreview ? (
+                  <img src={submitImagePreview} alt="Preview" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '6px' }} />
+                ) : (
+                  <div>
+                    <i className="fa fa-cloud-upload" style={{ fontSize: '40px', color: '#ccc' }}></i>
+                    <p className="text-muted small mt-2 mb-0">Bấm để chọn ảnh hoặc kéo thả vào đây</p>
+                  </div>
+                )}
+                <input
+                  id="work-image-input"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={e => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      setSubmitImage(file);
+                      setSubmitImagePreview(URL.createObjectURL(file));
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="form-group mb-3">
+              <label>Mô tả sản phẩm <span className="text-danger">*</span></label>
+              <textarea
+                className="form-control"
+                rows="3"
+                placeholder="VD: Bánh kem sinh nhật trang trí hoa hồng, lần đầu tự tay làm..."
+                value={submitData.description}
+                onChange={e => setSubmitData({...submitData, description: e.target.value})}
+              />
+            </div>
+
+            <div className="d-flex mt-4" style={{ gap: '15px' }}>
+              <button type="button" className="btn btn-outline-dark flex-grow-1 m-0" onClick={() => setShowSubmitModal(false)}>Hủy</button>
+              <button
+                type="button"
+                className="btn btn-maincolor flex-grow-1 m-0 d-flex justify-content-center align-items-center"
+                disabled={submittingWork}
+                onClick={async () => {
+                  if (!submitData.studentName || !submitData.description || !submitImage) {
+                    toast.error('Vui lòng điền đầy đủ thông tin và chọn ảnh.');
+                    return;
+                  }
+                  setSubmittingWork(true);
+                  try {
+                    // 1. Upload image
+                    const imgRes = await uploadImage(submitImage);
+                    const imageUrl = imgRes.url || imgRes.filePath;
+                    // 2. Submit work
+                    await submitStudentWork({
+                      studentName: submitData.studentName,
+                      imageUrl,
+                      description: submitData.description,
+                      programId: program.id,
+                    });
+                    toast.success('🎉 Nộp bài thành công! Bài của bạn sẽ được duyệt trước khi hiển thị.');
+                    setShowSubmitModal(false);
+                    setSubmitData({ studentName: '', description: '' });
+                    setSubmitImage(null);
+                    setSubmitImagePreview('');
+                  } catch (err) {
+                    toast.error(err.response?.data?.error || 'Lỗi khi nộp bài.');
+                  } finally {
+                    setSubmittingWork(false);
+                  }
+                }}
+              >
+                {submittingWork ? (
+                  <><span className="spinner-border spinner-border-sm mr-1"></span> Đang nộp...</>
+                ) : (
+                  <><i className="fa fa-paper-plane mr-1"></i> Nộp bài</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

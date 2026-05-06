@@ -1,6 +1,6 @@
 import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
 import BlogCard from '../components/Blog/BlogCard';
 import BlogSidebar from '../components/Blog/BlogSidebar';
@@ -14,6 +14,8 @@ const ITEMS_PER_PAGE = 3;
 
 const Receipt = () => {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const categoryFilter = searchParams.get('cat');
   const [posts, setPosts] = useState([]);
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,8 +34,12 @@ const Receipt = () => {
   }, []);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [categoryFilter]);
+
+  useEffect(() => {
     setLoading(true);
-    getPosts({ page: currentPage, limit: ITEMS_PER_PAGE })
+    getPosts({ page: currentPage, limit: ITEMS_PER_PAGE, category: categoryFilter || undefined })
       .then(response => {
         setPosts(response.data || []);
         setTotalPages(response.totalPages || 1);
@@ -43,7 +49,7 @@ const Receipt = () => {
         console.error("Failed to fetch posts", err);
         setLoading(false);
       });
-  }, [currentPage]);
+  }, [currentPage, categoryFilter]);
 
   useInitOnLoaded(loading);
 

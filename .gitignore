@@ -7,3 +7,4 @@ build/
 *.log
 HANDOVER.md
 CLIENT_HOST_MIGRATION_PLAN.md
+\n# Understand Anything artifacts\n.understand-anything/

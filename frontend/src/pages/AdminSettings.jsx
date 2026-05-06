@@ -3,6 +3,7 @@ import { useSiteConfig } from '../context/SiteConfigContext';
 import { updateSiteConfig } from '../services/api';
 import { toast } from 'react-toastify';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
+import AdminButton from '../components/admin/Shared/AdminButton';
 
 const AdminSettings = () => {
   const { siteConfig, updateConfig, loading: configLoading } = useSiteConfig();
@@ -77,10 +78,16 @@ const AdminSettings = () => {
           <h2 className="settings-title">Cấu hình Website</h2>
           <p className="settings-subtitle">Quản lý nội dung, thông tin liên hệ và cài đặt hiển thị</p>
         </div>
-        <button className="btn btn-save-main" onClick={handleSubmit} disabled={loading}>
-          {loading ? <i className="fa fa-spinner fa-spin mr-2"></i> : <i className="fa fa-save mr-2"></i>}
-          {loading ? 'Đang lưu...' : 'Lưu Thay Đổi'}
-        </button>
+        <AdminButton
+          variant="primary"
+          onClick={handleSubmit}
+          disabled={loading}
+          loading={loading}
+          icon="save"
+          label="Lưu Thay Đổi"
+          loadingLabel="Đang lưu..."
+          className="btn-save-main"
+        />
       </div>
 
       <div className="settings-layout">
@@ -286,9 +293,12 @@ const AdminSettings = () => {
       <style>{`
         .admin-settings-modern {
           background: #f8f9fe;
-          min-height: calc(100vh - 60px);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
           padding: 30px;
           border-radius: 12px;
+          min-height: 0;
         }
         .settings-header {
           display: flex;
@@ -296,12 +306,14 @@ const AdminSettings = () => {
           align-items: center;
           margin-bottom: 30px;
         }
+
         .settings-title {
           font-size: 24px;
           font-weight: 700;
           color: #2d3e50;
           margin: 0 0 5px 0;
         }
+        
         .settings-subtitle {
           color: #8898aa;
           margin: 0;
@@ -326,7 +338,9 @@ const AdminSettings = () => {
         .settings-layout {
           display: flex;
           gap: 30px;
-          align-items: flex-start;
+          align-items: stretch;
+          flex: 1;
+          min-height: 0;
         }
         
         .settings-sidebar {
@@ -373,7 +387,10 @@ const AdminSettings = () => {
         
         .settings-content {
           flex-grow: 1;
-          min-width: 0; /* Prevent flex overflow */
+          min-width: 0;
+          height: 100%;
+          overflow-y: auto;
+          padding-right: 15px;
         }
         
         .tab-pane {

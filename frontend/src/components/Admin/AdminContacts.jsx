@@ -3,6 +3,8 @@ import { toast } from 'react-toastify';
 import AdminConfirmModal from './AdminConfirmModal';
 import AdminModal from './AdminModal';
 import AdminButton from './Shared/AdminButton';
+import AdminActionBtn from './Shared/AdminActionBtn';
+import Pagination from '../Shared/Pagination';
 import { getContacts, deleteContact } from '../../services/api';
 import AdminPageShell from './AdminPageShell';
 import usePendingAction from './usePendingAction';
@@ -12,13 +14,15 @@ const AdminContacts = () => {
   const [loading, setLoading] = useState(true);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const { isPending, withPending, hasPending } = usePendingAction();
 
   const fetchContacts = async () => {
     try {
       const data = await getContacts();
       // Sort by date descending (newest first)
-      const sorted = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const sorted = (data || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setContacts(sorted);
       setLoading(false);
     } catch (err) {
@@ -47,15 +51,20 @@ const AdminContacts = () => {
 
   if (loading) return <AdminPageShell loading loadingRows={5} />;
 
+  const totalPages = Math.ceil(contacts.length / itemsPerPage) || 1;
+  const safePage = Math.min(currentPage, totalPages);
+  const startIndex = (safePage - 1) * itemsPerPage;
+  const paginatedContacts = contacts.slice(startIndex, startIndex + itemsPerPage);
+
   return (
     <>
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexShrink: 0 }}>
         <h3 className="mb-0">Tin nhắn Liên hệ</h3>
       </div>
-      
-      <div className="admin-paper">
-        <table className="admin-table">
+      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        <div className="table-responsive">
+          <table className="admin-table">
           <thead>
             <tr>
               <th>Ngày</th>
@@ -66,10 +75,10 @@ const AdminContacts = () => {
             </tr>
           </thead>
           <tbody>
-            {contacts.length === 0 ? (
+            {paginatedContacts.length === 0 ? (
               <tr><td colSpan="5" className="text-center">Chưa có tin nhắn nào</td></tr>
             ) : (
-              contacts.map(contact => (
+              paginatedContacts.map(contact => (
                 <tr key={contact.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedContact(contact)}>
                   <td style={{ whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
                     {new Date(contact.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -82,19 +91,35 @@ const AdminContacts = () => {
                   <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
                     {contact.message}
                   </td>
-                  <td className="text-right">
-                    <button className="admin-btn-icon view" title="Xem chi tiết" onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }}>
-                      <i className="fa fa-eye"></i>
-                    </button>
-                    <button className="admin-btn-icon delete" title="Xóa" disabled={isPending(`delete-${contact.id}`)} onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }}>
-                      <i className={`fa ${isPending(`delete-${contact.id}`) ? 'fa-spinner fa-spin' : 'fa-trash'}`}></i>
-                    </button>
+                  <td className="text-right d-flex justify-content-end">
+                    <AdminActionBtn 
+                      variant="view" 
+                      onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }} 
+                      title="Xem chi tiết" 
+                    />
+                    <AdminActionBtn 
+                      variant="delete" 
+                      onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }} 
+                      title="Xóa" 
+                      loading={isPending(`delete-${contact.id}`)} 
+                      disabled={isPending(`delete-${contact.id}`)}
+                    />
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+        </div>
+        {totalPages > 1 && (
+          <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
+            <Pagination 
+              currentPage={safePage} 
+              totalPages={totalPages} 
+              onPageChange={(p) => setCurrentPage(p)} 
+            />
+          </div>
+        )}
       </div>
     </div>
 
@@ -142,19 +167,23 @@ const AdminContacts = () => {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--admin-border-light)', paddingTop: '20px' }}>
-            <button 
-              type="button" 
-              className="btn btn-outline-danger btn-sm"
+            <AdminButton 
+              variant="danger" 
+              outline
+              icon="trash"
+              label="Xóa tin nhắn"
               onClick={() => setDeleteTargetId(selectedContact.id)}
               disabled={isPending(`delete-${selectedContact.id}`)}
-            >
-              <i className="fa fa-trash mr-2"></i>Xóa tin nhắn
-            </button>
+              loading={isPending(`delete-${selectedContact.id}`)}
+            />
 
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button type="button" className="btn btn-light" onClick={() => setSelectedContact(null)} disabled={hasPending}>
-                {hasPending ? 'Đang xử lý...' : 'Đóng'}
-              </button>
+              <AdminButton 
+                variant="secondary" 
+                onClick={() => setSelectedContact(null)} 
+                disabled={hasPending}
+                label="Đóng"
+              />
               <a 
                 href={`mailto:${selectedContact.email}?subject=Re: ${encodeURIComponent(selectedContact.subject || 'Phản hồi từ Muka Bakery')}`}
                 className="btn btn-primary"

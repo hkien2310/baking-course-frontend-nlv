@@ -19,7 +19,7 @@ const ProgramCard = ({ cls }) => {
   const getCategoryLabel = () => {
     if (cls.category) return cls.category;
     if (cls.programType === 'LIVE_CLASS') return 'Live class';
-    return 'Premium content';
+    return 'Khóa học';
   };
 
   return (

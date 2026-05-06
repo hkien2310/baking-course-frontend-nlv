@@ -59,7 +59,7 @@ const AdminProgramEditor = () => {
             slug: prog.slug || '',
             category: prog.category || '',
             description: prog.description || '',
-            price: prog.price != null ? priceToDollars(prog.price) : '',
+            price: prog.price != null ? priceToDollars(prog.price) : '10000000',
             salePrice: prog.salePrice != null ? priceToDollars(prog.salePrice) : '',
             thumbnail: prog.thumbnail || '',
             isFeatured: prog.isFeatured || false,
@@ -103,9 +103,13 @@ const AdminProgramEditor = () => {
     e.preventDefault();
     setSaving(true);
     try {
+      const priceVal = formData.price ? dollarsToCents(formData.price) : null;
+      // 10,000,000 is the "Unlimited" threshold. If reached, we send null to the API.
+      const finalPrice = (priceVal >= 10000000) ? null : priceVal;
+
       const payload = {
         ...formData,
-        price: formData.price ? dollarsToCents(formData.price) : null,
+        price: finalPrice,
         salePrice: formData.salePrice ? dollarsToCents(formData.salePrice) : null
       };
       if (isEditing) {
@@ -215,7 +219,23 @@ const AdminProgramEditor = () => {
 
           <div className="row mt-3">
             <div className="col-md-6">
-              <AdminInput label={<>Giá gốc (đ) <span className="text-danger">*</span></>} name="price" type="number" step="1000" min="0" value={formData.price} onChange={handleChange} placeholder="500000" required />
+              <AdminInput 
+                label={<>Giá gốc (đ) <span className="text-danger">*</span></>} 
+                name="price" 
+                type="number" 
+                step="1000" 
+                min="0" 
+                max="10000000"
+                value={formData.price} 
+                onChange={handleChange} 
+                placeholder="500000" 
+                required 
+              />
+              {Number(formData.price) >= 10000000 && (
+                <div className="text-success mt-1" style={{ fontSize: '13px', fontWeight: '500' }}>
+                  <i className="fa fa-info-circle mr-1"></i> (Không giới hạn) - Hệ thống sẽ không thu phí khóa học này.
+                </div>
+              )}
             </div>
             <div className="col-md-6">
               <AdminInput label="Giá khuyến mãi (đ)" name="salePrice" type="number" step="1000" min="0" value={formData.salePrice || ''} onChange={handleChange} placeholder="Để trống nếu không KM" />

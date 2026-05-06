@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
+import './Checkout.css';
 import { toast } from 'react-toastify';
 import PageTitle from '../components/Shared/PageTitle';
 import { getProgramBySlug, getPaymentConfig, createOrder, getOrderById, submitOrderProof, cancelOrder, uploadImage, createVnpayPaymentUrl, getMyOrders } from '../services/api';
@@ -12,7 +13,7 @@ const STEPS = {
   STATUS: 2
 };
 
-const Checkout = () => {
+const Checkout = ({ user }) => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -25,6 +26,17 @@ const Checkout = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('VNPAY');
+  const [usePoints, setUsePoints] = useState(false);
+  const [discountCode, setDiscountCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState(0);
+  
+  const [requiresInvoice, setRequiresInvoice] = useState(false);
+  const [invoiceData, setInvoiceData] = useState({
+    taxCode: '',
+    companyName: '',
+    companyAddress: '',
+    invoiceEmail: user?.email || ''
+  });
 
   useEffect(() => {
     const init = async () => {
@@ -64,9 +76,25 @@ const Checkout = () => {
   }, [slug, navigate, t]);
 
   const handleCreateOrder = async () => {
+    if (requiresInvoice) {
+      const { taxCode, companyName, companyAddress, invoiceEmail } = invoiceData;
+      if (!taxCode?.trim() || !companyName?.trim() || !companyAddress?.trim() || !invoiceEmail?.trim()) {
+        toast.error('Vui lòng điền đầy đủ thông tin xuất hóa đơn (Mã số thuế, Tên công ty, Địa chỉ và Email).');
+        // Scroll to invoice section to notify user
+        const section = document.querySelector('.invoice-section');
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
-      const res = await createOrder({ programId: program.id, classSessionId: sessionId });
+      const res = await createOrder({ 
+        programId: program.id, 
+        classSessionId: sessionId,
+        requiresInvoice,
+        ...invoiceData
+      });
       setOrder(res.order);
       // Immediately call VNPay
       const vnpayRes = await createVnpayPaymentUrl(res.order.id);
@@ -180,52 +208,174 @@ const Checkout = () => {
 
               {/* STEP 1: Order Summary */}
               {step === STEPS.SUMMARY && (
-                <div className="checkout-card bordered p-4 p-lg-5">
-                  <h4 className="mb-4"><i className="fa fa-shopping-cart color-main mr-2"></i> {t('checkout.orderSummary')}</h4>
-                  
-                  <div className="d-flex align-items-start mb-4" style={{ gap: '20px' }}>
-                    {program.thumbnail && (
-                      <img 
-                        src={window.imgSrc(program.thumbnail)} 
-                        alt={program.title} 
-                        style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '8px' }}
-                      />
-                    )}
-                    <div>
-                      <h5 className="mb-1">{program.title}</h5>
-                      {program.chief && <p className="small-text color-main mb-1">{t('programDetail.instructor') || 'Giảng viên'}: {program.chief.name}</p>}
-                      <p className="text-muted small mb-0">{program.description?.substring(0, 120)}...</p>
+                <form className="checkout-form" onSubmit={(e) => { e.preventDefault(); handleCreateOrder(); }}>
+                  <div className="checkout-card bordered p-4 p-lg-5">
+                    <h4 className="mb-4"><i className="fa fa-shopping-cart color-main mr-2"></i> {t('checkout.orderSummary')}</h4>
+                    
+                    <div className="d-flex align-items-start mb-4" style={{ gap: '20px' }}>
+                      {program.thumbnail && (
+                        <img 
+                          src={window.imgSrc(program.thumbnail)} 
+                          alt={program.title} 
+                          style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '8px' }}
+                        />
+                      )}
+                      <div>
+                        <h5 className="mb-1">{program.title}</h5>
+                        {program.chief && <p className="small-text color-main mb-1">{t('programDetail.instructor') || 'Giảng viên'}: {program.chief.name}</p>}
+                        <p className="text-muted small mb-0">{program.description?.substring(0, 120)}...</p>
+                      </div>
+                    </div>
+
+                    <div className="divider-15"></div>
+
+                    <div className="discount-code-section mb-4">
+                      <div className="input-group">
+                        <input 
+                          type="text" 
+                          className="form-control" 
+                          placeholder="Nhập mã giảm giá..." 
+                          value={discountCode}
+                          onChange={(e) => setDiscountCode(e.target.value)}
+                          style={{ height: '44px' }}
+                        />
+                        <div className="input-group-append">
+                          <button 
+                            className="btn btn-maincolor" 
+                            type="button"
+                            onClick={() => {
+                              if (discountCode) toast.info('Tính năng mã giảm giá đang được cập nhật!');
+                            }}
+                            style={{ margin: 0, height: '44px', lineHeight: '44px', padding: '0 20px' }}
+                          >
+                            Áp dụng
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="summary-list" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '20px' }}>
+                      {(() => {
+                        const originalPrice = program.price || 0;
+                        const salePrice = program.salePrice && program.price > program.salePrice ? program.salePrice : originalPrice;
+                        const promoDiscount = originalPrice - salePrice;
+                        const finalPrice = salePrice - appliedDiscount;
+                        const vatAmount = Math.round(finalPrice * 0.08);
+                        const totalPayment = finalPrice + vatAmount;
+                        
+                        return (
+                          <>
+                            <div className="d-flex justify-content-between mb-2">
+                              <span>Tạm tính</span>
+                              <span>{formatPrice(originalPrice)}</span>
+                            </div>
+                            <div className="d-flex justify-content-between mb-2">
+                              <span>Giảm giá khuyến mại</span>
+                              <span>{promoDiscount > 0 ? `- ${formatPrice(promoDiscount)}` : '0 đ'}</span>
+                            </div>
+                            <div className="d-flex justify-content-between mb-2">
+                              <span>Giảm giá thành viên</span>
+                              <span>0 đ</span>
+                            </div>
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                              <span className="d-flex align-items-center" style={{ gap: '8px' }}>
+                                Tích điểm (*)
+                                <label className="switch mb-0">
+                                  <input type="checkbox" checked={usePoints} onChange={(e) => setUsePoints(e.target.checked)} />
+                                  <span className="slider round"></span>
+                                </label>
+                              </span>
+                              <span>0 đ</span>
+                            </div>
+                            
+                            <div className="divider-15" style={{borderTop: '1px solid #ddd'}}></div>
+                            
+                            <div className="d-flex justify-content-between mb-2 mt-3">
+                              <span style={{ fontSize: '16px', fontWeight: '600' }}>Tổng cộng</span>
+                              <span style={{ fontSize: '16px', fontWeight: '600' }}>
+                                {formatPrice(finalPrice)}
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-between mb-2">
+                              <span>VAT 8%</span>
+                              <span>{formatPrice(vatAmount)}</span>
+                            </div>
+                            <div className="d-flex justify-content-between align-items-center mt-3">
+                              <span style={{ fontSize: '18px', fontWeight: '600' }}>Tiền thanh toán</span>
+                              <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--colorMain)' }}>
+                                {formatPrice(totalPayment)}
+                              </span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
+
+                    <div className="divider-30"></div>
+
+                    {/* VAT Form Section */}
+                    <div className="invoice-section mb-4 p-4" style={{ backgroundColor: '#fff', border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+                      <h5 className="mb-2" style={{fontSize: '16px'}}>Thông tin xuất hóa đơn</h5>
+                      <div className="p-2 mb-3" style={{ backgroundColor: '#fff3cd', color: '#856404', borderRadius: '4px', fontSize: '14px' }}>
+                        Học viên cần xuất hoá đơn VAT lưu ý điền đủ thông tin để xuất hoá đơn sau khi thanh toán xong
+                      </div>
+                      <div className="d-flex mb-3 align-items-start" style={{ gap: '10px' }}>
+                        <input type="radio" name="invoice" id="noInvoice" checked={!requiresInvoice} onChange={() => setRequiresInvoice(false)} style={{ marginTop: '5px', cursor: 'pointer', width: '16px', height: '16px' }} />
+                        <span className="d-none"></span>
+                        <label htmlFor="noInvoice" style={{ cursor: 'pointer', margin: 0, textTransform: 'uppercase', fontSize: '15px' }}>
+                          Không yêu cầu
+                          <span className="text-muted" style={{ textTransform: 'none', display: 'block', marginTop: '5px' }}>Hóa đơn sẽ được xuất dựa trên thông tin đơn hàng của bạn</span>
+                        </label>
+                      </div>
+                      <div className="d-flex mb-3 align-items-start" style={{ gap: '10px' }}>
+                        <input type="radio" name="invoice" id="yesInvoice" checked={requiresInvoice} onChange={() => setRequiresInvoice(true)} style={{ marginTop: '5px', cursor: 'pointer', width: '16px', height: '16px' }} />
+                        <span className="d-none"></span>
+                        <label htmlFor="yesInvoice" style={{ cursor: 'pointer', margin: 0, textTransform: 'uppercase', fontSize: '15px' }}>
+                          Xuất hóa đơn
+                        </label>
+                      </div>
+                      
+                      {requiresInvoice && (
+                        <div className="invoice-form-fields p-3" style={{backgroundColor: '#f8f9fa', borderRadius: '8px'}}>
+                          <div className="form-group mb-3">
+                            <label>Mã số thuế <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" placeholder="VD: 0123456789" value={invoiceData.taxCode} onChange={e => setInvoiceData({...invoiceData, taxCode: e.target.value})} required />
+                          </div>
+                          <div className="form-group mb-3">
+                            <label>Tên công ty <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" placeholder="VD: Công ty TNHH ABC" value={invoiceData.companyName} onChange={e => setInvoiceData({...invoiceData, companyName: e.target.value})} required />
+                          </div>
+                          <div className="form-group mb-3">
+                            <label>Địa chỉ <span className="text-danger">*</span></label>
+                            <input type="text" className="form-control" placeholder="VD: 123 Đường ABC, Quận XYZ, TP.HCM" value={invoiceData.companyAddress} onChange={e => setInvoiceData({...invoiceData, companyAddress: e.target.value})} required />
+                          </div>
+                          <div className="form-group mb-0">
+                            <label>Email nhận hóa đơn <span className="text-danger">*</span></label>
+                            <input type="email" className="form-control" placeholder="nguyenminhnguyet@gmail.com" value={invoiceData.invoiceEmail} onChange={e => setInvoiceData({...invoiceData, invoiceEmail: e.target.value})} required />
+                            <small className="text-muted mt-1 d-block">Hóa đơn sẽ được gửi qua email này sau khi xuất thành công</small>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-center">
+                      <button 
+                        type="submit"
+                        className="btn btn-maincolor btn-lg px-5" 
+                        disabled={submitting}
+                      >
+                        {submitting ? (
+                          <><span className="spinner-border spinner-border-sm mr-2"></span> Đang kết nối VNPay...</>
+                        ) : (
+                          <><i className="fa fa-lock mr-2"></i> Trả tiền qua VNPay</>
+                        )}
+                      </button>
+                      <p className="text-muted small mt-3">
+                        <i className="fa fa-shield mr-1"></i> Thanh toán an toàn qua cổng VNPay
+                      </p>
                     </div>
                   </div>
-
-                  <div className="divider-15"></div>
-
-                  <div className="d-flex justify-content-between align-items-center p-3" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                    <span style={{ fontSize: '18px', fontWeight: '600' }}>{t('checkout.total')}</span>
-                    <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--colorMain)' }}>
-                      {formatPrice(program.salePrice && program.price > program.salePrice ? program.salePrice : program.price)}
-                    </span>
-                  </div>
-
-                  <div className="divider-30"></div>
-
-                  <div className="text-center">
-                    <button 
-                      className="btn btn-maincolor btn-lg px-5" 
-                      onClick={handleCreateOrder} 
-                      disabled={submitting}
-                    >
-                      {submitting ? (
-                        <><span className="spinner-border spinner-border-sm mr-2"></span> Đang kết nối VNPay...</>
-                      ) : (
-                        <><i className="fa fa-lock mr-2"></i> Trả tiền qua VNPay</>
-                      )}
-                    </button>
-                    <p className="text-muted small mt-3">
-                      <i className="fa fa-shield mr-1"></i> Thanh toán an toàn qua cổng VNPay
-                    </p>
-                  </div>
-                </div>
+                </form>
               )}
 
               {/* STEP 4: Status */}
@@ -385,6 +535,58 @@ const Checkout = () => {
           border-color: var(--colorMain, #c19a5b) !important;
           transform: translateY(-2px);
           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        /* Switch styles */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 40px;
+          height: 20px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px;
+          width: 16px;
+          left: 2px;
+          bottom: 2px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+        input:checked + .slider {
+          background-color: var(--colorMain, #c19a5b);
+        }
+        input:focus + .slider {
+          box-shadow: 0 0 1px var(--colorMain, #c19a5b);
+        }
+        input:checked + .slider:before {
+          -webkit-transform: translateX(20px);
+          -ms-transform: translateX(20px);
+          transform: translateX(20px);
+        }
+        .slider.round {
+          border-radius: 34px;
+        }
+        .slider.round:before {
+          border-radius: 50%;
         }
       `}
       </style>

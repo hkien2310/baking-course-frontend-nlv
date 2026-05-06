@@ -4,7 +4,8 @@
     "about": "About Us",
     "programs": "Programs",
     "instructors": "Instructors",
-    "recipes": "Recipes",
+    "recipes": "Sharing",
+    "studentWork": "Student Work",
     "contacts": "Contacts",
     "cta": "Visit Workshop",
     "langToggle": "Language"
@@ -16,7 +17,8 @@
     "recentPosts": "Recent Posts",
     "subscribe": "Subscribe",
     "emailPlaceholder": "Enter Email address",
-    "copyright": "© Copyright {year} All Rights Reserved"
+    "copyright": "© Copyright {year} All Rights Reserved",
+    "subscribeSuccess": "Thank you for subscribing!"
   },
   "home": {
     "loading": "Loading Bakery Data...",
@@ -153,101 +155,6 @@
     "title": "Programs List"
   },
   "checkout": {
-    "pageTitle": "Checkout"
-  },
-  "payment": {
-    "resultTitle": "Payment Result",
-    "success": {
-      "title": "Payment Successful",
-      "courseActivated": "Course {title} has been activated.",
-      "accessNow": "You can access the course now.",
-      "viewCourse": "View Course"
-    },
-    "pending": {
-      "title": "Awaiting Confirmation",
-      "processing": "Processing transaction from VNPay...",
-      "autoCheck": "Auto-checking ({current}/{max})",
-      "timeoutMsg": "Timeout reached but no confirmation received from the bank yet.",
-      "checkAccount": "Please check the status in ",
-      "myAccount": "My Account",
-      "backToCourse": "Back to course"
-    },
-    "cancelled": {
-      "title": "Payment Cancelled",
-      "description": "You have cancelled the transaction on VNPay.",
-      "retry": "Try again",
-      "goBack": "Go Back"
-    },
-    "failed": {
-      "title": "Payment Failed",
-      "description": "Your payment failed. Please try again with another card.",
-      "retry": "Retry Payment",
-      "goBack": "Go Back"
-    },
-    "notFound": {
-      "title": "Order Not Found",
-      "description": "This order does not exist or has been deleted.",
-      "viewCourses": "View Courses"
-    },
-    "pendingOrder": {
-      "title": "Pending Order",
-      "description": "You have an unpaid order for this course.",
-      "continuePay": "Continue Payment"
-    },
-    "orderInfo": {
-      "code": "Order Code",
-      "amount": "Amount",
-      "paidAt": "Paid At"
-    }
-  },
-  "programDetail": {
-    "title": "Program Detail",
-    "loading": "Loading Program Details...",
-    "notFound": "Program not found.",
-    "owned": "You Own This Course",
-    "continuePay": "Continue Payment",
-    "buy": "Buy This Course",
-    "enrollFree": "Enroll Now — Free",
-    "willLearn": "You Will Learn:",
-    "classIncludes": "Class Includes:",
-    "curriculum": "Curriculum Overview",
-    "lockedContent": "Purchase this course to view detailed content",
-    "search": "Search On Website",
-    "searchDesc": "Find more exciting news and offers",
-    "searchPlaceholder": "Type Keyword Here...",
-    "getCourse": "Get This Course",
-    "courseOwned": "Course Owned",
-    "joinStudents": "Join {count} students who have already registered for this amazing experience.",
-    "selectCohort": "Select Cohort/Session:",
-    "instructor": "Your Instructor",
-    "viewProfile": "View Profile",
-    "learningGoalsEmpty": "Learning goals will be updated soon.",
-    "classIncludesEmpty": "Included activities will be updated soon.",
-    "curriculumEmpty": "Curriculum will be updated soon.",
-    "rejectedMsg": "Your previous payment was rejected.",
-    "tryAgain": "Try again"
-  },
-  "premium": {
-    "badge": "Premium Content",
-    "subtitle": "Exclusive content for enrolled students",
-    "tabs": {
-      "videos": "Video Lessons",
-      "resources": "Resources",
-      "guides": "Guide"
-    },
-    "lessonNum": "Lesson {num}",
-    "lessonFallback": "Lesson {num}",
-    "downloadHint": "Click to download",
-    "lock": {
-      "previewVideos": "Video Lessons (3 lessons)",
-      "previewResources": "PDF Resources & Recipes",
-      "previewGuides": "Step-by-Step Detailed Guide",
-      "title": "Premium Content",
-      "description": "Unlock video lessons, PDF resources and detailed guides when you enroll in this course.",
-      "unlock": "Unlock — {price}"
-    }
-  },
-  "checkout": {
     "loading": "Loading Checkout...",
     "notFound": "Program Not Found.",
     "steps": {
@@ -361,6 +268,53 @@
       "code": "Order Code",
       "amount": "Amount",
       "paidAt": "Paid at"
+    }
+  },
+  "programDetail": {
+    "title": "Program Detail",
+    "loading": "Loading Program Details...",
+    "notFound": "Program not found.",
+    "owned": "You Own This Course",
+    "continuePay": "Continue Payment",
+    "buy": "Buy This Course",
+    "enrollFree": "Enroll Now — Free",
+    "willLearn": "You Will Learn:",
+    "classIncludes": "Class Includes:",
+    "curriculum": "Curriculum Overview",
+    "lockedContent": "Purchase this course to view detailed content",
+    "search": "Search On Website",
+    "searchDesc": "Find more exciting news and offers",
+    "searchPlaceholder": "Type Keyword Here...",
+    "getCourse": "Get This Course",
+    "courseOwned": "Course Owned",
+    "joinStudents": "Join {count} students who have already registered for this amazing experience.",
+    "selectCohort": "Select Cohort/Session:",
+    "instructor": "Your Instructor",
+    "viewProfile": "View Profile",
+    "learningGoalsEmpty": "Learning goals will be updated soon.",
+    "classIncludesEmpty": "Included activities will be updated soon.",
+    "curriculumEmpty": "Curriculum will be updated soon.",
+    "rejectedMsg": "Your previous payment was rejected.",
+    "tryAgain": "Try again"
+  },
+  "premium": {
+    "badge": "Premium Content",
+    "subtitle": "Exclusive content for enrolled students",
+    "tabs": {
+      "videos": "Video Lessons",
+      "resources": "Resources",
+      "guides": "Guide"
+    },
+    "lessonNum": "Lesson {num}",
+    "lessonFallback": "Lesson {num}",
+    "downloadHint": "Click to download",
+    "lock": {
+      "previewVideos": "Video Lessons (3 lessons)",
+      "previewResources": "PDF Resources & Recipes",
+      "previewGuides": "Step-by-Step Detailed Guide",
+      "title": "Premium Content",
+      "description": "Unlock video lessons, PDF resources and detailed guides when you enroll in this course.",
+      "unlock": "Unlock — {price}"
     }
   },
   "userDash": {

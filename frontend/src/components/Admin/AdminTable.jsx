@@ -3,6 +3,7 @@ import Pagination from '../Shared/Pagination';
 import AdminConfirmModal from './AdminConfirmModal';
 import AdminButton from './Shared/AdminButton';
 import AdminLoadingBlock from './AdminLoadingBlock';
+import AdminActionBtn from './Shared/AdminActionBtn';
 
 const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPerPage = 10, loading = false, deletingId = null, deleteConfirmTitle = 'Xác nhận Xóa', deleteConfirmMessage = 'Bạn có chắc chắn muốn xóa mục này? Hành động này không thể hoàn tác.' }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,12 +54,25 @@ const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPer
                         </td>
                       ))}
                       <td className="text-center">
-                        <button onClick={() => onEdit(row)} className="admin-btn-icon edit" title="Sửa" disabled={deletingId === row.id}>
-                          <i className="fa fa-pencil"></i>
-                        </button>
-                        <button onClick={() => setDeleteTarget(row)} className="admin-btn-icon delete" title="Xóa" disabled={deletingId === row.id}>
-                          <i className={`fa ${deletingId === row.id ? 'fa-spinner fa-spin' : 'fa-trash'}`}></i>
-                        </button>
+                        <div className="d-flex justify-content-center" style={{ gap: '4px' }}>
+                          {onEdit && (
+                            <AdminActionBtn 
+                              variant="edit" 
+                              onClick={() => onEdit(row)} 
+                              title="Sửa" 
+                              disabled={deletingId === row.id} 
+                            />
+                          )}
+                          {onDelete && (
+                            <AdminActionBtn 
+                              variant="delete" 
+                              onClick={() => setDeleteTarget(row)} 
+                              title="Xóa" 
+                              disabled={deletingId === row.id}
+                              loading={deletingId === row.id} 
+                            />
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))

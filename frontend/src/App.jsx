@@ -23,6 +23,7 @@ import ProgramDetail from './pages/ProgramDetail';
 import PostDetail from './pages/PostDetail';
 import Checkout from './pages/Checkout';
 import PaymentResult from './pages/PaymentResult';
+import StudentWork from './pages/StudentWork';
 import NotFound from './pages/NotFound';
 import { ROUTES } from './constants/routes';
 import ScrollToTop from './components/Shared/ScrollToTop';
@@ -41,6 +42,7 @@ function App() {
           <Route path={ROUTES.ABOUT} element={<About />} />
           <Route path={ROUTES.PROGRAM} element={<Program />} />
           <Route path={ROUTES.RECEIPT} element={<Receipt />} />
+          <Route path={ROUTES.STUDENT_WORK} element={<StudentWork />} />
           <Route path={ROUTES.CONTACT} element={<Contact />} />
           <Route path={ROUTES.AUTH} element={<Auth />} />
           <Route path={ROUTES.CHIEFS} element={<Chiefs />} />

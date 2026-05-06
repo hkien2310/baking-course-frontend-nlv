@@ -5,7 +5,7 @@ import { useTranslation } from '../i18n/LanguageContext';
 const NotFound = () => {
   const { t } = useTranslation();
   return (
-    <section className="ls s-py-130 error-404 not-found page_404 s-overlay" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center' }}>
+    <section className="ls s-py-130 error-404 not-found page_404 s-overlay" style={{ backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '80vh', display: 'flex', alignItems: 'center' }}>
       <div className="container">
         <div className="row">
           <div className="d-none d-lg-block divider-55"></div>

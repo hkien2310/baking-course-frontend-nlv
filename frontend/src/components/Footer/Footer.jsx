@@ -32,7 +32,7 @@ const Footer = () => {
     setSubmitting(true);
     try {
       await submitContact({
-        name: 'Subscriber',
+        fullName: 'Subscriber',
         email: email,
         subject: 'Đăng ký nhận bản tin (Newsletter)',
         message: 'Yêu cầu đăng ký nhận tin tức mới qua email.'
@@ -132,7 +132,7 @@ const Footer = () => {
               <div className="widget widget_mailchimp footer_mailchimp">
                 <h3 className="widget-title">{siteConfig.footer.newsletterTitle}</h3>
                 <p>{siteConfig.footer.newsletterDescription}</p>
-                <form className="signup" onSubmit={handleSubscribe}>
+                <form className="newsletter-signup" onSubmit={handleSubscribe}>
                   <Input
                     id="mailchimp_email"
                     name="email"

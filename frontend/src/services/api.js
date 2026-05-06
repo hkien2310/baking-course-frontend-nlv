@@ -303,4 +303,35 @@ export const updateSiteConfig = async (payload) => {
   return data;
 };
 
+// ---------------- STUDENT WORK ----------------
+export const submitStudentWork = async (payload) => {
+  const { data } = await api.post('/student-work', payload);
+  return data;
+};
+
+export const getApprovedStudentWorks = async (page = 1, limit = 9) => {
+  const { data } = await api.get(`/student-work/approved?page=${page}&limit=${limit}`);
+  return data;
+};
+
+export const getAllStudentWorks = async (page = 1, limit = 5, status = 'ALL') => {
+  const { data } = await api.get(`/student-work/all?page=${page}&limit=${limit}&status=${status}`);
+  return data;
+};
+
+export const approveStudentWork = async (id) => {
+  const { data } = await api.patch(`/student-work/${id}/approve`);
+  return data;
+};
+
+export const rejectStudentWork = async (id) => {
+  const { data } = await api.patch(`/student-work/${id}/reject`);
+  return data;
+};
+
+export const deleteStudentWork = async (id) => {
+  const { data } = await api.delete(`/student-work/${id}`);
+  return data;
+};
+
 export default api;

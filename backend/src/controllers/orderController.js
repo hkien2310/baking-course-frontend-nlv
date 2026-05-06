@@ -15,7 +15,7 @@ const generateOrderCode = () => {
 // POST /api/orders — Create new order (User)
 exports.createOrder = async (req, res) => {
   try {
-    const { programId, classSessionId } = req.body;
+    const { programId, classSessionId, requiresInvoice, taxCode, companyName, companyAddress, invoiceEmail } = req.body;
     const userId = req.user.id;
 
     if (!programId) {
@@ -40,6 +40,11 @@ exports.createOrder = async (req, res) => {
     // VIDEO_COURSE never needs classSessionId
     const finalClassSessionId = program.programType === 'VIDEO_COURSE' ? null : (classSessionId || null);
 
+    // Calculate Subtotal and VAT
+    const subTotal = program.salePrice && program.price > program.salePrice ? program.salePrice : program.price;
+    const vatAmount = Math.round(subTotal * 0.08);
+    const amount = subTotal + vatAmount;
+
     // Check for existing active order (PENDING or AWAITING_CONFIRM) for same user + program
     const existingOrder = await prisma.order.findFirst({
       where: {
@@ -50,12 +55,22 @@ exports.createOrder = async (req, res) => {
     });
 
     if (existingOrder) {
-      if (existingOrder.status === 'PENDING' && finalClassSessionId && existingOrder.classSessionId !== finalClassSessionId) {
+      if (existingOrder.status === 'PENDING') {
         const updated = await prisma.order.update({
           where: { id: existingOrder.id },
-          data: { classSessionId: finalClassSessionId }
+          data: { 
+            classSessionId: finalClassSessionId,
+            subTotal,
+            vatAmount,
+            amount,
+            requiresInvoice: !!requiresInvoice,
+            taxCode: taxCode || null,
+            companyName: companyName || null,
+            companyAddress: companyAddress || null,
+            invoiceEmail: invoiceEmail || null,
+          }
         });
-        return res.json({ message: 'Tiếp tục thanh toán đơn hàng cũ (đã cập nhật lớp học).', order: updated });
+        return res.json({ message: 'Tiếp tục thanh toán đơn hàng cũ (đã cập nhật thông tin).', order: updated });
       }
       return res.json({ message: 'Bạn đã có một đơn hàng đang chờ xử lý cho khóa học này.', order: existingOrder });
     }
@@ -82,8 +97,15 @@ exports.createOrder = async (req, res) => {
         userId,
         programId,
         classSessionId: finalClassSessionId,
-        amount: program.salePrice && program.price > program.salePrice ? program.salePrice : program.price,
+        subTotal,
+        vatAmount,
+        amount,
         transferContent,
+        requiresInvoice: !!requiresInvoice,
+        taxCode: taxCode || null,
+        companyName: companyName || null,
+        companyAddress: companyAddress || null,
+        invoiceEmail: invoiceEmail || null,
       },
       include: {
         program: { select: { id: true, title: true, slug: true, thumbnail: true, price: true } }

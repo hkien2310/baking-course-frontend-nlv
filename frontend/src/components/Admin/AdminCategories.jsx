@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { getCategories, createCategory, updateCategory, deleteCategory } from '../../services/api';
-import AdminTable from './AdminTable';
+import { getCategories, createCategory, updateCategory, deleteCategory, reorderCategories } from '../../services/api';
 import AdminModal from './AdminModal';
+import AdminConfirmModal from './AdminConfirmModal';
 import AdminButton from './Shared/AdminButton';
+import AdminLoadingBlock from './AdminLoadingBlock';
+import AdminActionBtn from './Shared/AdminActionBtn';
 import usePendingAction from './usePendingAction';
 
 const AdminCategories = () => {
@@ -13,6 +15,8 @@ const AdminCategories = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('PROGRAM');
   const [formData, setFormData] = useState({ id: null, name: '', slug: '', sortOrder: 0, isActive: true });
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [draggedIdx, setDraggedIdx] = useState(null);
   const { isPending, withPending, hasPending } = usePendingAction();
 
   const fetchData = async () => {
@@ -34,6 +38,41 @@ const AdminCategories = () => {
     setIsEditing(false);
     setFormData({ id: null, name: '', slug: '', isActive: true });
     setIsModalOpen(false);
+  };
+
+  const dragItem = React.useRef(null);
+  const dragOverItem = React.useRef(null);
+
+  const handleDragStart = (idx) => {
+    dragItem.current = idx;
+    setDraggedIdx(idx);
+  };
+
+  const handleDragOver = (e, idx) => {
+    e.preventDefault();
+    dragOverItem.current = idx;
+  };
+
+  const handleDrop = async () => {
+    setDraggedIdx(null);
+    if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+      const newCats = [...categories];
+      const item = newCats.splice(dragItem.current, 1)[0];
+      newCats.splice(dragOverItem.current, 0, item);
+      
+      setCategories(newCats); // Update UI immediately
+
+      const payload = newCats.map((cat, idx) => ({ id: cat.id, sortOrder: idx }));
+      try {
+        await reorderCategories(payload);
+        toast.success('Đã cập nhật thứ tự!');
+      } catch (err) {
+        toast.error('Lỗi khi cập nhật vị trí');
+        fetchData();
+      }
+    }
+    dragItem.current = null;
+    dragOverItem.current = null;
   };
 
   const handleEdit = (category) => {
@@ -89,20 +128,6 @@ const AdminCategories = () => {
       toast.error(err.response?.data?.error || 'Lỗi lưu danh mục');
     }
   };
-
-  const columns = [
-    { label: 'Tên danh mục', key: 'name' },
-    { label: 'Đường dẫn (slug)', key: 'slug' },
-    { 
-      label: 'Trạng thái', 
-      render: (row) => (
-        <span className={`badge ${row.isActive ? 'badge-success' : 'badge-secondary'}`}>
-          {row.isActive ? 'Hiển thị' : 'Đang ẩn'}
-        </span>
-      ) 
-    }
-  ];
-
   return (
     <div className="admin-categories-page">
       <div className="admin-tabs">
@@ -122,17 +147,93 @@ const AdminCategories = () => {
         </button>
       </div>
 
-      <AdminTable 
-        title={activeTab === 'PROGRAM' ? "Danh mục Khóa học" : "Danh mục Bài viết"} 
-        columns={columns} 
-        data={categories} 
-        loading={loading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        deletingId={categories.find((item) => isPending(`delete-${item.id}`))?.id || null}
-        deleteConfirmTitle="Xóa danh mục"
-        deleteConfirmMessage="Bạn có chắc chắn muốn xóa danh mục này không? Hành động này không thể hoàn tác."
-        onCreate={() => setIsModalOpen(true)}
+      <div className="admin-paper fade-in">
+        <div className="admin-paper-header">
+          <h4>{activeTab === 'PROGRAM' ? "Danh mục Khóa học" : "Danh mục Bài viết"}</h4>
+          <AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={() => setIsModalOpen(true)} />
+        </div>
+
+        {loading ? (
+          <AdminLoadingBlock compact />
+        ) : (
+          <div className="table-responsive">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '40px' }}></th>
+                  <th>Tên danh mục</th>
+                  <th>Đường dẫn (slug)</th>
+                  <th>Trạng thái</th>
+                  <th width="150" className="text-center">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categories.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4" style={{color: '#888'}}>
+                      <i>Chưa có dữ liệu.</i>
+                    </td>
+                  </tr>
+                ) : (
+                  categories.map((row, idx) => (
+                    <tr 
+                      key={row.id}
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragOver={(e) => handleDragOver(e, idx)}
+                      onDrop={handleDrop}
+                      onDragEnd={() => setDraggedIdx(null)}
+                      style={{ 
+                        cursor: 'grab', 
+                        opacity: draggedIdx === idx ? 0.5 : 1,
+                        backgroundColor: draggedIdx === idx ? '#f8f9fa' : 'transparent'
+                      }}
+                    >
+                      <td className="text-center text-muted">
+                        <i className="fa fa-bars" style={{ cursor: 'grab' }}></i>
+                      </td>
+                      <td>{row.name}</td>
+                      <td>{row.slug}</td>
+                      <td>
+                        <span className={`badge ${row.isActive ? 'badge-success' : 'badge-secondary'}`}>
+                          {row.isActive ? 'Hiển thị' : 'Đang ẩn'}
+                        </span>
+                      </td>
+                      <td className="text-center">
+                        <div className="d-flex justify-content-center" style={{ gap: '4px' }}>
+                          <AdminActionBtn 
+                            variant="edit" 
+                            onClick={() => handleEdit(row)} 
+                            title="Sửa" 
+                            disabled={isPending(`delete-${row.id}`)} 
+                          />
+                          <AdminActionBtn 
+                            variant="delete" 
+                            onClick={() => setDeleteTarget(row)} 
+                            title="Xóa" 
+                            disabled={isPending(`delete-${row.id}`)}
+                            loading={isPending(`delete-${row.id}`)} 
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <AdminConfirmModal
+        isOpen={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          handleDelete(deleteTarget.id);
+          setDeleteTarget(null);
+        }}
+        title="Xóa danh mục"
+        message="Bạn có chắc chắn muốn xóa danh mục này không? Hành động này không thể hoàn tác."
       />
 
       <AdminModal
@@ -169,17 +270,22 @@ const AdminCategories = () => {
           </div>
 
           <div className="d-flex justify-content-end border-top pt-3 mt-3">
-            <button type="button" className="btn btn-light" onClick={resetForm} disabled={hasPending}>Hủy bỏ</button>
-            <button type="submit" className="admin-btn-save ml-2" disabled={isPending('submit-category')}>
-              {isPending('submit-category') ? 'Đang lưu...' : isEditing ? 'Lưu Thay Đổi' : 'Tạo Mới'}
-            </button>
+            <AdminButton variant="secondary" onClick={resetForm} disabled={hasPending} label="Hủy bỏ" />
+            <AdminButton 
+              type="submit" 
+              className="admin-btn-save ml-2" 
+              disabled={isPending('submit-category')}
+              loading={isPending('submit-category')}
+              label={isEditing ? 'Lưu Thay Đổi' : 'Tạo Mới'}
+            />
           </div>
         </form>
       </AdminModal>
 
       {/* MODAL & UI INLINE CSS */}
       <style>{`
-        .admin-categories-page { height: 100%; }
+        .admin-categories-page { height: 100%; display: flex; flex-direction: column; min-height: 0; }
+        .admin-tabs { flex-shrink: 0; }
         
         /* TOGGLE SWITCH */
         .switch {

@@ -76,6 +76,7 @@ model Program {
   classSessions ClassSession[]
   orders        Order[]
   enrollments   Enrollment[]
+  studentWorks  StudentWork[]
 }
 
 model ClassSession {
@@ -174,10 +175,19 @@ model Order {
   classSessionId  String?
 
   amount          Int
+  subTotal        Int       @default(0)
+  vatAmount       Int       @default(0)
   transferContent String?
 
   proofImage      String?
   transactionRef  String?
+
+  // Invoice info
+  requiresInvoice Boolean   @default(false)
+  taxCode         String?
+  companyName     String?
+  companyAddress  String?
+  invoiceEmail    String?
 
   // Payment gateway fields (VNPay integration)
   paymentMethod          String?   // "MANUAL_BANK" | "VNPAY"
@@ -241,4 +251,17 @@ model Setting {
   key       String   @unique
   value     Json
   updatedAt DateTime @updatedAt
+}
+
+model StudentWork {
+  id          String   @id @default(uuid())
+  studentName String
+  imageUrl    String
+  description String
+  programId   String
+  userId      String?
+  status      String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  createdAt   DateTime @default(now())
+
+  program     Program  @relation(fields: [programId], references: [id])
 }

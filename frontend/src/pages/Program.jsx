@@ -62,8 +62,10 @@ const Program = () => {
     if (searchKeyword) filter.search = searchKeyword;
     if (categoryStr) filter.category = categoryStr;
     if (sortBy) filter.sortBy = sortBy;
-    if (minPriceParam) filter.minPrice = minPriceParam;
-    if (maxPriceParam) filter.maxPrice = maxPriceParam;
+    
+    // Only add price filters if they are not the default boundaries
+    if (minPriceParam && minPriceParam !== '0') filter.minPrice = minPriceParam;
+    if (maxPriceParam && maxPriceParam !== '10000000') filter.maxPrice = maxPriceParam;
 
     getPrograms(filter)
       .then(response => {
@@ -86,10 +88,10 @@ const Program = () => {
     if (localSearch) newParams.set('search', localSearch);
     else newParams.delete('search');
 
-    if (localMinPrice) newParams.set('minPrice', localMinPrice);
+    if (localMinPrice && localMinPrice !== '0') newParams.set('minPrice', localMinPrice);
     else newParams.delete('minPrice');
 
-    if (localMaxPrice) newParams.set('maxPrice', localMaxPrice);
+    if (localMaxPrice && localMaxPrice !== '10000000') newParams.set('maxPrice', localMaxPrice);
     else newParams.delete('maxPrice');
 
     if (localCategories.length > 0) newParams.set('category', localCategories.join(','));
@@ -121,7 +123,7 @@ const Program = () => {
         breadcrumbs={[{ label: t('header.home'), link: '/' }, { label: t('header.programs') || 'Khóa Học' }]} 
       />
 
-			<section className="ls s-pt-90 s-pb-40 s-py-lg-100 c-gutter-30 c-mb-50 c-mb-md-30 program program-page">
+			<section className="ls s-pt-90 s-pb-40 s-py-lg-100 c-gutter-30 c-mb-50 c-mb-md-30 program program-page overflow-visible">
 				<div className="container">
 					<div className="row">
             
@@ -178,7 +180,7 @@ const Program = () => {
                     <div className="d-flex justify-content-between mt-2">
                       <span className="small-text text-muted">0đ</span>
                       <span className="font-weight-bold color-main">
-                        {localMaxPrice ? `${formatPrice(localMaxPrice)}` : '10,000,000đ'}
+                        {localMaxPrice === '10000000' || !localMaxPrice ? '(Không giới hạn)' : formatPrice(localMaxPrice)}
                       </span>
                     </div>
                   </div>

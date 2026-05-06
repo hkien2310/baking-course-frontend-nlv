@@ -31,6 +31,7 @@ const webhookRoutes = require('./routes/webhookRoutes');
 const vnpayRoutes = require('./routes/vnpayRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const settingRoutes = require('./routes/settingRoutes');
+const studentWorkRoutes = require('./routes/studentWorkRoutes');
 
 app.use('/api/programs', programRoutes);
 app.use('/api/posts', postRoutes);
@@ -48,6 +49,7 @@ app.use('/api/webhook', webhookRoutes);
 app.use('/api/vnpay', vnpayRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/settings', settingRoutes);
+app.use('/api/student-work', studentWorkRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

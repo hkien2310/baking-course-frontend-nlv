@@ -1,4 +1,5 @@
 import React from 'react';
+import AdminButton from './Shared/AdminButton';
 
 const AdminConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading = false, confirmLabel = 'Delete', cancelLabel = 'Cancel' }) => {
   if (!isOpen) return null;
@@ -75,45 +76,23 @@ const AdminConfirmModal = ({ isOpen, onClose, onConfirm, title, message, loading
         </p>
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-          <button 
+          <AdminButton 
+            variant="secondary" 
             onClick={onClose} 
-            disabled={loading}
-            style={{
-              padding: '10px 28px',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0',
-              background: '#fff',
-              color: '#475569',
-              fontWeight: 600,
-              fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => { e.target.style.background = '#f8fafc'; }}
-            onMouseLeave={(e) => { e.target.style.background = '#fff'; }}
-          >
-            {cancelLabel}
-          </button>
-          <button 
+            disabled={loading} 
+            label={cancelLabel} 
+            style={{ minWidth: '130px' }}
+          />
+          <AdminButton 
+            variant="danger" 
             onClick={onConfirm}
             disabled={loading}
-            style={{
-              padding: '10px 28px',
-              borderRadius: '8px',
-              border: 'none',
-              background: '#ef4444',
-              color: '#fff',
-              fontWeight: 600,
-              fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => { e.target.style.background = '#dc2626'; }}
-            onMouseLeave={(e) => { e.target.style.background = '#ef4444'; }}
-          >
-            <i className={`fa ${loading ? 'fa-spinner fa-spin' : 'fa-trash'}`} style={{ marginRight: '6px' }}></i>
-            {loading ? 'Đang xử lý...' : confirmLabel}
-          </button>
+            loading={loading}
+            icon="trash"
+            label={confirmLabel}
+            loadingLabel="Đang xử lý..."
+            style={{ minWidth: '130px' }}
+          />
         </div>
       </div>
     </div>

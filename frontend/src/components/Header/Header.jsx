@@ -81,6 +81,9 @@ const Header = () => {
                   <li className={location.pathname === "/receipt" || location.pathname.startsWith("/post") ? "active" : ""}>
                     <Link to={ROUTES.RECEIPT}>{t('header.recipes')}</Link>
                   </li>
+                  <li className={location.pathname === "/student-work" ? "active" : ""}>
+                    <Link to={ROUTES.STUDENT_WORK}>{t('header.studentWork')}</Link>
+                  </li>
                   <li className={location.pathname === "/contact" ? "active" : ""}>
                     <Link to={ROUTES.CONTACT}>{t('header.contacts')}</Link>
                   </li>

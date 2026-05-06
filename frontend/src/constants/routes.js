@@ -23,4 +23,5 @@ export const ROUTES = {
   ADMIN_PROGRAM_EDIT: (id) => `/admin/program/edit/${id}`,
   ADMIN_PROGRAM_EDIT_PATTERN: '/admin/program/edit/:id',
   PAYMENT_RESULT: '/payment/vnpay-return',
+  STUDENT_WORK: '/student-work',
 };

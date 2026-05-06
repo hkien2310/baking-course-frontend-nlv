@@ -4,7 +4,8 @@
     "about": "Giới thiệu",
     "programs": "Khóa học",
     "instructors": "Giảng viên",
-    "recipes": "Công thức",
+    "recipes": "Chia sẻ",
+    "studentWork": "Sản phẩm của học viên",
     "contacts": "Liên hệ",
     "cta": "Tài khoản",
     "langToggle": "Ngôn ngữ"
@@ -16,7 +17,8 @@
     "recentPosts": "Bài viết gần đây",
     "subscribe": "Đăng ký",
     "emailPlaceholder": "Nhập địa chỉ email",
-    "copyright": "© Bản quyền {year} Đã đăng ký bản quyền"
+    "copyright": "© Bản quyền {year} Đã đăng ký bản quyền",
+    "subscribeSuccess": "Cảm ơn bạn đã đăng ký!"
   },
   "home": {
     "loading": "Đang tải dữ liệu...",
@@ -152,48 +154,47 @@
     "notFound": "Không tìm thấy khóa học nào khớp với bộ lọc.",
     "title": "Danh Sách Khóa Học"
   },
-
   "payment": {
-    "resultTitle": "Kết Quả Giao Dịch",
+    "resultTitle": "Kết quả giao dịch",
     "success": {
-      "title": "Thanh Toán Thành Công",
+      "title": "🎉 Thanh toán thành công!",
       "courseActivated": "Khóa học {title} đã được kích hoạt.",
-      "accessNow": "Bạn có thể truy cập nội dung khóa học ngay bây giờ.",
-      "viewCourse": "Vào học ngay"
+      "accessNow": "Bạn có thể truy cập nội dung premium ngay bây giờ.",
+      "viewCourse": "Xem khóa học"
     },
     "pending": {
-      "title": "Đang Chờ Xác Nhận",
-      "processing": "Hệ thống đang xử lý giao dịch từ VNPay...",
-      "autoCheck": "Tự động kiểm tra ({current}/{max})",
-      "timeoutMsg": "Hết thời gian chờ nhưng chưa nhận được xác nhận từ ngân hàng.",
-      "checkAccount": "Vui lòng xem trạng thái tại mục ",
-      "myAccount": "Hồ sơ của tôi",
+      "title": "Đang xác nhận thanh toán...",
+      "processing": "Hệ thống đang xử lý giao dịch. Vui lòng chờ trong giây lát.",
+      "autoCheck": "Tự động kiểm tra... ({current}/{max})",
+      "timeoutMsg": "Nếu bạn đã thanh toán thành công, hệ thống sẽ xác nhận trong vài phút.",
+      "checkAccount": "Vui lòng kiểm tra lại tại {link} hoặc liên hệ hỗ trợ.",
+      "myAccount": "Tài khoản của tôi",
       "backToCourse": "Quay lại khóa học"
     },
     "cancelled": {
-      "title": "Đã Hủy Giao Dịch",
-      "description": "Bạn đã hủy giao dịch trên hệ thống VNPay.",
-      "retry": "Thử thanh toán lại",
+      "title": "Bạn đã hủy thanh toán",
+      "description": "Giao dịch đã bị hủy. Đơn hàng vẫn ở trạng thái chờ — bạn có thể thử lại bất cứ lúc nào.",
+      "retry": "Thử lại",
       "goBack": "Quay lại"
     },
     "failed": {
-      "title": "Giao Dịch Thất Bại",
-      "description": "Thanh toán của bạn không thành công. Vui lòng thử lại với phương thức khác.",
-      "retry": "Thanh toán lại",
+      "title": "Thanh toán thất bại",
+      "description": "Giao dịch không thành công. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.",
+      "retry": "Thử lại",
       "goBack": "Quay lại"
     },
     "notFound": {
-      "title": "Không Tìm Thấy Hóa Đơn",
-      "description": "Hóa đơn này không tồn tại hoặc tài khoản của bạn bị từ chối truy cập.",
-      "viewCourses": "Xem danh sách khóa học"
+      "title": "Không tìm thấy đơn hàng",
+      "description": "Không có thông tin giao dịch nào được tìm thấy.",
+      "viewCourses": "Xem các khóa học"
     },
     "pendingOrder": {
-      "title": "Hóa Đơn Chờ Thanh Toán",
-      "description": "Bạn đang có một hóa đơn chưa thanh toán.",
+      "title": "Đơn hàng đang chờ",
+      "description": "Đơn hàng đang chờ thanh toán.",
       "continuePay": "Tiếp tục thanh toán"
     },
     "orderInfo": {
-      "code": "Mã đơn hàng",
+      "code": "Mã đơn",
       "amount": "Số tiền",
       "paidAt": "Thanh toán lúc"
     }
@@ -315,51 +316,6 @@
       "cancelFailed": "Không thể hủy đơn hàng.",
       "paymentConfirmed": "🎉 Thanh toán đã được xác nhận! Bạn có thể truy cập nội dung premium ngay.",
       "paymentRejected": "Thanh toán bị từ chối. Bạn có thể tải lại ảnh chứng minh."
-    }
-  },
-  "payment": {
-    "resultTitle": "Kết quả giao dịch",
-    "success": {
-      "title": "🎉 Thanh toán thành công!",
-      "courseActivated": "Khóa học {title} đã được kích hoạt.",
-      "accessNow": "Bạn có thể truy cập nội dung premium ngay bây giờ.",
-      "viewCourse": "Xem khóa học"
-    },
-    "pending": {
-      "title": "Đang xác nhận thanh toán...",
-      "processing": "Hệ thống đang xử lý giao dịch. Vui lòng chờ trong giây lát.",
-      "autoCheck": "Tự động kiểm tra... ({current}/{max})",
-      "timeoutMsg": "Nếu bạn đã thanh toán thành công, hệ thống sẽ xác nhận trong vài phút.",
-      "checkAccount": "Vui lòng kiểm tra lại tại {link} hoặc liên hệ hỗ trợ.",
-      "myAccount": "Tài khoản của tôi",
-      "backToCourse": "Quay lại khóa học"
-    },
-    "cancelled": {
-      "title": "Bạn đã hủy thanh toán",
-      "description": "Giao dịch đã bị hủy. Đơn hàng vẫn ở trạng thái chờ — bạn có thể thử lại bất cứ lúc nào.",
-      "retry": "Thử lại",
-      "goBack": "Quay lại"
-    },
-    "failed": {
-      "title": "Thanh toán thất bại",
-      "description": "Giao dịch không thành công. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.",
-      "retry": "Thử lại",
-      "goBack": "Quay lại"
-    },
-    "notFound": {
-      "title": "Không tìm thấy đơn hàng",
-      "description": "Không có thông tin giao dịch nào được tìm thấy.",
-      "viewCourses": "Xem các khóa học"
-    },
-    "pendingOrder": {
-      "title": "Đơn hàng đang chờ",
-      "description": "Đơn hàng đang chờ thanh toán.",
-      "continuePay": "Tiếp tục thanh toán"
-    },
-    "orderInfo": {
-      "code": "Mã đơn",
-      "amount": "Số tiền",
-      "paidAt": "Thanh toán lúc"
     }
   },
   "userDash": {

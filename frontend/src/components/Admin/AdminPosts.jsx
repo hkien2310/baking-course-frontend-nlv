@@ -55,7 +55,7 @@ const AdminPosts = () => {
   ];
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <AdminTable 
         title="Quản lý Bài viết & Công thức" 
         columns={columns} 
@@ -68,8 +68,6 @@ const AdminPosts = () => {
         deleteConfirmTitle="Xóa bài viết"
         deleteConfirmMessage="Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác."
       />
-
-
     </div>
   );
 };
