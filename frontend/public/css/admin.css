@@ -492,3 +492,22 @@ body.admin-mode {
 .admin-layout label {
   text-transform: none;
 }
+
+/* ---------------- TEMPLATE OVERRIDE: BUTTON RESET ---------------- */
+/* Template main.css forces ALL buttons to orange pill shape (border-radius:50px, padding:9px 63px).
+   Reset for admin layout so custom buttons render correctly. */
+.admin-layout button,
+.admin-layout input[type="submit"] {
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  color: inherit;
+  padding: 0;
+  text-transform: none;
+  font-size: inherit;
+}
+
+.admin-layout button:hover {
+  background-color: transparent;
+  border-color: transparent;
+}
