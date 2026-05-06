@@ -102,17 +102,17 @@ const AdminSliders = () => {
                   <h6>{prog.title}</h6>
                   <span>{prog.authorName || 'Chưa có giảng viên'}</span>
                 </div>
-                <button
-                  className="btn slider-remove-btn"
-                  onClick={() => handleToggle(prog.id, true)}
-                  disabled={isPending(`toggle-${prog.id}`)}
+                <div
+                  className="slider-remove-btn"
+                  onClick={() => !isPending(`toggle-${prog.id}`) && handleToggle(prog.id, true)}
                   title="Gỡ khỏi Slider"
+                  role="button"
                 >
                   {isPending(`toggle-${prog.id}`)
                     ? <i className="fa fa-spinner fa-spin"></i>
                     : <i className="fa fa-times"></i>
                   }
-                </button>
+                </div>
               </div>
             ))}
             {/* Empty slots */}
@@ -171,16 +171,20 @@ const AdminSliders = () => {
                       <div className="slider-available-body">
                         <h6>{prog.title}</h6>
                         <span>{prog.authorName || 'Chưa có giảng viên'}</span>
-                        <button
-                          className="btn slider-add-btn"
-                          onClick={() => handleToggle(prog.id, false)}
-                          disabled={limitReached || isPending(`toggle-${prog.id}`)}
+                        <div
+                          className={`slider-add-btn ${(limitReached || isPending(`toggle-${prog.id}`)) ? 'disabled' : ''}`}
+                          onClick={() => {
+                            if (!limitReached && !isPending(`toggle-${prog.id}`)) {
+                              handleToggle(prog.id, false);
+                            }
+                          }}
+                          role="button"
                         >
                           {isPending(`toggle-${prog.id}`)
                             ? <i className="fa fa-spinner fa-spin"></i>
                             : <><i className="fa fa-plus"></i> Thêm vào Slider</>
                           }
-                        </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -415,13 +419,14 @@ const AdminSliders = () => {
           cursor: pointer;
           transition: all 0.15s ease;
         }
-        .slider-add-btn:hover:not(:disabled) {
+        .slider-add-btn:hover:not(.disabled) {
           background: #dcfce7 !important;
           border-color: #86efac !important;
         }
-        .slider-add-btn:disabled {
+        .slider-add-btn.disabled {
           opacity: 0.45;
           cursor: not-allowed;
+          pointer-events: none;
         }
         .slider-limit-banner {
           background: #fffbeb;
