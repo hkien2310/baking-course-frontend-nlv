@@ -40,7 +40,7 @@ const Program = () => {
     getCategories({ type: 'PROGRAM' })
       .then(res => {
         const cats = res?.data || res || [];
-        setCategoryOptions(cats.filter(c => c.isActive).map(c => c.name));
+        setCategoryOptions(cats.filter(c => c.isActive).map(c => ({ name: c.name, slug: c.slug })));
       })
       .catch(() => console.error('Failed to load categories'));
   }, []);
@@ -150,10 +150,10 @@ const Program = () => {
                   <h3 className="widget-title">Danh mục</h3>
                   <div className="category-list">
                     {categoryOptions.map(cat => (
-                      <div key={cat} className="custom-checkbox">
-                        <input type="checkbox" id={`cat-${cat}`} 
-                               checked={localCategories.includes(cat)} onChange={() => toggleCategory(cat)} />
-                        <label htmlFor={`cat-${cat}`}>{cat}</label>
+                      <div key={cat.slug} className="custom-checkbox">
+                        <input type="checkbox" id={`cat-${cat.slug}`} 
+                               checked={localCategories.includes(cat.slug)} onChange={() => toggleCategory(cat.slug)} />
+                        <label htmlFor={`cat-${cat.slug}`}>{cat.name}</label>
                       </div>
                     ))}
                   </div>

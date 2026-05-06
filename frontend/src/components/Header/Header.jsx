@@ -59,7 +59,7 @@ const Header = () => {
                         <li><Link to={ROUTES.PROGRAM}>Tất cả khóa học</Link></li>
                         {categories.map(cat => (
                           <li key={cat.id}>
-                            <Link to={`${ROUTES.PROGRAM}?category=${encodeURIComponent(cat.name)}`}>
+                            <Link to={`${ROUTES.PROGRAM}?category=${cat.slug}`}>
                               {cat.name}
                             </Link>
                           </li>

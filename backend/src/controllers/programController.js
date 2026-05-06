@@ -26,8 +26,25 @@ exports.getAllPrograms = async (req, res) => {
     }
     if (category) {
       // Support multiple categories by splitting commas
-      const categories = category.split(',').map(c => c.trim());
-      where.category = { in: categories };
+      const categoryInputs = category.split(',').map(c => c.trim());
+      
+      // Look up names for the provided slugs (or names)
+      const cats = await prisma.category.findMany({
+        where: {
+          OR: [
+            { slug: { in: categoryInputs } },
+            { name: { in: categoryInputs } }
+          ],
+          type: 'PROGRAM'
+        }
+      });
+      
+      const names = cats.map(c => c.name);
+      
+      // For backwards compatibility, if some inputs weren't slugs (or are deleted), we still query them exactly
+      const resolvedCategories = [...new Set([...names, ...categoryInputs])];
+      
+      where.category = { in: resolvedCategories };
     }
     if (isFeatured !== undefined) {
       where.isFeatured = isFeatured === 'true';
