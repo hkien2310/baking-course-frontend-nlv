@@ -6,6 +6,41 @@
   background: var(--admin-bg, #f4f6fb);
 }
 
+.admin-btn-save {
+  background: var(--admin-brand, #3f785e) !important;
+  border: 1px solid var(--admin-brand, #3f785e) !important;
+  color: #ffffff !important;
+  padding: 10px 24px !important;
+  border-radius: 6px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 6px rgba(63, 120, 94, 0.2) !important;
+}
+
+.admin-btn-save i {
+  margin-right: 0 !important; /* using gap instead */
+}
+
+.admin-btn-save:hover:not(:disabled) {
+  background: #2c5a45 !important;
+  border-color: #2c5a45 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(63, 120, 94, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.admin-btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .admin-loading-block {
   background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(249,246,240,0.96));
   border: 1px solid rgba(193,154,91,0.18);
