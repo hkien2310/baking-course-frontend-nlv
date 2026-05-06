@@ -8,6 +8,7 @@ import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shar
 import { ROUTES } from '../constants/routes';
 import { priceToDollars, dollarsToCents } from '../utils/formatters';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
+import AdminEditorLayout from '../components/Admin/Shared/AdminEditorLayout';
 import './AdminDesign.css';
 
 const AdminProgramEditor = () => {
@@ -151,24 +152,14 @@ const AdminProgramEditor = () => {
   useInitOnLoaded(loading);
 
   return (
-    <div className="admin-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      
-      {/* Top Navbar */}
-      <div className="admin-paper-header" style={{ position: 'sticky', top: 0, zIndex: 100, borderRadius: 0, padding: '15px 30px', backgroundColor: 'var(--admin-paper-bg)', borderBottom: '1px solid var(--admin-border-light)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="d-flex align-items-center">
-          <button className="admin-btn-outline mr-3" onClick={() => navigate(ROUTES.ADMIN + "#programs")} disabled={saving}>
-            <i className="fa fa-arrow-left mr-2"></i> Quay lại
-          </button>
-          <h4 style={{ margin: 0 }}>{isEditing ? 'Sửa Khóa Học' : 'Tạo Khóa Học Mới'}</h4>
-        </div>
-        <div>
-          <button type="submit" form="admin-program-form" className="admin-btn-save" disabled={saving}>
-            <i className={`fa ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-2`}></i> {saving ? 'Đang lưu...' : 'Lưu Khóa Học'}
-          </button>
-        </div>
-      </div>
-
-      <form id="admin-program-form" onSubmit={handleSave} className="container p-4 admin-editor-form" style={{ flexGrow: 1, maxWidth: '1000px' }}>
+    <AdminEditorLayout
+      title={isEditing ? 'Sửa Khóa Học' : 'Tạo Khóa Học Mới'}
+      backUrl={ROUTES.ADMIN + "#programs"}
+      saving={saving}
+      saveLabel="Lưu Khóa Học"
+      formId="admin-program-form"
+    >
+      <form id="admin-program-form" onSubmit={handleSave} className="container p-4 admin-editor-form" style={{ flexGrow: 1, maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
         
         {/* Tabs Navigation */}
         <div className="admin-tabs">
@@ -583,7 +574,7 @@ const AdminProgramEditor = () => {
       )}
 
       </form>
-    </div>
+    </AdminEditorLayout>
   );
 };
 

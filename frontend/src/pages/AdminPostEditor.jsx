@@ -7,6 +7,7 @@ import AdminImageUpload from '../components/Admin/AdminImageUpload';
 import { ROUTES } from '../constants/routes';
 import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
+import AdminEditorLayout from '../components/Admin/Shared/AdminEditorLayout';
 import './AdminDesign.css';
 
 const AdminPostEditor = () => {
@@ -83,22 +84,13 @@ const AdminPostEditor = () => {
   useInitOnLoaded(loading);
 
   return (
-    <div className="admin-layout" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      
-      {/* Top Navbar */}
-      <div className="admin-paper-header" style={{ position: 'sticky', top: 0, zIndex: 100, borderRadius: 0, padding: '15px 30px', backgroundColor: 'var(--admin-paper-bg)', borderBottom: '1px solid var(--admin-border-light)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <div className="d-flex align-items-center">
-          <button className="btn btn-dark mr-3" onClick={() => navigate(ROUTES.ADMIN + "#posts")} disabled={saving}>
-            <i className="fa fa-arrow-left"></i> Quay lại
-          </button>
-          <h4 style={{ margin: 0 }}>{isEditing ? 'Sửa Bài Viết' : 'Tạo Bài Viết Mới'}</h4>
-        </div>
-        <div>
-          <button type="submit" form="admin-post-form" className="admin-btn-save" disabled={saving}>
-            <i className={`fa ${saving ? 'fa-spinner fa-spin' : 'fa-save'} mr-2`}></i> {saving ? 'Đang lưu...' : 'Lưu Bài Viết'}
-          </button>
-        </div>
-      </div>
+    <AdminEditorLayout
+      title={isEditing ? 'Sửa Bài Viết' : 'Tạo Bài Viết Mới'}
+      backUrl={ROUTES.ADMIN + "#posts"}
+      saving={saving}
+      saveLabel="Lưu Bài Viết"
+      formId="admin-post-form"
+    >
 
       <div className="container-fluid p-4" style={{ flexGrow: 1 }}>
         {loading ? (
@@ -236,7 +228,7 @@ const AdminPostEditor = () => {
         </form>
         )}
       </div>
-    </div>
+    </AdminEditorLayout>
   );
 };
 

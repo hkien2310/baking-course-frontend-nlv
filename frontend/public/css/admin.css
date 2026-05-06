@@ -259,6 +259,8 @@ body.admin-mode, .admin-layout {
 .admin-tabs .admin-tab-btn {
   background: transparent !important;
   border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
   font-size: 16px;
   font-weight: 600;
   color: var(--admin-text-muted) !important;
@@ -393,6 +395,34 @@ body.admin-mode, .admin-layout {
   border-color: var(--admin-brand);
   color: var(--admin-brand);
   background: var(--admin-border-light);
+}
+
+.admin-btn-save {
+  background: var(--admin-brand);
+  border: 1px solid var(--admin-brand);
+  color: #ffffff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(63, 120, 94, 0.2);
+}
+
+.admin-btn-save:hover:not(:disabled) {
+  background: #2c5a45; /* Darker green */
+  border-color: #2c5a45;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(63, 120, 94, 0.3);
+}
+
+.admin-btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ---------------- MODAL OVERRIDES ---------------- */
