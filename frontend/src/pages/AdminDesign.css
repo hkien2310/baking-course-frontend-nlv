@@ -280,24 +280,28 @@
 /* Add New Item Button */
 .btn-add-array {
   width: 100%;
-  padding: 15px;
+  padding: 12px 20px;
   background: transparent;
-  border: 2px dashed #ccc;
-  color: #666;
+  border: 2px dashed var(--admin-brand, #3f785e);
+  color: var(--admin-brand, #3f785e);
+  font-size: 14px;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  background-color: rgba(63, 120, 94, 0.03);
 }
 
 .btn-add-array:hover {
-  border-color: #fc834b;
-  color: #fc834b;
-  background: rgba(252, 131, 75, 0.05);
+  border-color: var(--admin-brand, #3f785e);
+  color: #ffffff;
+  background-color: var(--admin-brand, #3f785e);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(63, 120, 94, 0.2);
 }
 
 /* Compact input row for simple arrays */
