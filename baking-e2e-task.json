@@ -1,0 +1,42 @@
+{
+  "name": "Baking Project E2E Bug Hunting",
+  "baseUrl": "http://localhost:5173",
+  "agents": [
+    {
+      "role": "The Explorer",
+      "goal": "Verify UI consistency and filtering logic on Homepage and Program list.",
+      "tasks": [
+        "Visit homepage and check if Student Work section has equal height slides and full-scale images.",
+        "Go to /program page and slide the price filter to 10,000,000. Verify UI shows '(Không giới hạn)'.",
+        "Click Apply Filter and verify the URL does NOT contain minPrice=0 or maxPrice=10000000."
+      ]
+    },
+    {
+      "role": "The Buyer",
+      "goal": "Test Checkout validation and Invoice requirements.",
+      "tasks": [
+        "Go to a program detail page and click 'Mua khóa học'.",
+        "At Checkout, select 'Xuất hóa đơn'.",
+        "Leave all invoice fields empty and click 'Trả tiền qua VNPay'.",
+        "EXPECTED: The browser should block the request and show native validation messages. No API call should be made."
+      ]
+    },
+    {
+      "role": "The Admin",
+      "goal": "Test business constraints and 'Unlimited' price logic in CMS.",
+      "tasks": [
+        "Login to Admin Dashboard.",
+        "Try to set 'Featured' for more than 3 programs. Verify it returns a 400 error.",
+        "Set a program price to 10,000,000 and save. Verify the UI shows '(Không giới hạn)' and the price in DB becomes null."
+      ]
+    },
+    {
+      "role": "Chaos Monkey",
+      "goal": "Spam and inject malformed data to find security or stability issues.",
+      "tasks": [
+        "Submit Contact form with 1000+ characters of random text.",
+        "Try to submit Student Work with a very large image URL or script tags in description."
+      ]
+    }
+  ]
+}

@@ -4,12 +4,7 @@ import ProgramCard from '../Shared/ProgramCard';
 const HomeNewCourses = ({ classes }) => {
   const carouselRef = useRef(null);
 
-  // Sort by createdAt DESC, take first 8
-  const newCourses = [...classes]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 8);
-
-  if (newCourses.length === 0) return null;
+  if (!classes || classes.length === 0) return null;
 
   return (
     <section className="ls s-pt-0 s-pb-40 s-pb-lg-100 program program-carousel animate" data-animation="fadeInUp" id="new-courses">
@@ -23,7 +18,7 @@ const HomeNewCourses = ({ classes }) => {
             </div>
             <div className="d-none d-lg-block divider-60"></div>
             <div ref={carouselRef} className="owl-carousel carousel-nav" data-responsive-lg="3" data-responsive-md="2" data-responsive-sm="2" data-responsive-xs="1" data-nav="true" data-loop="true">
-              {newCourses.map((cls) => (
+              {classes.map((cls) => (
                 <ProgramCard key={cls.id} cls={cls} />
               ))}
             </div>

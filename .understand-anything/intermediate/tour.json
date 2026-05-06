@@ -1,0 +1,65 @@
+[
+  {
+    "order": 1,
+    "title": "Tổng quan dự án Muka Baking",
+    "description": "Bắt đầu với tài liệu README.md để hiểu về mục đích của dự án, các công nghệ sử dụng và cách cài đặt môi trường phát triển cho cả Backend và Frontend.",
+    "nodeIds": ["document:README.md"]
+  },
+  {
+    "order": 2,
+    "title": "Mô hình dữ liệu & ORM",
+    "description": "Lược đồ Prisma định nghĩa cấu trúc cơ sở dữ liệu cốt lõi của hệ thống, bao gồm các model cho Người dùng, Khóa học (Program), Giảng viên (Chief) và Đơn hàng. Đây là nền tảng cho mọi tương tác dữ liệu trong ứng dụng.",
+    "nodeIds": ["schema:backend/prisma/schema.prisma"],
+    "languageLesson": "Prisma schema sử dụng ngôn ngữ khai báo để định nghĩa các quan hệ (1-n, n-n) giữa các bảng, giúp tự động tạo ra các migration SQL và client types an toàn."
+  },
+  {
+    "order": 3,
+    "title": "Khởi tạo Server Backend",
+    "description": "Tệp index.js là điểm vào của server Node.js, nơi cấu hình Express, các middleware bảo mật (CORS, JWT) và đăng ký toàn bộ các tuyến đường (routes) API của hệ thống.",
+    "nodeIds": ["file:backend/src/index.js"]
+  },
+  {
+    "order": 4,
+    "title": "Điều khiển nghiệp vụ Khóa học",
+    "description": "ProgramController xử lý logic nghiệp vụ cho tính năng quan trọng nhất: quản lý các chương trình đào tạo baking. Nó điều phối việc truy vấn dữ liệu từ DB và trả về kết quả chuẩn hóa cho Frontend.",
+    "nodeIds": ["file:backend/src/controllers/programController.js"]
+  },
+  {
+    "order": 5,
+    "title": "Cầu nối liên kết API",
+    "description": "Đây là lớp dịch vụ trung tâm ở phía Frontend, định nghĩa tất cả các hàm giao tiếp với Backend. Với chỉ số fan-in cao nhất, đây là tệp quan trọng nhất để hiểu cách dữ liệu chảy từ server vào giao diện người dùng.",
+    "nodeIds": ["file:frontend/src/services/api.js"],
+    "languageLesson": "Sử dụng Axios instance giúp cấu hình Base URL và tự động đính kèm Token xác thực vào Header của mọi yêu cầu gửi đi một cách nhất quán."
+  },
+  {
+    "order": 6,
+    "title": "Cấu trúc ứng dụng React",
+    "description": "Thành phần App.jsx quản lý định tuyến (routing) của ứng dụng bằng React Router, đồng thời bao bọc các Provider cho Đa ngôn ngữ và Cấu hình hệ thống.",
+    "nodeIds": ["file:frontend/src/App.jsx"]
+  },
+  {
+    "order": 7,
+    "title": "Trang Chi tiết & Nội dung Premium",
+    "description": "Trang này minh họa cách kết hợp dữ liệu công khai (thông tin lớp học) và dữ liệu bảo mật (bài học cho học viên đã mua). Nó cũng xử lý trạng thái đăng ký của người dùng.",
+    "nodeIds": ["file:frontend/src/pages/ProgramDetail.jsx"]
+  },
+  {
+    "order": 8,
+    "title": "Tích hợp thanh toán trực tuyến",
+    "description": "Hệ thống sử dụng cổng VNPay để xử lý thanh toán. Quy trình bao gồm tạo URL thanh toán phía server, xử lý IPN để cập nhật trạng thái đơn hàng tự động và hiển thị kết quả cho khách hàng.",
+    "nodeIds": ["file:backend/src/services/vnpayService.js", "file:backend/src/controllers/vnpayController.js"],
+    "languageLesson": "Quy trình thanh toán yêu cầu tính toàn vẹn dữ liệu cao thông qua việc tạo chữ ký bảo mật (Checksum) để đảm bảo thông tin không bị thay đổi trong quá trình truyền tin giữa các bên."
+  },
+  {
+    "order": 9,
+    "title": "Hệ thống quản trị nội dung (CMS)",
+    "description": "AdminDashboard là trung tâm điều khiển dành cho người quản lý, tích hợp các công cụ CRUD cho khóa học, bài viết và quản lý đơn hàng của học viên.",
+    "nodeIds": ["file:frontend/src/pages/AdminDashboard.jsx"]
+  },
+  {
+    "order": 10,
+    "title": "Cấu hình triển khai & Hạ tầng",
+    "description": "Cấu hình Vercel đảm bảo ứng dụng Single Page Application (SPA) hoạt động mượt mà khi triển khai, xử lý các yêu cầu điều hướng phía client về đúng trang index.html.",
+    "nodeIds": ["config:frontend/vercel.json"]
+  }
+]

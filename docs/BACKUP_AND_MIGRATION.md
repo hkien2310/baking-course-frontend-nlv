@@ -11,7 +11,14 @@ Hệ thống của bạn đang chạy phân tán để đạt hiệu suất cao 
 1.  **Dữ liệu chữ (Database):** Nằm trên **Neon**. Chứa đơn hàng, bài viết, thông tin học viên.
 2.  **Hình ảnh (Assets):** Nằm trên **Cloudinary**. Chứa ảnh khóa học, ảnh blog, ảnh minh chứng chuyển khoản.
 3.  **Bộ não xử lý (Backend):** Nằm trên **Render**.
-4.  **Giao diện (Frontend):** Nằm trên **Vercel**.
+4.  **Giao diện (Frontend):** Nằm trên **Vercel** (Được deploy từ Repo Fork).
+
+### Quản lý Mã nguồn (Source Code)
+Hiện tại hệ thống sử dụng cấu trúc 2 kho lưu trữ (Repo) để phục vụ việc deploy:
+- **Repo Gốc (Real):** `ocanhdt12-gif/baking-course-frontend` (Nơi lưu trữ chính nhưng không có quyền deploy Vercel).
+- **Repo Fork:** `hkien2310/baking-course-frontend` (Dùng để kết nối và deploy lên Vercel cá nhân).
+
+**Nguyên tắc đồng bộ:** Khi có code mới, phải push lên cả 2 repo này để đảm bảo Backend (Render) và Frontend (Vercel) đều nhận được bản cập nhật.
 
 ---
 

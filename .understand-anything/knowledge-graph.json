@@ -1,0 +1,3793 @@
+{
+  "nodes": [
+    {
+      "id": "file:backend/.env.example",
+      "type": "file",
+      "name": ".env.example",
+      "filePath": "backend/.env.example",
+      "summary": "Mẫu tệp cấu hình môi trường cho backend, định nghĩa các biến như PORT, DATABASE_URL và JWT_SECRET.",
+      "tags": [
+        "configuration",
+        "environment",
+        "template"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:backend/DOCS_PLAN.md",
+      "type": "document",
+      "name": "DOCS_PLAN.md",
+      "filePath": "backend/DOCS_PLAN.md",
+      "summary": "Kế hoạch thực hiện backend chi tiết theo từng giai đoạn, từ nền tảng đến thanh toán và hạ tầng.",
+      "tags": [
+        "documentation",
+        "planning",
+        "roadmap"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/migrateMissingImages.js",
+      "type": "file",
+      "name": "migrateMissingImages.js",
+      "filePath": "backend/migrateMissingImages.js",
+      "summary": "Script di trú để xử lý và sao chép các hình ảnh bị thiếu từ các URL bên ngoài vào thư mục lưu trữ cục bộ.",
+      "tags": [
+        "script",
+        "migration",
+        "image-processing"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/migrateMissingImages.js:processImage",
+      "type": "function",
+      "name": "processImage",
+      "filePath": "backend/migrateMissingImages.js",
+      "lineRange": [
+        13,
+        42
+      ],
+      "summary": "Xử lý một URL hình ảnh, tải về hoặc sao chép vào thư mục uploads cục bộ và trả về đường dẫn mới.",
+      "tags": [
+        "utility",
+        "image-processing",
+        "file-system"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/migratePostCategories.js",
+      "type": "file",
+      "name": "migratePostCategories.js",
+      "filePath": "backend/migratePostCategories.js",
+      "summary": "Script di trú để đồng bộ hóa và tạo các danh mục bài viết dựa trên dữ liệu bài viết hiện có.",
+      "tags": [
+        "script",
+        "migration",
+        "data-cleanup"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:backend/package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "backend/package.json",
+      "summary": "Cấu hình dự án Node.js cho backend, quản lý dependencies và các script khởi chạy.",
+      "tags": [
+        "configuration",
+        "package-manager",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql:Order",
+      "type": "table",
+      "name": "Order",
+      "filePath": "backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql",
+      "summary": "Định nghĩa bảng lưu trữ thông tin đơn hàng, bao gồm mã đơn, số tiền và trạng thái thanh toán.",
+      "tags": [
+        "database",
+        "schema",
+        "payment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql:PaymentConfig",
+      "type": "table",
+      "name": "PaymentConfig",
+      "filePath": "backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql",
+      "summary": "Định nghĩa bảng cấu hình thông tin thanh toán ngân hàng và webhook.",
+      "tags": [
+        "database",
+        "schema",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "schema:backend/prisma/schema.prisma",
+      "type": "schema",
+      "name": "schema.prisma",
+      "filePath": "backend/prisma/schema.prisma",
+      "summary": "Định nghĩa toàn bộ lược đồ dữ liệu Prisma cho ứng dụng, bao gồm các model User, Program, Chief, Post và Order.",
+      "tags": [
+        "database",
+        "orm",
+        "schema-definition"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:backend/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "backend/README.md",
+      "summary": "Tài liệu hướng dẫn chính cho backend, bao gồm công nghệ sử dụng, cấu trúc thư mục và tham chiếu API.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "overview"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/seedCategories.js",
+      "type": "file",
+      "name": "seedCategories.js",
+      "filePath": "backend/seedCategories.js",
+      "summary": "Script khởi tạo dữ liệu danh mục ban đầu cho hệ thống.",
+      "tags": [
+        "script",
+        "seeding",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/seedData.js",
+      "type": "file",
+      "name": "seedData.js",
+      "filePath": "backend/seedData.js",
+      "summary": "Script khởi tạo dữ liệu mẫu diện rộng cho đầu bếp, chương trình học và bài viết.",
+      "tags": [
+        "script",
+        "seeding",
+        "database"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/seedDataExact.js",
+      "type": "file",
+      "name": "seedDataExact.js",
+      "filePath": "backend/seedDataExact.js",
+      "summary": "Script khởi tạo dữ liệu chính xác cho các ca học, đánh giá và bài viết cụ thể.",
+      "tags": [
+        "script",
+        "seeding",
+        "database"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/seedPrograms.js",
+      "type": "file",
+      "name": "seedPrograms.js",
+      "filePath": "backend/seedPrograms.js",
+      "summary": "Script chuyên biệt để khởi tạo và cập nhật thông tin các chương trình đào tạo.",
+      "tags": [
+        "script",
+        "seeding",
+        "database"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/seedProgramTypes.js",
+      "type": "file",
+      "name": "seedProgramTypes.js",
+      "filePath": "backend/seedProgramTypes.js",
+      "summary": "Script khởi tạo các loại chương trình đào tạo và cấu hình ca học chi tiết.",
+      "tags": [
+        "script",
+        "seeding",
+        "database"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/seedUsers.js",
+      "type": "file",
+      "name": "seedUsers.js",
+      "filePath": "backend/seedUsers.js",
+      "summary": "Script khởi tạo các tài khoản người dùng quản trị và khách hàng mẫu với mật khẩu băm.",
+      "tags": [
+        "script",
+        "seeding",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/authController.js",
+      "type": "file",
+      "name": "authController.js",
+      "filePath": "backend/src/controllers/authController.js",
+      "summary": "Điều khiển logic xác thực, đăng nhập và quản lý thông tin người dùng.",
+      "tags": [
+        "api-handler",
+        "authentication",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/categoryController.js",
+      "type": "file",
+      "name": "categoryController.js",
+      "filePath": "backend/src/controllers/categoryController.js",
+      "summary": "Quản lý các thao tác CRUD cho danh mục bài viết và khóa học.",
+      "tags": [
+        "api-handler",
+        "content-management",
+        "crud"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/chiefController.js",
+      "type": "file",
+      "name": "chiefController.js",
+      "filePath": "backend/src/controllers/chiefController.js",
+      "summary": "Quản lý thông tin và hình ảnh của các đầu bếp (chiefs) trong hệ thống.",
+      "tags": [
+        "api-handler",
+        "content-management",
+        "file-upload"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/cleanupController.js",
+      "type": "file",
+      "name": "cleanupController.js",
+      "filePath": "backend/src/controllers/cleanupController.js",
+      "summary": "Điều khiển các tác vụ dọn dẹp hệ thống, tệp tin rác và tối ưu hóa dữ liệu.",
+      "tags": [
+        "api-handler",
+        "maintenance",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/contactController.js",
+      "type": "file",
+      "name": "contactController.js",
+      "filePath": "backend/src/controllers/contactController.js",
+      "summary": "Xử lý các yêu cầu liên hệ từ khách hàng và quản lý danh sách liên hệ.",
+      "tags": [
+        "api-handler",
+        "crm",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/controllers/enrollmentController.js",
+      "type": "file",
+      "name": "enrollmentController.js",
+      "filePath": "backend/src/controllers/enrollmentController.js",
+      "summary": "Quản lý việc đăng ký khóa học của người dùng và trạng thái ghi danh.",
+      "tags": [
+        "api-handler",
+        "enrollment",
+        "business-logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/orderController.js",
+      "type": "file",
+      "name": "orderController.js",
+      "filePath": "backend/src/controllers/orderController.js",
+      "summary": "Xử lý quy trình đặt hàng, tạo mã đơn hàng và quản lý trạng thái thanh toán thủ công.",
+      "tags": [
+        "api-handler",
+        "orders",
+        "payment"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/src/controllers/paymentConfigController.js",
+      "type": "file",
+      "name": "paymentConfigController.js",
+      "filePath": "backend/src/controllers/paymentConfigController.js",
+      "summary": "Quản lý cấu hình tài khoản ngân hàng và các thiết lập thanh toán của hệ thống.",
+      "tags": [
+        "api-handler",
+        "configuration",
+        "payment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/postController.js",
+      "type": "file",
+      "name": "postController.js",
+      "filePath": "backend/src/controllers/postController.js",
+      "summary": "Điều khiển logic cho tin tức và bài viết blog, bao gồm tải ảnh và tạo slug.",
+      "tags": [
+        "api-handler",
+        "blog",
+        "content-management"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/programController.js",
+      "type": "file",
+      "name": "programController.js",
+      "filePath": "backend/src/controllers/programController.js",
+      "summary": "Quản lý chi tiết các khóa học, bao gồm ca học, giá cả và nội dung đào tạo.",
+      "tags": [
+        "api-handler",
+        "education",
+        "content-management"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/src/controllers/settingController.js",
+      "type": "file",
+      "name": "settingController.js",
+      "filePath": "backend/src/controllers/settingController.js",
+      "summary": "Quản lý các thiết lập chung của website như thông tin liên hệ, mạng xã hội và cấu hình hiển thị.",
+      "tags": [
+        "api-handler",
+        "configuration",
+        "site-settings"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/statsController.js",
+      "type": "file",
+      "name": "statsController.js",
+      "filePath": "backend/src/controllers/statsController.js",
+      "summary": "Điều khiển việc thu thập và cung cấp các số liệu thống kê tổng quan về hệ thống cho dashboard quản trị.",
+      "tags": [
+        "api-handler",
+        "statistics",
+        "dashboard"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/controllers/testimonialController.js",
+      "type": "file",
+      "name": "testimonialController.js",
+      "filePath": "backend/src/controllers/testimonialController.js",
+      "summary": "Quản lý các phản hồi và đánh giá từ học viên (testimonials) để hiển thị trên website.",
+      "tags": [
+        "api-handler",
+        "content-management",
+        "testimonials"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/controllers/timetableController.js",
+      "type": "file",
+      "name": "timetableController.js",
+      "filePath": "backend/src/controllers/timetableController.js",
+      "summary": "Cung cấp thông tin về lịch học và các ca học sắp tới cho học viên.",
+      "tags": [
+        "api-handler",
+        "education",
+        "timetable"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/controllers/vnpayController.js",
+      "type": "file",
+      "name": "vnpayController.js",
+      "filePath": "backend/src/controllers/vnpayController.js",
+      "summary": "Điều khiển quy trình thanh toán qua cổng VNPay, bao gồm tạo URL thanh toán và xử lý phản hồi (IPN).",
+      "tags": [
+        "api-handler",
+        "payment",
+        "vnpay"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/controllers/webhookController.js",
+      "type": "file",
+      "name": "webhookController.js",
+      "filePath": "backend/src/controllers/webhookController.js",
+      "summary": "Xử lý các thông báo tự động (webhook) từ ngân hàng hoặc dịch vụ bên thứ ba để cập nhật trạng thái đơn hàng.",
+      "tags": [
+        "api-handler",
+        "webhook",
+        "payment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/index.js",
+      "type": "file",
+      "name": "index.js",
+      "filePath": "backend/src/index.js",
+      "summary": "Điểm khởi đầu của ứng dụng backend, cấu hình Express, kết nối cơ sở dữ liệu và đăng ký các tuyến đường (routes) API.",
+      "tags": [
+        "entry-point",
+        "server",
+        "configuration"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/middleware/authMiddleware.js",
+      "type": "file",
+      "name": "authMiddleware.js",
+      "filePath": "backend/src/middleware/authMiddleware.js",
+      "summary": "Middleware xử lý xác thực JWT và kiểm tra quyền truy cập (RBAC) cho các endpoint được bảo vệ.",
+      "tags": [
+        "middleware",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/authRoutes.js",
+      "type": "file",
+      "name": "authRoutes.js",
+      "filePath": "backend/src/routes/authRoutes.js",
+      "summary": "Định nghĩa các endpoint API liên quan đến xác thực và thông tin người dùng.",
+      "tags": [
+        "api-route",
+        "authentication",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/categoryRoutes.js",
+      "type": "file",
+      "name": "categoryRoutes.js",
+      "filePath": "backend/src/routes/categoryRoutes.js",
+      "summary": "Định nghĩa các endpoint API quản lý danh mục.",
+      "tags": [
+        "api-route",
+        "content-management",
+        "category"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/chiefRoutes.js",
+      "type": "file",
+      "name": "chiefRoutes.js",
+      "filePath": "backend/src/routes/chiefRoutes.js",
+      "summary": "Định nghĩa các endpoint API quản lý thông tin đầu bếp.",
+      "tags": [
+        "api-route",
+        "content-management",
+        "chief"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/contactRoutes.js",
+      "type": "file",
+      "name": "contactRoutes.js",
+      "filePath": "backend/src/routes/contactRoutes.js",
+      "summary": "Định nghĩa các endpoint API xử lý tin nhắn liên hệ.",
+      "tags": [
+        "api-route",
+        "crm",
+        "contact"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/enrollmentRoutes.js",
+      "type": "file",
+      "name": "enrollmentRoutes.js",
+      "filePath": "backend/src/routes/enrollmentRoutes.js",
+      "summary": "Định nghĩa các endpoint API quản lý ghi danh khóa học.",
+      "tags": [
+        "api-route",
+        "education",
+        "enrollment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/orderRoutes.js",
+      "type": "file",
+      "name": "orderRoutes.js",
+      "filePath": "backend/src/routes/orderRoutes.js",
+      "summary": "Định nghĩa các endpoint API quản lý đơn hàng.",
+      "tags": [
+        "api-route",
+        "payment",
+        "order"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/paymentConfigRoutes.js",
+      "type": "file",
+      "name": "paymentConfigRoutes.js",
+      "filePath": "backend/src/routes/paymentConfigRoutes.js",
+      "summary": "Định nghĩa các endpoint API cấu hình thanh toán.",
+      "tags": [
+        "api-route",
+        "configuration",
+        "payment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/postRoutes.js",
+      "type": "file",
+      "name": "postRoutes.js",
+      "filePath": "backend/src/routes/postRoutes.js",
+      "summary": "Định nghĩa các endpoint API quản lý bài viết và blog.",
+      "tags": [
+        "api-route",
+        "content-management",
+        "blog"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/programRoutes.js",
+      "type": "file",
+      "name": "programRoutes.js",
+      "filePath": "backend/src/routes/programRoutes.js",
+      "summary": "Định nghĩa các endpoint API quản lý chương trình học.",
+      "tags": [
+        "api-route",
+        "education",
+        "program"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/settingRoutes.js",
+      "type": "file",
+      "name": "settingRoutes.js",
+      "filePath": "backend/src/routes/settingRoutes.js",
+      "summary": "Định nghĩa các endpoint API cấu hình website.",
+      "tags": [
+        "api-route",
+        "configuration",
+        "site-settings"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/statsRoutes.js",
+      "type": "file",
+      "name": "statsRoutes.js",
+      "filePath": "backend/src/routes/statsRoutes.js",
+      "summary": "Định nghĩa các endpoint API thống kê hệ thống.",
+      "tags": [
+        "api-route",
+        "statistics",
+        "dashboard"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/testimonialRoutes.js",
+      "type": "file",
+      "name": "testimonialRoutes.js",
+      "filePath": "backend/src/routes/testimonialRoutes.js",
+      "summary": "Định nghĩa các endpoint API quản lý đánh giá khách hàng.",
+      "tags": [
+        "api-route",
+        "content-management",
+        "testimonials"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/timetableRoutes.js",
+      "type": "file",
+      "name": "timetableRoutes.js",
+      "filePath": "backend/src/routes/timetableRoutes.js",
+      "summary": "Định nghĩa các endpoint API cung cấp lịch học.",
+      "tags": [
+        "api-route",
+        "education",
+        "timetable"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/uploadRoutes.js",
+      "type": "file",
+      "name": "uploadRoutes.js",
+      "filePath": "backend/src/routes/uploadRoutes.js",
+      "summary": "Định nghĩa endpoint xử lý tải tệp tin lên máy chủ.",
+      "tags": [
+        "api-route",
+        "file-upload",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/vnpayRoutes.js",
+      "type": "file",
+      "name": "vnpayRoutes.js",
+      "filePath": "backend/src/routes/vnpayRoutes.js",
+      "summary": "Định nghĩa các endpoint API tích hợp thanh toán VNPay.",
+      "tags": [
+        "api-route",
+        "payment",
+        "vnpay"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/routes/webhookRoutes.js",
+      "type": "file",
+      "name": "webhookRoutes.js",
+      "filePath": "backend/src/routes/webhookRoutes.js",
+      "summary": "Định nghĩa endpoint xử lý webhook thanh toán.",
+      "tags": [
+        "api-route",
+        "webhook",
+        "payment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/seed.js",
+      "type": "file",
+      "name": "seed.js",
+      "filePath": "backend/src/seed.js",
+      "summary": "Script khởi tạo dữ liệu chính cho hệ thống, bao gồm chương trình học, bài viết và đánh giá.",
+      "tags": [
+        "script",
+        "seeding",
+        "database"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/src/seedAdmin.js",
+      "type": "file",
+      "name": "seedAdmin.js",
+      "filePath": "backend/src/seedAdmin.js",
+      "summary": "Script chuyên biệt để tạo tài khoản quản trị viên mặc định.",
+      "tags": [
+        "script",
+        "seeding",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/services/enrollmentService.js",
+      "type": "file",
+      "name": "enrollmentService.js",
+      "filePath": "backend/src/services/enrollmentService.js",
+      "summary": "Dịch vụ xử lý nghiệp vụ ghi danh khóa học, tạo bản ghi enrollment sau khi thanh toán thành công.",
+      "tags": [
+        "service",
+        "enrollment",
+        "business-logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/src/services/vnpayService.js",
+      "type": "file",
+      "name": "vnpayService.js",
+      "filePath": "backend/src/services/vnpayService.js",
+      "summary": "Dịch vụ tích hợp sâu với VNPay, xử lý tạo giao dịch và xác thực kết quả thanh toán từ cổng VNPay.",
+      "tags": [
+        "service",
+        "payment",
+        "vnpay"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/src/utils/fileCleanup.js",
+      "type": "file",
+      "name": "fileCleanup.js",
+      "filePath": "backend/src/utils/fileCleanup.js",
+      "summary": "Tiện ích xử lý xóa các tệp tin đã tải lên khi dữ liệu liên quan bị xóa hoặc cập nhật.",
+      "tags": [
+        "utility",
+        "file-system",
+        "maintenance"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/utils/slugify.js",
+      "type": "file",
+      "name": "slugify.js",
+      "filePath": "backend/src/utils/slugify.js",
+      "summary": "Tiện ích chuyển đổi chuỗi tiếng Việt có dấu thành slug không dấu dùng cho URL.",
+      "tags": [
+        "utility",
+        "string-processing",
+        "url"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/src/utils/vnpay.js",
+      "type": "file",
+      "name": "vnpay.js",
+      "filePath": "backend/src/utils/vnpay.js",
+      "summary": "Các hàm bổ trợ kỹ thuật cho VNPay như sắp xếp tham số, tạo chữ ký bảo mật và định dạng ngày tháng.",
+      "tags": [
+        "utility",
+        "security",
+        "vnpay"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/test-db.js",
+      "type": "file",
+      "name": "test-db.js",
+      "filePath": "backend/test-db.js",
+      "summary": "Script đơn giản để kiểm tra kết nối cơ sở dữ liệu và truy vấn thử dữ liệu bài viết.",
+      "tags": [
+        "test",
+        "database",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/.env.example",
+      "type": "file",
+      "name": ".env.example",
+      "filePath": "frontend/.env.example",
+      "summary": "Mẫu tệp cấu hình môi trường cho frontend, định nghĩa VITE_API_BASE_URL.",
+      "tags": [
+        "configuration",
+        "environment",
+        "template"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/eslint.config.js",
+      "type": "file",
+      "name": "eslint.config.js",
+      "filePath": "frontend/eslint.config.js",
+      "summary": "Cấu hình linter ESLint cho project frontend để đảm bảo chất lượng và định dạng mã nguồn.",
+      "tags": [
+        "configuration",
+        "linter",
+        "development"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "frontend/index.html",
+      "summary": "Tệp HTML chính của ứng dụng React SPA, nơi nhúng các tài nguyên CSS và JS.",
+      "tags": [
+        "entry-point",
+        "markup",
+        "html"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:frontend/package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "frontend/package.json",
+      "summary": "Cấu hình dự án React/Vite cho frontend, quản lý dependencies và scripts.",
+      "tags": [
+        "configuration",
+        "package-manager",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/public/css/main.css",
+      "type": "file",
+      "name": "main.css",
+      "filePath": "frontend/public/css/main.css",
+      "summary": "Tệp CSS chính chứa toàn bộ phong cách giao diện của website công cộng.",
+      "tags": [
+        "markup",
+        "styling",
+        "css"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:frontend/public/js/main.js",
+      "type": "file",
+      "name": "main.js",
+      "filePath": "frontend/public/js/main.js",
+      "summary": "Script phía client xử lý các hiệu ứng giao diện và tương tác DOM thuần túy.",
+      "tags": [
+        "script",
+        "frontend",
+        "interaction"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:frontend/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "frontend/README.md",
+      "summary": "Tài liệu hướng dẫn phát triển frontend, các lệnh khởi chạy và cấu hình.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "overview"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/App.jsx",
+      "type": "file",
+      "name": "App.jsx",
+      "filePath": "frontend/src/App.jsx",
+      "summary": "Thành phần gốc của ứng dụng React, định nghĩa định tuyến (routing) và các provider ngữ cảnh.",
+      "tags": [
+        "component",
+        "entry-point",
+        "routing"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/About/AboutHistory.jsx",
+      "type": "file",
+      "name": "AboutHistory.jsx",
+      "filePath": "frontend/src/components/About/AboutHistory.jsx",
+      "summary": "Thành phần hiển thị lịch sử hình thành và phát triển của trung tâm.",
+      "tags": [
+        "component",
+        "ui-element",
+        "about"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminCategories.jsx",
+      "type": "file",
+      "name": "AdminCategories.jsx",
+      "filePath": "frontend/src/components/Admin/AdminCategories.jsx",
+      "summary": "Trang quản trị danh mục, cho phép thêm, sửa, xóa các danh mục trong hệ thống.",
+      "tags": [
+        "component",
+        "admin-ui",
+        "crud"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminChiefs.jsx",
+      "type": "file",
+      "name": "AdminChiefs.jsx",
+      "filePath": "frontend/src/components/Admin/AdminChiefs.jsx",
+      "summary": "Trang quản trị đầu bếp, quản lý thông tin cá nhân và hình ảnh của các đầu bếp.",
+      "tags": [
+        "component",
+        "admin-ui",
+        "crud"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminContacts.jsx",
+      "type": "file",
+      "name": "AdminContacts.jsx",
+      "filePath": "frontend/src/components/Admin/AdminContacts.jsx",
+      "summary": "Component quản lý danh sách tin nhắn liên hệ trong trang quản trị.",
+      "tags": [
+        "frontend",
+        "admin",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminContacts.jsx:AdminContacts",
+      "type": "function",
+      "name": "AdminContacts",
+      "summary": "React functional component hiển thị và quản lý các tin nhắn từ khách hàng.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminEnrollments.jsx",
+      "type": "file",
+      "name": "AdminEnrollments.jsx",
+      "filePath": "frontend/src/components/Admin/AdminEnrollments.jsx",
+      "summary": "Component quản lý danh sách đăng ký khóa học của học viên.",
+      "tags": [
+        "frontend",
+        "admin",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminEnrollments.jsx:AdminEnrollments",
+      "type": "function",
+      "name": "AdminEnrollments",
+      "summary": "React functional component để phê duyệt hoặc xóa các bản ghi danh.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminImageUpload.jsx",
+      "type": "file",
+      "name": "AdminImageUpload.jsx",
+      "filePath": "frontend/src/components/Admin/AdminImageUpload.jsx",
+      "summary": "Component xử lý tải ảnh lên cho các mục trong Admin.",
+      "tags": [
+        "frontend",
+        "admin",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminImageUpload.jsx:AdminImageUpload",
+      "type": "function",
+      "name": "AdminImageUpload",
+      "summary": "Component cho phép kéo thả hoặc chọn tệp để tải ảnh lên server.",
+      "tags": [
+        "react",
+        "component",
+        "upload"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminLoadingBlock.jsx",
+      "type": "file",
+      "name": "AdminLoadingBlock.jsx",
+      "filePath": "frontend/src/components/Admin/AdminLoadingBlock.jsx",
+      "summary": "Component hiển thị trạng thái đang tải (shimmer effect) cho các bảng trong Admin.",
+      "tags": [
+        "frontend",
+        "ui",
+        "shimmer"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminLoadingBlock.jsx:AdminLoadingBlock",
+      "type": "function",
+      "name": "AdminLoadingBlock",
+      "summary": "Skeleton loading placeholder cho các khối dữ liệu Admin.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminModal.jsx",
+      "type": "file",
+      "name": "AdminModal.jsx",
+      "filePath": "frontend/src/components/Admin/AdminModal.jsx",
+      "summary": "Component Modal cơ bản dùng trong giao diện quản trị.",
+      "tags": [
+        "frontend",
+        "ui",
+        "modal"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminModal.jsx:AdminModal",
+      "type": "function",
+      "name": "AdminModal",
+      "summary": "Wrapper component cho các cửa sổ pop-up trong Admin.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminOrders.jsx",
+      "type": "file",
+      "name": "AdminOrders.jsx",
+      "filePath": "frontend/src/components/Admin/AdminOrders.jsx",
+      "summary": "Component quản lý đơn hàng và thanh toán.",
+      "tags": [
+        "frontend",
+        "admin",
+        "payment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminOrders.jsx:AdminOrders",
+      "type": "function",
+      "name": "AdminOrders",
+      "summary": "Component xử lý duyệt/từ chối đơn hàng và xem chi tiết thanh toán.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminOverviewLoading.jsx",
+      "type": "file",
+      "name": "AdminOverviewLoading.jsx",
+      "filePath": "frontend/src/components/Admin/AdminOverviewLoading.jsx",
+      "summary": "Trạng thái tải cho trang tổng quan Admin.",
+      "tags": [
+        "frontend",
+        "ui",
+        "loading"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminOverviewLoading.jsx:AdminOverviewLoading",
+      "type": "function",
+      "name": "AdminOverviewLoading",
+      "summary": "Hiển thị các khối shimmer cho dashboard.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminPageShell.jsx",
+      "type": "file",
+      "name": "AdminPageShell.jsx",
+      "filePath": "frontend/src/components/Admin/AdminPageShell.jsx",
+      "summary": "Khung bao quát (Shell) cho các trang trong Admin.",
+      "tags": [
+        "frontend",
+        "layout",
+        "admin"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminPageShell.jsx:AdminPageShell",
+      "type": "function",
+      "name": "AdminPageShell",
+      "summary": "Cung cấp cấu trúc header và nội dung chuẩn cho mỗi trang Admin.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminPosts.jsx",
+      "type": "file",
+      "name": "AdminPosts.jsx",
+      "filePath": "frontend/src/components/Admin/AdminPosts.jsx",
+      "summary": "Component danh sách bài viết/công thức trong Admin.",
+      "tags": [
+        "frontend",
+        "admin",
+        "cms"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminPosts.jsx:AdminPosts",
+      "type": "function",
+      "name": "AdminPosts",
+      "summary": "Hiển thị bảng danh sách bài viết với các thao tác sửa/xóa.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminPrograms.jsx",
+      "type": "file",
+      "name": "AdminPrograms.jsx",
+      "filePath": "frontend/src/components/Admin/AdminPrograms.jsx",
+      "summary": "Component quản lý danh sách khóa học.",
+      "tags": [
+        "frontend",
+        "admin",
+        "course"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminPrograms.jsx:AdminPrograms",
+      "type": "function",
+      "name": "AdminPrograms",
+      "summary": "Hiển thị và quản lý các chương trình đào tạo.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminRouteLoading.jsx",
+      "type": "file",
+      "name": "AdminRouteLoading.jsx",
+      "filePath": "frontend/src/components/Admin/AdminRouteLoading.jsx",
+      "summary": "Skeleton cho toàn bộ layout Admin khi chuyển route.",
+      "tags": [
+        "frontend",
+        "ui",
+        "loading"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminRouteLoading.jsx:AdminRouteLoading",
+      "type": "function",
+      "name": "AdminRouteLoading",
+      "summary": "Bao gồm cả sidebar và content area skeleton.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminSliders.jsx",
+      "type": "file",
+      "name": "AdminSliders.jsx",
+      "filePath": "frontend/src/components/Admin/AdminSliders.jsx",
+      "summary": "Quản lý các khóa học hiển thị trên slider trang chủ.",
+      "tags": [
+        "frontend",
+        "admin",
+        "ui-config"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminSliders.jsx:AdminSliders",
+      "type": "function",
+      "name": "AdminSliders",
+      "summary": "Cho phép chọn tối đa 3 khóa học để làm nổi bật trên slider.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminTable.jsx",
+      "type": "file",
+      "name": "AdminTable.jsx",
+      "filePath": "frontend/src/components/Admin/AdminTable.jsx",
+      "summary": "Component bảng dữ liệu chuẩn hóa cho trang Admin.",
+      "tags": [
+        "frontend",
+        "ui",
+        "table"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminTable.jsx:AdminTable",
+      "type": "function",
+      "name": "AdminTable",
+      "summary": "Hỗ trợ phân trang, hành động sửa/xóa và trạng thái đang tải.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/AdminTestimonials.jsx",
+      "type": "file",
+      "name": "AdminTestimonials.jsx",
+      "filePath": "frontend/src/components/Admin/AdminTestimonials.jsx",
+      "summary": "Quản lý các đánh giá từ học viên.",
+      "tags": [
+        "frontend",
+        "admin",
+        "feedback"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/AdminTestimonials.jsx:AdminTestimonials",
+      "type": "function",
+      "name": "AdminTestimonials",
+      "summary": "CRUD cho các lời chứng thực (testimonials).",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/Shared/AdminButton.jsx",
+      "type": "file",
+      "name": "AdminButton.jsx",
+      "filePath": "frontend/src/components/Admin/Shared/AdminButton.jsx",
+      "summary": "Component nút bấm chuẩn trong Admin.",
+      "tags": [
+        "frontend",
+        "ui",
+        "shared"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/Shared/AdminButton.jsx:AdminButton",
+      "type": "function",
+      "name": "AdminButton",
+      "summary": "Nút bấm hỗ trợ các biến thể màu sắc, icon và trạng thái loading.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/Shared/AdminEditorLayout.jsx",
+      "type": "file",
+      "name": "AdminEditorLayout.jsx",
+      "filePath": "frontend/src/components/Admin/Shared/AdminEditorLayout.jsx",
+      "summary": "Layout chuẩn cho các trang chỉnh sửa (Editor) trong Admin.",
+      "tags": [
+        "frontend",
+        "layout",
+        "admin"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/Shared/AdminEditorLayout.jsx:AdminEditorLayout",
+      "type": "function",
+      "name": "AdminEditorLayout",
+      "summary": "Cung cấp toolbar phía trên với nút quay lại và lưu.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/Shared/AdminFormControls.jsx",
+      "type": "file",
+      "name": "AdminFormControls.jsx",
+      "filePath": "frontend/src/components/Admin/Shared/AdminFormControls.jsx",
+      "summary": "Tập hợp các input field chuẩn cho form Admin.",
+      "tags": [
+        "frontend",
+        "ui",
+        "form"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/Shared/AdminFormControls.jsx:AdminInput",
+      "type": "function",
+      "name": "AdminInput",
+      "summary": "Text input component với nhãn và thông báo lỗi.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Admin/usePendingAction.js",
+      "type": "file",
+      "name": "usePendingAction.js",
+      "filePath": "frontend/src/components/Admin/usePendingAction.js",
+      "summary": "Custom hook để quản lý trạng thái xử lý (loading) của các hành động Admin.",
+      "tags": [
+        "frontend",
+        "hook",
+        "logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Admin/usePendingAction.js:usePendingAction",
+      "type": "function",
+      "name": "usePendingAction",
+      "summary": "Hook trả về isPending, withPending để theo dõi các async actions.",
+      "tags": [
+        "react",
+        "hook"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Auth/ProtectedRoute.jsx",
+      "type": "file",
+      "name": "ProtectedRoute.jsx",
+      "filePath": "frontend/src/components/Auth/ProtectedRoute.jsx",
+      "summary": "Component bảo vệ các route yêu cầu đăng nhập hoặc quyền Admin.",
+      "tags": [
+        "frontend",
+        "auth",
+        "security"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Auth/ProtectedRoute.jsx:ProtectedRoute",
+      "type": "function",
+      "name": "ProtectedRoute",
+      "summary": "Kiểm tra token và role của người dùng trước khi cho phép truy cập route.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Blog/BlogCard.jsx",
+      "type": "file",
+      "name": "BlogCard.jsx",
+      "filePath": "frontend/src/components/Blog/BlogCard.jsx",
+      "summary": "Thẻ hiển thị tóm tắt bài viết trên danh sách blog.",
+      "tags": [
+        "frontend",
+        "ui",
+        "blog"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Blog/BlogCard.jsx:BlogCard",
+      "type": "function",
+      "name": "BlogCard",
+      "summary": "Hiển thị ảnh thumbnail, tiêu đề và mô tả ngắn của bài viết.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Blog/BlogSidebar.jsx",
+      "type": "file",
+      "name": "BlogSidebar.jsx",
+      "filePath": "frontend/src/components/Blog/BlogSidebar.jsx",
+      "summary": "Thanh bên cho trang Blog.",
+      "tags": [
+        "frontend",
+        "ui",
+        "blog"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Blog/BlogSidebar.jsx:BlogSidebar",
+      "type": "function",
+      "name": "BlogSidebar",
+      "summary": "Hiển thị các mạng xã hội và danh mục bài viết.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Contact/ContactForm.jsx",
+      "type": "file",
+      "name": "ContactForm.jsx",
+      "filePath": "frontend/src/components/Contact/ContactForm.jsx",
+      "summary": "Form liên hệ cho khách hàng.",
+      "tags": [
+        "frontend",
+        "ui",
+        "form"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Contact/ContactForm.jsx:ContactForm",
+      "type": "function",
+      "name": "ContactForm",
+      "summary": "Xử lý gửi tin nhắn liên hệ từ người dùng đến server.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Contact/ContactInfo.jsx",
+      "type": "file",
+      "name": "ContactInfo.jsx",
+      "filePath": "frontend/src/components/Contact/ContactInfo.jsx",
+      "summary": "Hiển thị thông tin liên hệ của trung tâm.",
+      "tags": [
+        "frontend",
+        "ui",
+        "info"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Contact/ContactInfo.jsx:ContactInfo",
+      "type": "function",
+      "name": "ContactInfo",
+      "summary": "Hiển thị địa chỉ, SĐT, email và mạng xã hội.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Footer/Footer.jsx",
+      "type": "file",
+      "name": "Footer.jsx",
+      "filePath": "frontend/src/components/Footer/Footer.jsx",
+      "summary": "Component chân trang của website.",
+      "tags": [
+        "frontend",
+        "layout",
+        "global"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Footer/Footer.jsx:Footer",
+      "type": "function",
+      "name": "Footer",
+      "summary": "Hiển thị thông tin giới thiệu, bài viết mới nhất và form đăng ký newsletter.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Header/Header.jsx",
+      "type": "file",
+      "name": "Header.jsx",
+      "filePath": "frontend/src/components/Header/Header.jsx",
+      "summary": "Component đầu trang của website.",
+      "tags": [
+        "frontend",
+        "layout",
+        "global"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Header/Header.jsx:Header",
+      "type": "function",
+      "name": "Header",
+      "summary": "Chứa logo, menu điều hướng và nút đăng ký/đăng nhập.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeAbout.jsx",
+      "type": "file",
+      "name": "HomeAbout.jsx",
+      "filePath": "frontend/src/components/Home/HomeAbout.jsx",
+      "summary": "Phần giới thiệu về YUM Saigon trên trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeAbout.jsx:HomeAbout",
+      "type": "function",
+      "name": "HomeAbout",
+      "summary": "Hiển thị video giới thiệu và các thành tựu của trung tâm.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeBlog.jsx",
+      "type": "file",
+      "name": "HomeBlog.jsx",
+      "filePath": "frontend/src/components/Home/HomeBlog.jsx",
+      "summary": "Phần hiển thị các bài viết mới nhất trên trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "blog"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeBlog.jsx:HomeBlog",
+      "type": "function",
+      "name": "HomeBlog",
+      "summary": "Slider hiển thị bài viết kèm theo bộ lọc danh mục.",
+      "tags": [
+        "react",
+        "component",
+        "carousel"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeChiefs.jsx",
+      "type": "file",
+      "name": "HomeChiefs.jsx",
+      "filePath": "frontend/src/components/Home/HomeChiefs.jsx",
+      "summary": "Phần giới thiệu đội ngũ giảng viên trên trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "chiefs"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeChiefs.jsx:HomeChiefs",
+      "type": "function",
+      "name": "HomeChiefs",
+      "summary": "Slider hiển thị thông tin các đầu bếp/giảng viên.",
+      "tags": [
+        "react",
+        "component",
+        "carousel"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeClasses.jsx",
+      "type": "file",
+      "name": "HomeClasses.jsx",
+      "filePath": "frontend/src/components/Home/HomeClasses.jsx",
+      "summary": "Phần hiển thị các lớp học nổi bật trên trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "classes"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeClasses.jsx:HomeClasses",
+      "type": "function",
+      "name": "HomeClasses",
+      "summary": "Slider hiển thị danh sách các khóa học nổi bật.",
+      "tags": [
+        "react",
+        "component",
+        "carousel"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeContacts.jsx",
+      "type": "file",
+      "name": "HomeContacts.jsx",
+      "filePath": "frontend/src/components/Home/HomeContacts.jsx",
+      "summary": "Form đăng ký tư vấn nhanh trên trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "form"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeContacts.jsx:HomeContacts",
+      "type": "function",
+      "name": "HomeContacts",
+      "summary": "Xử lý đăng ký nhận tư vấn từ người dùng.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeFaq.jsx",
+      "type": "file",
+      "name": "HomeFaq.jsx",
+      "filePath": "frontend/src/components/Home/HomeFaq.jsx",
+      "summary": "Phần câu hỏi thường gặp và bản đồ vị trí trên trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "faq"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeFaq.jsx:HomeFaq",
+      "type": "function",
+      "name": "HomeFaq",
+      "summary": "Hiển thị Accordion FAQ và nhúng Google Maps.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeNewCourses.jsx",
+      "type": "file",
+      "name": "HomeNewCourses.jsx",
+      "filePath": "frontend/src/components/Home/HomeNewCourses.jsx",
+      "summary": "Phần hiển thị các khóa học mới nhất.",
+      "tags": [
+        "frontend",
+        "home",
+        "courses"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeNewCourses.jsx:HomeNewCourses",
+      "type": "function",
+      "name": "HomeNewCourses",
+      "summary": "Hiển thị 8 khóa học mới nhất được sắp xếp theo thời gian.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeSlider.jsx",
+      "type": "file",
+      "name": "HomeSlider.jsx",
+      "filePath": "frontend/src/components/Home/HomeSlider.jsx",
+      "summary": "Slider chính (Flexslider) ở đầu trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "slider"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeSlider.jsx:HomeSlider",
+      "type": "function",
+      "name": "HomeSlider",
+      "summary": "Hiển thị các khóa học sắp tới kèm đồng hồ đếm ngược.",
+      "tags": [
+        "react",
+        "component",
+        "slider"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Home/HomeTimetables.jsx",
+      "type": "file",
+      "name": "HomeTimetables.jsx",
+      "filePath": "frontend/src/components/Home/HomeTimetables.jsx",
+      "summary": "Lịch học hàng tuần trên trang chủ.",
+      "tags": [
+        "frontend",
+        "home",
+        "timetable"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Home/HomeTimetables.jsx:HomeTimetables",
+      "type": "function",
+      "name": "HomeTimetables",
+      "summary": "Hiển thị lịch học theo các thứ trong tuần.",
+      "tags": [
+        "react",
+        "component",
+        "tabs"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/Button.jsx",
+      "type": "file",
+      "name": "Button.jsx",
+      "filePath": "frontend/src/components/Shared/Button.jsx",
+      "summary": "Component nút bấm dùng chung cho toàn bộ frontend.",
+      "tags": [
+        "frontend",
+        "shared",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Shared/Button.jsx:Button",
+      "type": "function",
+      "name": "Button",
+      "summary": "Nút bấm hỗ trợ Link (react-router), anchor hoặc button thông thường.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/Input.jsx",
+      "type": "file",
+      "name": "Input.jsx",
+      "filePath": "frontend/src/components/Shared/Input.jsx",
+      "summary": "Component input field dùng chung cho toàn bộ frontend.",
+      "tags": [
+        "frontend",
+        "shared",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Shared/Input.jsx:Input",
+      "type": "function",
+      "name": "Input",
+      "summary": "Input hỗ trợ icon, label và các thuộc tính form chuẩn.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/PageLoading.jsx",
+      "type": "file",
+      "name": "PageLoading.jsx",
+      "filePath": "frontend/src/components/Shared/PageLoading.jsx",
+      "summary": "Trạng thái tải cho toàn bộ trang web.",
+      "tags": [
+        "frontend",
+        "shared",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/PageTitle.jsx",
+      "type": "file",
+      "name": "PageTitle.jsx",
+      "filePath": "frontend/src/components/Shared/PageTitle.jsx",
+      "summary": "Phần tiêu đề trang kèm breadcrumbs.",
+      "tags": [
+        "frontend",
+        "shared",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/Pagination.jsx",
+      "type": "file",
+      "name": "Pagination.jsx",
+      "filePath": "frontend/src/components/Shared/Pagination.jsx",
+      "summary": "Component phân trang cho danh sách.",
+      "tags": [
+        "frontend",
+        "shared",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/ProgramCard.jsx",
+      "type": "file",
+      "name": "ProgramCard.jsx",
+      "filePath": "frontend/src/components/Shared/ProgramCard.jsx",
+      "summary": "Thẻ hiển thị thông tin khóa học.",
+      "tags": [
+        "frontend",
+        "shared",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/components/Shared/ProgramCard.jsx:ProgramCard",
+      "type": "function",
+      "name": "ProgramCard",
+      "summary": "Hiển thị giá, giảm giá, số lượng học viên và nút mua.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/ScrollToTop.jsx",
+      "type": "file",
+      "name": "ScrollToTop.jsx",
+      "filePath": "frontend/src/components/Shared/ScrollToTop.jsx",
+      "summary": "Tự động cuộn lên đầu trang khi chuyển route.",
+      "tags": [
+        "frontend",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/SocialIconLink.jsx",
+      "type": "file",
+      "name": "SocialIconLink.jsx",
+      "filePath": "frontend/src/components/Shared/SocialIconLink.jsx",
+      "summary": "Liên kết mạng xã hội với icon tương ứng.",
+      "tags": [
+        "frontend",
+        "shared",
+        "ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/TestimonialsSlider.jsx",
+      "type": "file",
+      "name": "TestimonialsSlider.jsx",
+      "filePath": "frontend/src/components/Shared/TestimonialsSlider.jsx",
+      "summary": "Slider hiển thị sản phẩm và đánh giá của học viên.",
+      "tags": [
+        "frontend",
+        "shared",
+        "carousel"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/components/Shared/TikTokIcon.jsx",
+      "type": "file",
+      "name": "TikTokIcon.jsx",
+      "filePath": "frontend/src/components/Shared/TikTokIcon.jsx",
+      "summary": "Icon SVG cho TikTok.",
+      "tags": [
+        "frontend",
+        "ui",
+        "icon"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/constants/routes.js",
+      "type": "file",
+      "name": "routes.js",
+      "filePath": "frontend/src/constants/routes.js",
+      "summary": "Định nghĩa tất cả các đường dẫn (routes) của ứng dụng.",
+      "tags": [
+        "frontend",
+        "config",
+        "routes"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/context/SiteConfigContext.jsx",
+      "type": "file",
+      "name": "SiteConfigContext.jsx",
+      "filePath": "frontend/src/context/SiteConfigContext.jsx",
+      "summary": "Context quản lý cấu hình chung của website (tên, logo, liên hệ).",
+      "tags": [
+        "frontend",
+        "context",
+        "state"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:frontend/src/context/SiteConfigContext.jsx:SiteConfigProvider",
+      "type": "service",
+      "name": "SiteConfigProvider",
+      "summary": "Cung cấp siteConfig cho toàn bộ ứng dụng.",
+      "tags": [
+        "react",
+        "provider"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/hooks/useFormValidation.js",
+      "type": "file",
+      "name": "useFormValidation.js",
+      "filePath": "frontend/src/hooks/useFormValidation.js",
+      "summary": "Hook xử lý validate dữ liệu form.",
+      "tags": [
+        "frontend",
+        "hook",
+        "logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/hooks/useFormValidation.js:useFormValidation",
+      "type": "function",
+      "name": "useFormValidation",
+      "summary": "Hỗ trợ validate email, số điện thoại, URL và độ dài ký tự.",
+      "tags": [
+        "react",
+        "hook"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/hooks/useInitOnLoaded.js",
+      "type": "file",
+      "name": "useInitOnLoaded.js",
+      "filePath": "frontend/src/hooks/useInitOnLoaded.js",
+      "summary": "Hook trigger các script legacy sau khi trang tải xong.",
+      "tags": [
+        "frontend",
+        "hook",
+        "legacy-support"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/hooks/useTemplateRuntime.js",
+      "type": "file",
+      "name": "useTemplateRuntime.js",
+      "filePath": "frontend/src/hooks/useTemplateRuntime.js",
+      "summary": "Quản lý việc khởi tạo các hiệu ứng và script của template.",
+      "tags": [
+        "frontend",
+        "hook",
+        "ui-logic"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/hooks/useTemplateRuntime.js:useTemplateRuntime",
+      "type": "function",
+      "name": "useTemplateRuntime",
+      "summary": "Khởi tạo header affix và template animations dựa trên route.",
+      "tags": [
+        "react",
+        "hook"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/i18n/en.json",
+      "type": "file",
+      "name": "en.json",
+      "filePath": "frontend/src/i18n/en.json",
+      "summary": "Tệp dịch thuật tiếng Anh.",
+      "tags": [
+        "frontend",
+        "i18n",
+        "data"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/i18n/LanguageContext.jsx",
+      "type": "file",
+      "name": "LanguageContext.jsx",
+      "filePath": "frontend/src/i18n/LanguageContext.jsx",
+      "summary": "Context quản lý đa ngôn ngữ (i18n) cho ứng dụng.",
+      "tags": [
+        "frontend",
+        "i18n",
+        "state"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:frontend/src/i18n/LanguageContext.jsx:LanguageProvider",
+      "type": "service",
+      "name": "LanguageProvider",
+      "summary": "Cung cấp chức năng dịch (t) và chuyển đổi ngôn ngữ (vi/en).",
+      "tags": [
+        "react",
+        "provider"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/i18n/vi.json",
+      "type": "file",
+      "name": "vi.json",
+      "filePath": "frontend/src/i18n/vi.json",
+      "summary": "Tệp dịch thuật tiếng Việt.",
+      "tags": [
+        "frontend",
+        "i18n",
+        "data"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/layouts/AdminLayout.jsx",
+      "type": "file",
+      "name": "AdminLayout.jsx",
+      "filePath": "frontend/src/layouts/AdminLayout.jsx",
+      "summary": "Layout cơ bản cho trang quản trị.",
+      "tags": [
+        "frontend",
+        "layout",
+        "admin"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/layouts/AdminLayout.jsx:AdminLayout",
+      "type": "function",
+      "name": "AdminLayout",
+      "summary": "Cung cấp sidebar và vùng chứa nội dung cho các trang admin.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/layouts/PublicLayout.jsx",
+      "type": "file",
+      "name": "PublicLayout.jsx",
+      "filePath": "frontend/src/layouts/PublicLayout.jsx",
+      "summary": "Layout chính cho giao diện người dùng công cộng.",
+      "tags": [
+        "frontend",
+        "layout",
+        "public"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/layouts/PublicLayout.jsx:PublicLayout",
+      "type": "function",
+      "name": "PublicLayout",
+      "summary": "Bao gồm Header, Footer và xử lý các hiệu ứng template toàn cục.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/main.jsx",
+      "type": "file",
+      "name": "main.jsx",
+      "filePath": "frontend/src/main.jsx",
+      "summary": "Điểm vào (Entry point) của ứng dụng React.",
+      "tags": [
+        "frontend",
+        "entry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/About.jsx",
+      "type": "file",
+      "name": "About.jsx",
+      "filePath": "frontend/src/pages/About.jsx",
+      "summary": "Trang giới thiệu về trung tâm.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/About.jsx:About",
+      "type": "function",
+      "name": "About",
+      "summary": "Hiển thị lịch sử, thành tựu và đánh giá của học viên.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/AdminDashboard.jsx",
+      "type": "file",
+      "name": "AdminDashboard.jsx",
+      "filePath": "frontend/src/pages/AdminDashboard.jsx",
+      "summary": "Trang điều khiển chính của Admin.",
+      "tags": [
+        "frontend",
+        "page",
+        "admin"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/AdminDashboard.jsx:AdminDashboard",
+      "type": "function",
+      "name": "AdminDashboard",
+      "summary": "Quản lý các tab nội dung như Khóa học, Bài viết, Đơn hàng, v.v.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/AdminPostEditor.jsx",
+      "type": "file",
+      "name": "AdminPostEditor.jsx",
+      "filePath": "frontend/src/pages/AdminPostEditor.jsx",
+      "summary": "Trang soạn thảo bài viết/công thức.",
+      "tags": [
+        "frontend",
+        "page",
+        "admin",
+        "editor"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/AdminPostEditor.jsx:AdminPostEditor",
+      "type": "function",
+      "name": "AdminPostEditor",
+      "summary": "Cung cấp form nhập liệu HTML và xem trước bài viết trực tiếp.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/AdminProgramEditor.jsx",
+      "type": "file",
+      "name": "AdminProgramEditor.jsx",
+      "filePath": "frontend/src/pages/AdminProgramEditor.jsx",
+      "summary": "Trang quản lý/chỉnh sửa khóa học.",
+      "tags": [
+        "frontend",
+        "page",
+        "admin",
+        "editor"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/AdminProgramEditor.jsx:AdminProgramEditor",
+      "type": "function",
+      "name": "AdminProgramEditor",
+      "summary": "Quản lý thông tin khóa học, giáo trình và nội dung Premium.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/AdminSettings.jsx",
+      "type": "file",
+      "name": "AdminSettings.jsx",
+      "filePath": "frontend/src/pages/AdminSettings.jsx",
+      "summary": "Trang cấu hình toàn bộ website.",
+      "tags": [
+        "frontend",
+        "page",
+        "admin",
+        "config"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/AdminSettings.jsx:AdminSettings",
+      "type": "function",
+      "name": "AdminSettings",
+      "summary": "Chỉnh sửa thông tin liên hệ, mạng xã hội, logo và nội dung giới thiệu.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/Auth.jsx",
+      "type": "file",
+      "name": "Auth.jsx",
+      "filePath": "frontend/src/pages/Auth.jsx",
+      "summary": "Trang đăng nhập và đăng ký.",
+      "tags": [
+        "frontend",
+        "page",
+        "auth"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/Auth.jsx:Auth",
+      "type": "function",
+      "name": "Auth",
+      "summary": "Xử lý login/register và chuyển hướng người dùng theo role.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/Checkout.jsx",
+      "type": "file",
+      "name": "Checkout.jsx",
+      "filePath": "frontend/src/pages/Checkout.jsx",
+      "summary": "Trang thanh toán khóa học.",
+      "tags": [
+        "frontend",
+        "page",
+        "payment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/Checkout.jsx:Checkout",
+      "type": "function",
+      "name": "Checkout",
+      "summary": "Xử lý tóm tắt đơn hàng, mã giảm giá và kết nối cổng VNPay.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/ChiefDetail.jsx",
+      "type": "file",
+      "name": "ChiefDetail.jsx",
+      "filePath": "frontend/src/pages/ChiefDetail.jsx",
+      "summary": "Trang chi tiết giảng viên.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/ChiefDetail.jsx:ChiefDetail",
+      "type": "function",
+      "name": "ChiefDetail",
+      "summary": "Hiển thị tiểu sử, kỹ năng và các lớp học của giảng viên.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/Chiefs.jsx",
+      "type": "file",
+      "name": "Chiefs.jsx",
+      "filePath": "frontend/src/pages/Chiefs.jsx",
+      "summary": "Trang danh sách giảng viên.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/Contact.jsx",
+      "type": "file",
+      "name": "Contact.jsx",
+      "filePath": "frontend/src/pages/Contact.jsx",
+      "summary": "Trang liên hệ của website.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/Home.jsx",
+      "type": "file",
+      "name": "Home.jsx",
+      "filePath": "frontend/src/pages/Home.jsx",
+      "summary": "Trang chủ của website.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/Home.jsx:Home",
+      "type": "function",
+      "name": "Home",
+      "summary": "Trang tổng hợp slider, khóa học nổi bật, bài viết và sản phẩm học viên.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/NotFound.jsx",
+      "type": "file",
+      "name": "NotFound.jsx",
+      "filePath": "frontend/src/pages/NotFound.jsx",
+      "summary": "Trang 404 lỗi không tìm thấy.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/PaymentResult.jsx",
+      "type": "file",
+      "name": "PaymentResult.jsx",
+      "filePath": "frontend/src/pages/PaymentResult.jsx",
+      "summary": "Trang hiển thị kết quả thanh toán sau khi từ VNPay quay về.",
+      "tags": [
+        "frontend",
+        "page",
+        "payment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/PaymentResult.jsx:PaymentResult",
+      "type": "function",
+      "name": "PaymentResult",
+      "summary": "Xử lý polling trạng thái đơn hàng và thông báo thành công/thất bại.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/PostDetail.jsx",
+      "type": "file",
+      "name": "PostDetail.jsx",
+      "filePath": "frontend/src/pages/PostDetail.jsx",
+      "summary": "Trang chi tiết bài viết blog/công thức.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/PostDetail.jsx:PostDetail",
+      "type": "function",
+      "name": "PostDetail",
+      "summary": "Hiển thị nội dung HTML của bài viết kèm sidebar và bài liên quan.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/Program.jsx",
+      "type": "file",
+      "name": "Program.jsx",
+      "filePath": "frontend/src/pages/Program.jsx",
+      "summary": "Trang danh sách khóa học kèm bộ lọc.",
+      "tags": [
+        "frontend",
+        "page"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/Program.jsx:Program",
+      "type": "function",
+      "name": "Program",
+      "summary": "Hỗ trợ lọc theo tên, danh mục và khoảng giá.",
+      "tags": [
+        "react",
+        "component"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/ProgramDetail.jsx",
+      "type": "file",
+      "name": "ProgramDetail.jsx",
+      "filePath": "frontend/src/pages/ProgramDetail.jsx",
+      "summary": "Trang chi tiết khóa học, hiển thị thông tin tổng quan, chương trình học và nội dung cao cấp (Premium Content) cho người dùng đã mua.",
+      "tags": [
+        "component",
+        "page",
+        "program-detail",
+        "premium-content",
+        "student-work"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:frontend/src/pages/ProgramDetail.jsx:ProgramDetail",
+      "type": "function",
+      "name": "ProgramDetail",
+      "filePath": "frontend/src/pages/ProgramDetail.jsx",
+      "lineRange": [
+        24,
+        550
+      ],
+      "summary": "Component React chính cho trang chi tiết khóa học, quản lý trạng thái tải dữ liệu, hiển thị nội dung khóa học và xử lý nộp bài tập học viên.",
+      "tags": [
+        "react-hook",
+        "data-fetching",
+        "ui-logic"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:frontend/src/pages/Receipt.jsx",
+      "type": "file",
+      "name": "Receipt.jsx",
+      "filePath": "frontend/src/pages/Receipt.jsx",
+      "summary": "Trang hiển thị danh sách các bài viết (Blog/News), mặc dù tên file là Receipt nhưng nội dung chính là quản lý hiển thị các bài blog.",
+      "tags": [
+        "component",
+        "page",
+        "blog",
+        "news",
+        "list-view"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/pages/Receipt.jsx:Receipt",
+      "type": "function",
+      "name": "Receipt",
+      "filePath": "frontend/src/pages/Receipt.jsx",
+      "lineRange": [
+        15,
+        146
+      ],
+      "summary": "Component React hiển thị danh sách bài viết với phân trang và bài viết nổi bật.",
+      "tags": [
+        "react-hook",
+        "pagination",
+        "blog-list"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/UserDashboard.css",
+      "type": "file",
+      "name": "UserDashboard.css",
+      "filePath": "frontend/src/pages/UserDashboard.css",
+      "summary": "Định nghĩa phong cách CSS cho trang Dashboard của người dùng, bao gồm bố cục sidebar và các thẻ hiển thị khóa học.",
+      "tags": [
+        "styling",
+        "css",
+        "dashboard-ui"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/pages/UserDashboard.jsx",
+      "type": "file",
+      "name": "UserDashboard.jsx",
+      "filePath": "frontend/src/pages/UserDashboard.jsx",
+      "summary": "Trang Dashboard cá nhân cho người dùng, hiển thị thông tin tài khoản, danh sách đơn hàng và các khóa học đã mua.",
+      "tags": [
+        "component",
+        "page",
+        "user-dashboard",
+        "account",
+        "orders"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:frontend/src/pages/UserDashboard.jsx:UserDashboard",
+      "type": "function",
+      "name": "UserDashboard",
+      "filePath": "frontend/src/pages/UserDashboard.jsx",
+      "lineRange": [
+        11,
+        247
+      ],
+      "summary": "Component React quản lý thông tin người dùng và hiển thị các tab tương ứng với lịch sử đơn hàng và khóa học đã tham gia.",
+      "tags": [
+        "react-hook",
+        "user-session",
+        "order-history"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:frontend/src/services/api.js",
+      "type": "file",
+      "name": "api.js",
+      "filePath": "frontend/src/services/api.js",
+      "summary": "Lớp dịch vụ API trung tâm cho frontend, định nghĩa các hàm gọi Axios để tương tác với backend CMS.",
+      "tags": [
+        "service",
+        "api",
+        "axios",
+        "backend-integration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:frontend/src/services/api.js:getPrograms",
+      "type": "function",
+      "name": "getPrograms",
+      "filePath": "frontend/src/services/api.js",
+      "lineRange": [
+        20,
+        23
+      ],
+      "summary": "Lấy danh sách tất cả các khóa học từ server.",
+      "tags": [
+        "api-call",
+        "get-request"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:frontend/src/services/api.js:getProgramBySlug",
+      "type": "function",
+      "name": "getProgramBySlug",
+      "filePath": "frontend/src/services/api.js",
+      "lineRange": [
+        30,
+        33
+      ],
+      "summary": "Lấy thông tin chi tiết của một khóa học dựa trên slug.",
+      "tags": [
+        "api-call",
+        "get-request"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:frontend/src/services/api.js:getMe",
+      "type": "function",
+      "name": "getMe",
+      "filePath": "frontend/src/services/api.js",
+      "lineRange": [
+        218,
+        224
+      ],
+      "summary": "Lấy thông tin hồ sơ của người dùng hiện tại đang đăng nhập.",
+      "tags": [
+        "api-call",
+        "auth"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/src/styles/social-brand.css",
+      "type": "file",
+      "name": "social-brand.css",
+      "filePath": "frontend/src/styles/social-brand.css",
+      "summary": "Định nghĩa màu sắc và phong cách cho các biểu tượng mạng xã hội (Facebook, Instagram, YouTube, etc.)",
+      "tags": [
+        "styling",
+        "css",
+        "branding",
+        "social-icons"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:frontend/src/utils/formatters.js",
+      "type": "file",
+      "name": "formatters.js",
+      "filePath": "frontend/src/utils/formatters.js",
+      "summary": "Bộ công cụ định dạng dữ liệu cho hiển thị tiền tệ, số lượng học viên và trạng thái đơn hàng.",
+      "tags": [
+        "utility",
+        "formatting",
+        "currency",
+        "status-badge"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:frontend/src/utils/formatters.js:formatPrice",
+      "type": "function",
+      "name": "formatPrice",
+      "filePath": "frontend/src/utils/formatters.js",
+      "lineRange": [
+        6,
+        9
+      ],
+      "summary": "Định dạng giá trị tiền tệ sang định dạng địa phương.",
+      "tags": [
+        "utility",
+        "formatting",
+        "currency"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:frontend/src/utils/formatters.js:getOrderStatusBadge",
+      "type": "function",
+      "name": "getOrderStatusBadge",
+      "filePath": "frontend/src/utils/formatters.js",
+      "lineRange": [
+        37,
+        52
+      ],
+      "summary": "Trả về thông tin nhãn và màu sắc tương ứng với trạng thái đơn hàng.",
+      "tags": [
+        "utility",
+        "ui-helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/src/utils/imageUrl.js",
+      "type": "file",
+      "name": "imageUrl.js",
+      "filePath": "frontend/src/utils/imageUrl.js",
+      "summary": "Tiện ích xử lý URL hình ảnh, hỗ trợ đính kèm base URL từ biến môi trường nếu cần thiết.",
+      "tags": [
+        "utility",
+        "url-processing",
+        "image"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:frontend/src/utils/imageUrl.js:imageUrl",
+      "type": "function",
+      "name": "imageUrl",
+      "filePath": "frontend/src/utils/imageUrl.js",
+      "lineRange": [
+        3,
+        11
+      ],
+      "summary": "Xử lý và trả về URL ảnh đầy đủ.",
+      "tags": [
+        "utility",
+        "helper"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:frontend/src/utils/socialIcon.js",
+      "type": "file",
+      "name": "socialIcon.js",
+      "filePath": "frontend/src/utils/socialIcon.js",
+      "summary": "Tiện ích lấy class icon FontAwesome dựa trên tên nền tảng mạng xã hội.",
+      "tags": [
+        "utility",
+        "ui-helper",
+        "social-media"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:frontend/vercel.json",
+      "type": "config",
+      "name": "vercel.json",
+      "filePath": "frontend/vercel.json",
+      "summary": "Cấu hình triển khai cho Vercel, định nghĩa các luật rewrite cho SPA để hỗ trợ React Router.",
+      "tags": [
+        "configuration",
+        "deployment",
+        "vercel",
+        "routing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:frontend/vite.config.js",
+      "type": "config",
+      "name": "vite.config.js",
+      "filePath": "frontend/vite.config.js",
+      "summary": "Cấu hình cho công cụ xây dựng Vite, định nghĩa các plugin và tùy chọn biên dịch cho frontend.",
+      "tags": [
+        "configuration",
+        "build-system",
+        "vite",
+        "frontend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:HUONG_DAN_QUAN_TRI.md",
+      "type": "document",
+      "name": "HUONG_DAN_QUAN_TRI.md",
+      "filePath": "HUONG_DAN_QUAN_TRI.md",
+      "summary": "Tài liệu hướng dẫn chi tiết dành cho quản trị viên về cách sử dụng CMS, quản lý khóa học, đơn hàng và bài viết.",
+      "tags": [
+        "documentation",
+        "admin-guide",
+        "manual"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:HUONG_DAN_UPLOAD_DATA.md",
+      "type": "document",
+      "name": "HUONG_DAN_UPLOAD_DATA.md",
+      "filePath": "HUONG_DAN_UPLOAD_DATA.md",
+      "summary": "Tài liệu hướng dẫn quy trình tải lên dữ liệu, hình ảnh và định dạng nội dung HTML cho khóa học và bài viết.",
+      "tags": [
+        "documentation",
+        "data-upload",
+        "tutorial"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Tài liệu tổng quan về dự án, cấu trúc kiến trúc, hướng dẫn cài đặt nhanh cho cả Backend và Frontend.",
+      "tags": [
+        "documentation",
+        "overview",
+        "setup-guide"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scratch.js",
+      "type": "file",
+      "name": "scratch.js",
+      "filePath": "scratch.js",
+      "summary": "Tệp nháp chứa các đoạn mã thử nghiệm định dạng tiền tệ và xử lý dữ liệu tạm thời.",
+      "tags": [
+        "script",
+        "testing",
+        "scratchpad"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:backend/migrateMissingImages.js",
+      "target": "function:backend/migrateMissingImages.js:processImage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:backend/src/controllers/categoryController.js",
+      "target": "file:backend/src/utils/slugify.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/controllers/chiefController.js",
+      "target": "file:backend/src/utils/fileCleanup.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/controllers/orderController.js",
+      "target": "file:backend/src/services/enrollmentService.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/controllers/postController.js",
+      "target": "file:backend/src/utils/slugify.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/controllers/postController.js",
+      "target": "file:backend/src/utils/fileCleanup.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/controllers/programController.js",
+      "target": "file:backend/src/utils/slugify.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/controllers/programController.js",
+      "target": "file:backend/src/utils/fileCleanup.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "schema:backend/prisma/schema.prisma",
+      "target": "table:backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql:Order",
+      "type": "defines_schema",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "schema:backend/prisma/schema.prisma",
+      "target": "table:backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql:PaymentConfig",
+      "type": "defines_schema",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:backend/package.json",
+      "target": "file:backend/src/index.js",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:backend/README.md",
+      "target": "schema:backend/prisma/schema.prisma",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:backend/src/controllers/vnpayController.js",
+      "target": "file:backend/src/services/vnpayService.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/index.js",
+      "target": "file:backend/src/routes/programRoutes.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/index.js",
+      "target": "file:backend/src/routes/postRoutes.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/routes/authRoutes.js",
+      "target": "file:backend/src/controllers/authController.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/routes/authRoutes.js",
+      "target": "file:backend/src/middleware/authMiddleware.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/routes/categoryRoutes.js",
+      "target": "file:backend/src/controllers/categoryController.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/routes/chiefRoutes.js",
+      "target": "file:backend/src/controllers/chiefController.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/routes/orderRoutes.js",
+      "target": "file:backend/src/controllers/orderController.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/routes/statsRoutes.js",
+      "target": "file:backend/src/controllers/statsController.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/routes/statsRoutes.js",
+      "target": "file:backend/src/controllers/cleanupController.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/services/vnpayService.js",
+      "target": "file:backend/src/utils/vnpay.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:backend/src/services/vnpayService.js",
+      "target": "file:backend/src/services/enrollmentService.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/App.jsx",
+      "target": "file:frontend/src/pages/Home.jsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/App.jsx",
+      "target": "file:frontend/src/pages/About.jsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminCategories.jsx",
+      "target": "file:frontend/src/services/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminChiefs.jsx",
+      "target": "file:frontend/src/services/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/index.html",
+      "target": "file:frontend/src/main.jsx",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "config:frontend/package.json",
+      "target": "file:frontend/index.html",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminContacts.jsx",
+      "target": "function:frontend/src/components/Admin/AdminContacts.jsx:AdminContacts",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Admin/AdminContacts.jsx:AdminContacts",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:frontend/src/components/Admin/AdminContacts.jsx:AdminContacts",
+      "target": "file:frontend/src/components/Admin/AdminModal.jsx",
+      "type": "calls",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminEnrollments.jsx",
+      "target": "function:frontend/src/components/Admin/AdminEnrollments.jsx:AdminEnrollments",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Admin/AdminEnrollments.jsx:AdminEnrollments",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminImageUpload.jsx",
+      "target": "function:frontend/src/components/Admin/AdminImageUpload.jsx:AdminImageUpload",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Admin/AdminImageUpload.jsx:AdminImageUpload",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminOrders.jsx",
+      "target": "function:frontend/src/components/Admin/AdminOrders.jsx:AdminOrders",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Admin/AdminOrders.jsx:AdminOrders",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminPosts.jsx",
+      "target": "function:frontend/src/components/Admin/AdminPosts.jsx:AdminPosts",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Admin/AdminPosts.jsx:AdminPosts",
+      "target": "file:frontend/src/components/Admin/AdminTable.jsx",
+      "type": "calls",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminPrograms.jsx",
+      "target": "function:frontend/src/components/Admin/AdminPrograms.jsx:AdminPrograms",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Admin/AdminSliders.jsx",
+      "target": "function:frontend/src/components/Admin/AdminSliders.jsx:AdminSliders",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Auth/ProtectedRoute.jsx",
+      "target": "function:frontend/src/components/Auth/ProtectedRoute.jsx:ProtectedRoute",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Auth/ProtectedRoute.jsx:ProtectedRoute",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/components/Blog/BlogCard.jsx",
+      "target": "function:frontend/src/components/Blog/BlogCard.jsx:BlogCard",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Blog/BlogSidebar.jsx",
+      "target": "function:frontend/src/components/Blog/BlogSidebar.jsx:BlogSidebar",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Contact/ContactForm.jsx",
+      "target": "function:frontend/src/components/Contact/ContactForm.jsx:ContactForm",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Footer/Footer.jsx",
+      "target": "function:frontend/src/components/Footer/Footer.jsx:Footer",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Header/Header.jsx",
+      "target": "function:frontend/src/components/Header/Header.jsx:Header",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeAbout.jsx",
+      "target": "function:frontend/src/components/Home/HomeAbout.jsx:HomeAbout",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeBlog.jsx",
+      "target": "function:frontend/src/components/Home/HomeBlog.jsx:HomeBlog",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Home/HomeBlog.jsx:HomeBlog",
+      "target": "file:frontend/src/constants/routes.js",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeChiefs.jsx",
+      "target": "function:frontend/src/components/Home/HomeChiefs.jsx:HomeChiefs",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeClasses.jsx",
+      "target": "function:frontend/src/components/Home/HomeClasses.jsx:HomeClasses",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Home/HomeClasses.jsx:HomeClasses",
+      "target": "file:frontend/src/components/Shared/ProgramCard.jsx",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeContacts.jsx",
+      "target": "function:frontend/src/components/Home/HomeContacts.jsx:HomeContacts",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Home/HomeContacts.jsx:HomeContacts",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeNewCourses.jsx",
+      "target": "function:frontend/src/components/Home/HomeNewCourses.jsx:HomeNewCourses",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Home/HomeNewCourses.jsx:HomeNewCourses",
+      "target": "file:frontend/src/components/Shared/ProgramCard.jsx",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeSlider.jsx",
+      "target": "function:frontend/src/components/Home/HomeSlider.jsx:HomeSlider",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Home/HomeSlider.jsx:HomeSlider",
+      "target": "file:frontend/src/components/Shared/Button.jsx",
+      "type": "calls",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/components/Home/HomeTimetables.jsx",
+      "target": "function:frontend/src/components/Home/HomeTimetables.jsx:HomeTimetables",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/components/Shared/ProgramCard.jsx",
+      "target": "function:frontend/src/components/Shared/ProgramCard.jsx:ProgramCard",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/components/Shared/ProgramCard.jsx:ProgramCard",
+      "target": "file:frontend/src/components/Shared/Button.jsx",
+      "type": "calls",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/context/SiteConfigContext.jsx",
+      "target": "service:frontend/src/context/SiteConfigContext.jsx:SiteConfigProvider",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "service:frontend/src/context/SiteConfigContext.jsx:SiteConfigProvider",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/hooks/useTemplateRuntime.js",
+      "target": "function:frontend/src/hooks/useTemplateRuntime.js:useTemplateRuntime",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/i18n/LanguageContext.jsx",
+      "target": "service:frontend/src/i18n/LanguageContext.jsx:LanguageProvider",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "service:frontend/src/i18n/LanguageContext.jsx:LanguageProvider",
+      "target": "file:frontend/src/i18n/vi.json",
+      "type": "imports",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/layouts/PublicLayout.jsx",
+      "target": "function:frontend/src/layouts/PublicLayout.jsx:PublicLayout",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/layouts/PublicLayout.jsx:PublicLayout",
+      "target": "file:frontend/src/components/Header/Header.jsx",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "function:frontend/src/layouts/PublicLayout.jsx:PublicLayout",
+      "target": "file:frontend/src/components/Footer/Footer.jsx",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/main.jsx",
+      "target": "file:frontend/src/App.jsx",
+      "type": "imports",
+      "weight": 0.9
+    },
+    {
+      "source": "file:frontend/src/pages/About.jsx",
+      "target": "function:frontend/src/pages/About.jsx:About",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/AdminDashboard.jsx",
+      "target": "function:frontend/src/pages/AdminDashboard.jsx:AdminDashboard",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "function:frontend/src/pages/AdminDashboard.jsx:AdminDashboard",
+      "target": "file:frontend/src/services/api.js",
+      "type": "calls",
+      "weight": 0.8
+    },
+    {
+      "source": "file:frontend/src/pages/AdminPostEditor.jsx",
+      "target": "function:frontend/src/pages/AdminPostEditor.jsx:AdminPostEditor",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/AdminProgramEditor.jsx",
+      "target": "function:frontend/src/pages/AdminProgramEditor.jsx:AdminProgramEditor",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/AdminSettings.jsx",
+      "target": "function:frontend/src/pages/AdminSettings.jsx:AdminSettings",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/Checkout.jsx",
+      "target": "function:frontend/src/pages/Checkout.jsx:Checkout",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/Home.jsx",
+      "target": "function:frontend/src/pages/Home.jsx:Home",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/PaymentResult.jsx",
+      "target": "function:frontend/src/pages/PaymentResult.jsx:PaymentResult",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/PostDetail.jsx",
+      "target": "function:frontend/src/pages/PostDetail.jsx:PostDetail",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/Program.jsx",
+      "target": "function:frontend/src/pages/Program.jsx:Program",
+      "type": "contains",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/ProgramDetail.jsx",
+      "target": "function:frontend/src/pages/ProgramDetail.jsx:ProgramDetail",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/Receipt.jsx",
+      "target": "function:frontend/src/pages/Receipt.jsx:Receipt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/UserDashboard.jsx",
+      "target": "function:frontend/src/pages/UserDashboard.jsx:UserDashboard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/services/api.js",
+      "target": "function:frontend/src/services/api.js:getPrograms",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/services/api.js",
+      "target": "function:frontend/src/services/api.js:getProgramBySlug",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/services/api.js",
+      "target": "function:frontend/src/services/api.js:getMe",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/utils/formatters.js",
+      "target": "function:frontend/src/utils/formatters.js:formatPrice",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/utils/formatters.js",
+      "target": "function:frontend/src/utils/formatters.js:getOrderStatusBadge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/utils/imageUrl.js",
+      "target": "function:frontend/src/utils/imageUrl.js:imageUrl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:frontend/src/pages/ProgramDetail.jsx",
+      "target": "file:frontend/src/services/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/pages/ProgramDetail.jsx",
+      "target": "file:frontend/src/utils/formatters.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/pages/ProgramDetail.jsx",
+      "target": "file:frontend/src/utils/imageUrl.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/pages/Receipt.jsx",
+      "target": "file:frontend/src/services/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/pages/UserDashboard.jsx",
+      "target": "file:frontend/src/services/api.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/pages/UserDashboard.jsx",
+      "target": "file:frontend/src/utils/formatters.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:frontend/src/pages/UserDashboard.jsx",
+      "target": "file:frontend/src/utils/imageUrl.js",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:frontend/src/pages/ProgramDetail.jsx:ProgramDetail",
+      "target": "function:frontend/src/services/api.js:getProgramBySlug",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:frontend/src/pages/UserDashboard.jsx:UserDashboard",
+      "target": "function:frontend/src/services/api.js:getMe",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:frontend/vite.config.js",
+      "target": "file:frontend/src/pages/ProgramDetail.jsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:frontend/vercel.json",
+      "target": "file:frontend/src/pages/ProgramDetail.jsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:frontend/src/pages/ProgramDetail.jsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:HUONG_DAN_QUAN_TRI.md",
+      "target": "file:frontend/src/services/api.js",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:frontend/src/pages/UserDashboard.jsx",
+      "target": "file:frontend/src/pages/UserDashboard.css",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:backend-controller-route",
+      "name": "Backend Controllers & Routes",
+      "description": "Xử lý các yêu cầu HTTP, định nghĩa các endpoint API và điều phối luồng dữ liệu giữa client và server.",
+      "nodeIds": [
+        "file:backend/src/controllers/authController.js",
+        "file:backend/src/controllers/categoryController.js",
+        "file:backend/src/controllers/chiefController.js",
+        "file:backend/src/controllers/cleanupController.js",
+        "file:backend/src/controllers/contactController.js",
+        "file:backend/src/controllers/enrollmentController.js",
+        "file:backend/src/controllers/orderController.js",
+        "file:backend/src/controllers/paymentConfigController.js",
+        "file:backend/src/controllers/postController.js",
+        "file:backend/src/controllers/programController.js",
+        "file:backend/src/controllers/settingController.js",
+        "file:backend/src/controllers/statsController.js",
+        "file:backend/src/controllers/testimonialController.js",
+        "file:backend/src/controllers/timetableController.js",
+        "file:backend/src/controllers/vnpayController.js",
+        "file:backend/src/controllers/webhookController.js",
+        "file:backend/src/routes/authRoutes.js",
+        "file:backend/src/routes/categoryRoutes.js",
+        "file:backend/src/routes/chiefRoutes.js",
+        "file:backend/src/routes/contactRoutes.js",
+        "file:backend/src/routes/enrollmentRoutes.js",
+        "file:backend/src/routes/orderRoutes.js",
+        "file:backend/src/routes/paymentConfigRoutes.js",
+        "file:backend/src/routes/postRoutes.js",
+        "file:backend/src/routes/programRoutes.js",
+        "file:backend/src/routes/settingRoutes.js",
+        "file:backend/src/routes/statsRoutes.js",
+        "file:backend/src/routes/testimonialRoutes.js",
+        "file:backend/src/routes/timetableRoutes.js",
+        "file:backend/src/routes/uploadRoutes.js",
+        "file:backend/src/routes/vnpayRoutes.js",
+        "file:backend/src/routes/webhookRoutes.js",
+        "file:backend/src/index.js"
+      ]
+    },
+    {
+      "id": "layer:backend-service-logic",
+      "name": "Backend Service & Logic",
+      "description": "Chứa logic nghiệp vụ cốt lõi, middleware xác thực và các tiện ích hỗ trợ hệ thống backend.",
+      "nodeIds": [
+        "file:backend/src/services/enrollmentService.js",
+        "file:backend/src/services/vnpayService.js",
+        "file:backend/src/middleware/authMiddleware.js",
+        "file:backend/src/utils/fileCleanup.js",
+        "file:backend/src/utils/slugify.js",
+        "file:backend/src/utils/vnpay.js",
+        "file:backend/migrateMissingImages.js",
+        "file:backend/migratePostCategories.js",
+        "file:backend/test-db.js"
+      ]
+    },
+    {
+      "id": "layer:backend-data-seed",
+      "name": "Backend Data & Seed",
+      "description": "Quản lý cấu hình cơ sở dữ liệu Prisma, các bản di trú (migrations) và các script khởi tạo dữ liệu mẫu.",
+      "nodeIds": [
+        "schema:backend/prisma/schema.prisma",
+        "table:backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql:Order",
+        "table:backend/prisma/migrations/20260415072324_add_payment_orders/migration.sql:PaymentConfig",
+        "file:backend/seedCategories.js",
+        "file:backend/seedData.js",
+        "file:backend/seedDataExact.js",
+        "file:backend/seedPrograms.js",
+        "file:backend/seedProgramTypes.js",
+        "file:backend/seedUsers.js",
+        "file:backend/src/seed.js",
+        "file:backend/src/seedAdmin.js"
+      ]
+    },
+    {
+      "id": "layer:frontend-component-layout",
+      "name": "Frontend Components & Layout",
+      "description": "Các thành phần giao diện người dùng, khung bố cục và phong cách CSS định dạng website.",
+      "nodeIds": [
+        "file:frontend/src/components/About/AboutHistory.jsx",
+        "file:frontend/src/components/Admin/AdminCategories.jsx",
+        "file:frontend/src/components/Admin/AdminChiefs.jsx",
+        "file:frontend/src/components/Admin/AdminContacts.jsx",
+        "file:frontend/src/components/Admin/AdminEnrollments.jsx",
+        "file:frontend/src/components/Admin/AdminImageUpload.jsx",
+        "file:frontend/src/components/Admin/AdminLoadingBlock.jsx",
+        "file:frontend/src/components/Admin/AdminModal.jsx",
+        "file:frontend/src/components/Admin/AdminOrders.jsx",
+        "file:frontend/src/components/Admin/AdminOverviewLoading.jsx",
+        "file:frontend/src/components/Admin/AdminPageShell.jsx",
+        "file:frontend/src/components/Admin/AdminPosts.jsx",
+        "file:frontend/src/components/Admin/AdminPrograms.jsx",
+        "file:frontend/src/components/Admin/AdminRouteLoading.jsx",
+        "file:frontend/src/components/Admin/AdminSliders.jsx",
+        "file:frontend/src/components/Admin/AdminTable.jsx",
+        "file:frontend/src/components/Admin/AdminTestimonials.jsx",
+        "file:frontend/src/components/Admin/Shared/AdminButton.jsx",
+        "file:frontend/src/components/Admin/Shared/AdminEditorLayout.jsx",
+        "file:frontend/src/components/Admin/Shared/AdminFormControls.jsx",
+        "file:frontend/src/components/Admin/usePendingAction.js",
+        "file:frontend/src/components/Auth/ProtectedRoute.jsx",
+        "file:frontend/src/components/Blog/BlogCard.jsx",
+        "file:frontend/src/components/Blog/BlogSidebar.jsx",
+        "file:frontend/src/components/Contact/ContactForm.jsx",
+        "file:frontend/src/components/Contact/ContactInfo.jsx",
+        "file:frontend/src/components/Footer/Footer.jsx",
+        "file:frontend/src/components/Header/Header.jsx",
+        "file:frontend/src/components/Home/HomeAbout.jsx",
+        "file:frontend/src/components/Home/HomeBlog.jsx",
+        "file:frontend/src/components/Home/HomeChiefs.jsx",
+        "file:frontend/src/components/Home/HomeClasses.jsx",
+        "file:frontend/src/components/Home/HomeContacts.jsx",
+        "file:frontend/src/components/Home/HomeFaq.jsx",
+        "file:frontend/src/components/Home/HomeNewCourses.jsx",
+        "file:frontend/src/components/Home/HomeSlider.jsx",
+        "file:frontend/src/components/Home/HomeTimetables.jsx",
+        "file:frontend/src/components/Shared/Button.jsx",
+        "file:frontend/src/components/Shared/Input.jsx",
+        "file:frontend/src/components/Shared/PageLoading.jsx",
+        "file:frontend/src/components/Shared/PageTitle.jsx",
+        "file:frontend/src/components/Shared/Pagination.jsx",
+        "file:frontend/src/components/Shared/ProgramCard.jsx",
+        "file:frontend/src/components/Shared/ScrollToTop.jsx",
+        "file:frontend/src/components/Shared/SocialIconLink.jsx",
+        "file:frontend/src/components/Shared/TestimonialsSlider.jsx",
+        "file:frontend/src/components/Shared/TikTokIcon.jsx",
+        "file:frontend/src/layouts/AdminLayout.jsx",
+        "file:frontend/src/layouts/PublicLayout.jsx",
+        "file:frontend/src/styles/social-brand.css",
+        "file:frontend/public/css/main.css",
+        "file:frontend/public/js/main.js"
+      ]
+    },
+    {
+      "id": "layer:frontend-page",
+      "name": "Frontend Pages",
+      "description": "Các trang chính của ứng dụng, kết hợp các component để tạo thành giao diện hoàn chỉnh cho người dùng và quản trị viên.",
+      "nodeIds": [
+        "file:frontend/src/pages/About.jsx",
+        "file:frontend/src/pages/AdminDashboard.jsx",
+        "file:frontend/src/pages/AdminPostEditor.jsx",
+        "file:frontend/src/pages/AdminProgramEditor.jsx",
+        "file:frontend/src/pages/AdminSettings.jsx",
+        "file:frontend/src/pages/Auth.jsx",
+        "file:frontend/src/pages/Checkout.jsx",
+        "file:frontend/src/pages/ChiefDetail.jsx",
+        "file:frontend/src/pages/Chiefs.jsx",
+        "file:frontend/src/pages/Contact.jsx",
+        "file:frontend/src/pages/Home.jsx",
+        "file:frontend/src/pages/NotFound.jsx",
+        "file:frontend/src/pages/PaymentResult.jsx",
+        "file:frontend/src/pages/PostDetail.jsx",
+        "file:frontend/src/pages/Program.jsx",
+        "file:frontend/src/pages/ProgramDetail.jsx",
+        "file:frontend/src/pages/Receipt.jsx",
+        "file:frontend/src/pages/UserDashboard.css",
+        "file:frontend/src/pages/UserDashboard.jsx"
+      ]
+    },
+    {
+      "id": "layer:frontend-core-logic",
+      "name": "Frontend Core Logic",
+      "description": "Quản lý trạng thái ứng dụng, tích hợp API, đa ngôn ngữ và các logic bổ trợ phía client.",
+      "nodeIds": [
+        "file:frontend/src/services/api.js",
+        "file:frontend/src/hooks/useFormValidation.js",
+        "file:frontend/src/hooks/useInitOnLoaded.js",
+        "file:frontend/src/hooks/useTemplateRuntime.js",
+        "file:frontend/src/context/SiteConfigContext.jsx",
+        "service:frontend/src/context/SiteConfigContext.jsx:SiteConfigProvider",
+        "file:frontend/src/i18n/en.json",
+        "file:frontend/src/i18n/LanguageContext.jsx",
+        "service:frontend/src/i18n/LanguageContext.jsx:LanguageProvider",
+        "file:frontend/src/i18n/vi.json",
+        "file:frontend/src/utils/formatters.js",
+        "file:frontend/src/utils/imageUrl.js",
+        "file:frontend/src/utils/socialIcon.js",
+        "file:frontend/src/constants/routes.js",
+        "file:frontend/src/App.jsx",
+        "file:frontend/src/main.jsx"
+      ]
+    },
+    {
+      "id": "layer:infrastructure-config",
+      "name": "Infrastructure & Configuration",
+      "description": "Cấu hình môi trường, quản lý thư viện và các thiết lập triển khai (deployment) cho toàn bộ dự án.",
+      "nodeIds": [
+        "file:backend/.env.example",
+        "config:backend/package.json",
+        "file:frontend/.env.example",
+        "file:frontend/eslint.config.js",
+        "file:frontend/index.html",
+        "config:frontend/package.json",
+        "config:frontend/vercel.json",
+        "config:frontend/vite.config.js",
+        "file:scratch.js"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "Documentation",
+      "description": "Tài liệu hướng dẫn phát triển, quản trị hệ thống và kế hoạch triển khai dự án.",
+      "nodeIds": [
+        "document:backend/DOCS_PLAN.md",
+        "document:backend/README.md",
+        "document:frontend/README.md",
+        "document:HUONG_DAN_QUAN_TRI.md",
+        "document:HUONG_DAN_UPLOAD_DATA.md",
+        "document:README.md"
+      ]
+    }
+  ],
+  "tours": [
+    {
+      "id": "tour:getting-started",
+      "name": "Getting Started with Muka Baking",
+      "description": "A pedagogical tour through the project architecture, from backend API to frontend components.",
+      "steps": [
+        {
+          "order": 1,
+          "title": "Tổng quan dự án Muka Baking",
+          "description": "Bắt đầu với tài liệu README.md để hiểu về mục đích của dự án, các công nghệ sử dụng và cách cài đặt môi trường phát triển cho cả Backend và Frontend.",
+          "nodeIds": [
+            "document:README.md"
+          ]
+        },
+        {
+          "order": 2,
+          "title": "Mô hình dữ liệu & ORM",
+          "description": "Lược đồ Prisma định nghĩa cấu trúc cơ sở dữ liệu cốt lõi của hệ thống, bao gồm các model cho Người dùng, Khóa học (Program), Giảng viên (Chief) và Đơn hàng. Đây là nền tảng cho mọi tương tác dữ liệu trong ứng dụng.",
+          "nodeIds": [
+            "schema:backend/prisma/schema.prisma"
+          ],
+          "languageLesson": "Prisma schema sử dụng ngôn ngữ khai báo để định nghĩa các quan hệ (1-n, n-n) giữa các bảng, giúp tự động tạo ra các migration SQL và client types an toàn."
+        },
+        {
+          "order": 3,
+          "title": "Khởi tạo Server Backend",
+          "description": "Tệp index.js là điểm vào của server Node.js, nơi cấu hình Express, các middleware bảo mật (CORS, JWT) và đăng ký toàn bộ các tuyến đường (routes) API của hệ thống.",
+          "nodeIds": [
+            "file:backend/src/index.js"
+          ]
+        },
+        {
+          "order": 4,
+          "title": "Điều khiển nghiệp vụ Khóa học",
+          "description": "ProgramController xử lý logic nghiệp vụ cho tính năng quan trọng nhất: quản lý các chương trình đào tạo baking. Nó điều phối việc truy vấn dữ liệu từ DB và trả về kết quả chuẩn hóa cho Frontend.",
+          "nodeIds": [
+            "file:backend/src/controllers/programController.js"
+          ]
+        },
+        {
+          "order": 5,
+          "title": "Cầu nối liên kết API",
+          "description": "Đây là lớp dịch vụ trung tâm ở phía Frontend, định nghĩa tất cả các hàm giao tiếp với Backend. Với chỉ số fan-in cao nhất, đây là tệp quan trọng nhất để hiểu cách dữ liệu chảy từ server vào giao diện người dùng.",
+          "nodeIds": [
+            "file:frontend/src/services/api.js"
+          ],
+          "languageLesson": "Sử dụng Axios instance giúp cấu hình Base URL và tự động đính kèm Token xác thực vào Header của mọi yêu cầu gửi đi một cách nhất quán."
+        },
+        {
+          "order": 6,
+          "title": "Cấu trúc ứng dụng React",
+          "description": "Thành phần App.jsx quản lý định tuyến (routing) của ứng dụng bằng React Router, đồng thời bao bọc các Provider cho Đa ngôn ngữ và Cấu hình hệ thống.",
+          "nodeIds": [
+            "file:frontend/src/App.jsx"
+          ]
+        },
+        {
+          "order": 7,
+          "title": "Trang Chi tiết & Nội dung Premium",
+          "description": "Trang này minh họa cách kết hợp dữ liệu công khai (thông tin lớp học) và dữ liệu bảo mật (bài học cho học viên đã mua). Nó cũng xử lý trạng thái đăng ký của người dùng.",
+          "nodeIds": [
+            "file:frontend/src/pages/ProgramDetail.jsx"
+          ]
+        },
+        {
+          "order": 8,
+          "title": "Tích hợp thanh toán trực tuyến",
+          "description": "Hệ thống sử dụng cổng VNPay để xử lý thanh toán. Quy trình bao gồm tạo URL thanh toán phía server, xử lý IPN để cập nhật trạng thái đơn hàng tự động và hiển thị kết quả cho khách hàng.",
+          "nodeIds": [
+            "file:backend/src/services/vnpayService.js",
+            "file:backend/src/controllers/vnpayController.js"
+          ],
+          "languageLesson": "Quy trình thanh toán yêu cầu tính toàn vẹn dữ liệu cao thông qua việc tạo chữ ký bảo mật (Checksum) để đảm bảo thông tin không bị thay đổi trong quá trình truyền tin giữa các bên."
+        },
+        {
+          "order": 9,
+          "title": "Hệ thống quản trị nội dung (CMS)",
+          "description": "AdminDashboard là trung tâm điều khiển dành cho người quản lý, tích hợp các công cụ CRUD cho khóa học, bài viết và quản lý đơn hàng của học viên.",
+          "nodeIds": [
+            "file:frontend/src/pages/AdminDashboard.jsx"
+          ]
+        },
+        {
+          "order": 10,
+          "title": "Cấu hình triển khai & Hạ tầng",
+          "description": "Cấu hình Vercel đảm bảo ứng dụng Single Page Application (SPA) hoạt động mượt mà khi triển khai, xử lý các yêu cầu điều hướng phía client về đúng trang index.html.",
+          "nodeIds": [
+            "config:frontend/vercel.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "projectRoot": "/Users/hoangkien/NLV/baking",
+    "gitCommitHash": "21b28cd0578853b55a2ec6359da7c8765626f967",
+    "lastUpdated": "2026-05-06T08:58:34.899Z",
+    "stats": {
+      "nodeCount": 218,
+      "edgeCount": 108,
+      "layerCount": 8,
+      "tourCount": 1
+    }
+  }
+}

@@ -13,7 +13,8 @@ const Home = () => {
   const { t } = useTranslation();
   const [data, setData] = useState({
     upcomingSlides: [],
-    programs: [],
+    featuredPrograms: [],
+    newPrograms: [],
     studentWorks: []
   });
   const [loading, setLoading] = useState(true);
@@ -21,23 +22,23 @@ const Home = () => {
   useEffect(() => {
     Promise.all([
       getUpcomingPrograms(3),
-      getPrograms(),
+      getPrograms({ isFeatured: true, page: 1, limit: 3 }),
+      getPrograms({ isFeatured: false, page: 1, limit: 8 }),
       getApprovedStudentWorks()
-    ]).then(([upcomingRes, programsRes, studentWorksRes]) => {
-      // programsRes is an object with { data, totalPages... } because we paginate in backend now
-      const allPrograms = programsRes?.data || programsRes || [];
-      const featuredPrograms = allPrograms
-        .filter(p => p.isFeatured)
-        .slice(0, 3);
+    ]).then(([upcomingRes, featuredRes, newRes, studentWorksRes]) => {
+      const featuredData = featuredRes?.data || featuredRes || [];
+      const newData = newRes?.data || newRes || [];
       
-      let heroSlides = featuredPrograms;
+      let heroSlides = featuredData;
       if (heroSlides.length === 0) {
-        heroSlides = [...allPrograms].sort((a, b) => (b.students || 0) - (a.students || 0)).slice(0, 3);
+        // Fallback: If no featured, use new programs for slider
+        heroSlides = newData.slice(0, 3);
       }
       
       setData({
         upcomingSlides: heroSlides,
-        programs: allPrograms,
+        featuredPrograms: featuredData,
+        newPrograms: newData,
         studentWorks: studentWorksRes?.data || studentWorksRes || []
       });
       setLoading(false);
@@ -56,8 +57,8 @@ const Home = () => {
   return (
     <>
       <HomeSlider slides={data.upcomingSlides} />
-      <HomeClasses classes={data.programs.filter(p => p.isFeatured)} />
-      <HomeNewCourses classes={data.programs.filter(p => !p.isFeatured)} />
+      <HomeClasses classes={data.featuredPrograms} />
+      <HomeNewCourses classes={data.newPrograms} />
       <HomeAbout />
       <TestimonialsSlider works={data.studentWorks} />
     </>
