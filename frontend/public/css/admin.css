@@ -534,13 +534,26 @@ body.admin-mode, .admin-layout {
   width: 100%;
   font-family: inherit;
   transition: all 0.3s ease;
-  color: var(--admin-input-text);
+  color: var(--admin-input-text) !important;
   background-color: var(--admin-input-bg) !important;
   padding: 10px 16px !important;
   border: 1px solid var(--admin-border-dark) !important;
   border-radius: 6px !important;
   height: 44px !important;
   font-size: 14px !important;
+}
+
+.admin-form-control::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+/* Đồng bộ màu cho datetime-local (Chrome render system color mặc định) */
+input[type="datetime-local"].admin-form-control,
+input[type="date"].admin-form-control,
+input[type="time"].admin-form-control {
+  color: var(--admin-input-text) !important;
+  color-scheme: light;
 }
 
 textarea.admin-form-control {
