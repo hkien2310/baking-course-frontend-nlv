@@ -48,8 +48,8 @@ export const AdminTextarea = ({ label, value, onChange, onBlur, placeholder, row
   const autoResize = useCallback(() => {
     const el = textareaRef.current;
     if (!el) return;
-    el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
+    el.style.setProperty('height', 'auto', 'important');
+    el.style.setProperty('height', el.scrollHeight + 'px', 'important');
   }, []);
 
   // Auto-resize khi value thay đổi (bao gồm lần load đầu)
