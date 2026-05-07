@@ -191,6 +191,13 @@ exports.getProgramByIdOrSlug = async (req, res) => {
       orderStatus, // null, PENDING, AWAITING_CONFIRM, CONFIRMED, REJECTED, CANCELLED
     };
 
+    // Auto-expire sale in details view as well
+    const now = new Date();
+    if (response.saleEndDate && new Date(response.saleEndDate) < now) {
+      response.salePrice = null;
+      response.saleEndDate = null;
+    }
+
     // Strip premiumContent if not purchased
     if (!hasPurchased) {
       response.premiumContent = null;
