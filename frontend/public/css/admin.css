@@ -534,7 +534,7 @@ body.admin-mode, .admin-layout {
   width: 100%;
   font-family: inherit;
   transition: all 0.3s ease;
-  color: var(--admin-input-text) !important;
+  color: #64748b !important;
   background-color: var(--admin-input-bg) !important;
   padding: 10px 16px !important;
   border: 1px solid var(--admin-border-dark) !important;
@@ -552,7 +552,7 @@ body.admin-mode, .admin-layout {
 input[type="datetime-local"].admin-form-control,
 input[type="date"].admin-form-control,
 input[type="time"].admin-form-control {
-  color: var(--admin-input-text) !important;
+  color: #64748b !important;
   color-scheme: light;
 }
 
@@ -570,7 +570,7 @@ input[type="date"].admin-form-control::-webkit-datetime-edit-text,
 input[type="date"].admin-form-control::-webkit-datetime-edit-month-field,
 input[type="date"].admin-form-control::-webkit-datetime-edit-day-field,
 input[type="date"].admin-form-control::-webkit-datetime-edit-year-field {
-  color: var(--admin-input-text) !important;
+  color: #64748b !important;
 }
 
 textarea.admin-form-control {
