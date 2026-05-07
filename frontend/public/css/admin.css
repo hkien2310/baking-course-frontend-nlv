@@ -546,10 +546,10 @@ body.admin-mode, .admin-layout {
 textarea.admin-form-control {
   height: auto !important;
   min-height: 80px;
-  resize: none;
-  overflow: hidden;
+  resize: vertical;
   line-height: 1.6;
   padding: 10px 16px !important;
+  field-sizing: content;
 }
 
 .admin-form-control:focus {
