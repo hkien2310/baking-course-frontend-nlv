@@ -608,6 +608,7 @@ body.admin-mode {
 .admin-layout input[type="search"],
 .admin-layout input[type="tel"],
 .admin-layout input[type="number"],
+.admin-layout input[type="datetime-local"],
 .admin-layout textarea,
 .admin-layout select,
 .admin-layout .form-control {
@@ -651,6 +652,13 @@ body.admin-mode {
   text-transform: none !important;
 }
 
+/* Ensure datetime-local looks like other inputs */
+input[type="datetime-local"].admin-form-control {
+  padding: 10px 15px !important;
+  border: 1px solid var(--admin-border-dark) !important;
+  border-radius: 6px !important;
+  height: 45px !important;
+}
 /* ---------------- MODERN ADMIN BUTTONS (UI-UX-PRO-MAX) ---------------- */
 .admin-btn {
   display: inline-flex !important;
