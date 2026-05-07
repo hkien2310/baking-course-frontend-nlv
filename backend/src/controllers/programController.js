@@ -11,10 +11,16 @@ exports.getAllPrograms = async (req, res) => {
 
     const now = new Date();
     const where = {};
+    const AND = [];
 
     if (hasDiscount === 'true') {
       where.salePrice = { not: null };
-      where.saleEndDate = { gte: now };
+      AND.push({
+        OR: [
+          { saleEndDate: null },
+          { saleEndDate: { gte: now } }
+        ]
+      });
     }
     if (dayOfWeek) {
       where.classSessions = {
@@ -57,10 +63,16 @@ exports.getAllPrograms = async (req, res) => {
       const max = !isNaN(parseInt(maxPrice)) ? parseInt(maxPrice) : 999999999;
       // Filter logic: program effective price is salePrice if it exists, otherwise price.
       // Prisma doesn't support complex OR conditions on computed fields easily, so we use OR:
-      where.OR = [
-        { salePrice: { gte: min, lte: max } },
-        { salePrice: null, price: { gte: min, lte: max } }
-      ];
+      AND.push({
+        OR: [
+          { salePrice: { gte: min, lte: max } },
+          { salePrice: null, price: { gte: min, lte: max } }
+        ]
+      });
+    }
+
+    if (AND.length > 0) {
+      where.AND = AND;
     }
 
     let orderBy = {};
