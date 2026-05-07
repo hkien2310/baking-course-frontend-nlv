@@ -16,6 +16,25 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Interceptor to handle 401 Unauthorized errors (expired token)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      // Clear local storage
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      
+      // Redirect to auth page if not already there
+      if (!window.location.pathname.startsWith('/auth')) {
+        const currentPath = window.location.pathname + window.location.search;
+        window.location.href = `/auth?redirect=${encodeURIComponent(currentPath)}`;
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // ---------------- PROGRAMS ----------------
 export const getPrograms = async (params = {}) => {
   const { data } = await api.get('/programs', { params });
