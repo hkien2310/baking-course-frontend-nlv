@@ -156,9 +156,9 @@ const AdminImageUpload = ({ label, value, onChange, name }) => {
           name={name}
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
-          className="admin-form-control"
+          className="admin-form-control admin-input-with-icon"
           placeholder="Or paste external image URL manually..."
-          style={{ fontSize: '13px', paddingLeft: '40px' }}
+          style={{ fontSize: '13px' }}
         />
       </div>
 

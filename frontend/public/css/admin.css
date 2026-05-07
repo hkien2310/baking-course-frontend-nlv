@@ -571,6 +571,10 @@ textarea.admin-form-control {
   box-shadow: 0 0 0 3px rgba(252, 131, 75, 0.1);
 }
 
+.admin-input-with-icon {
+  padding-left: 40px !important;
+}
+
 /* ---------------- FORM VALIDATION ---------------- */
 .admin-form-control.is-invalid {
   border-color: #e53e3e;
