@@ -77,8 +77,10 @@ const AdminDashboard = ({ user }) => {
 
       case 'posts':
         return <AdminPosts />;
+      /* [TEMPORARILY HIDDEN] Ẩn Sliders trang chủ
       case 'sliders':
         return <AdminSliders />;
+      */
 
       /* [TEMPORARILY HIDDEN] Ẩn tab giảng viên
       case 'chiefs':
@@ -137,12 +139,14 @@ const AdminDashboard = ({ user }) => {
                   <p>Tin nhắn liên hệ</p>
                 </div>
               </div>
+              {/* [TEMPORARILY HIDDEN] Ẩn stat card Sliders trang chủ
               <div className="col-md-4 mb-4">
                 <div className="admin-stat-card" onClick={() => setActiveTab('sliders')} style={{ cursor: 'pointer' }}>
                   <h3>{stats.sliders}</h3>
                   <p>Sliders trang chủ</p>
                 </div>
               </div>
+              */}
               
               {/* [TEMPORARILY HIDDEN] Ẩn stat card Giảng viên
               <div className="col-md-4 mb-4">
@@ -225,11 +229,13 @@ const AdminDashboard = ({ user }) => {
             </a>
           </li>
 
+          {/* [TEMPORARILY HIDDEN] Ẩn menu Sliders trang chủ
           <li className={activeTab === 'sliders' ? 'active' : ''}>
             <a href="#sliders" onClick={(e) => { e.preventDefault(); handleTabChange('sliders'); }}>
               <i className="fa fa-image"></i> Sliders trang chủ
             </a>
           </li>
+          */}
           
           <li className={activeTab === 'settings' ? 'active' : ''}>
             <a href="#settings" onClick={(e) => { e.preventDefault(); handleTabChange('settings'); }}>
