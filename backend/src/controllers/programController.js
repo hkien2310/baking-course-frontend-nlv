@@ -212,7 +212,7 @@ exports.getProgramByIdOrSlug = async (req, res) => {
 
 exports.createProgram = async (req, res) => {
   try {
-    const { title, category, description, price, salePrice, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
+    const { title, category, description, price, salePrice, saleEndDate, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
     
     // Price validation
     if (salePrice != null && price != null && parseInt(salePrice) >= parseInt(price)) {
@@ -241,6 +241,7 @@ exports.createProgram = async (req, res) => {
         description,
         price: price != null ? parseInt(price) : null,
         salePrice: salePrice != null ? parseInt(salePrice) : null,
+        saleEndDate: saleEndDate ? new Date(saleEndDate) : null,
         thumbnail,
         chiefId: chiefId || null,
         programType: programType || 'LIVE_CLASS',
@@ -268,7 +269,7 @@ exports.createProgram = async (req, res) => {
 exports.updateProgram = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, category, description, price, salePrice, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
+    const { title, category, description, price, salePrice, saleEndDate, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
     
     // Price validation
     if (salePrice !== undefined && price !== undefined) {
@@ -290,6 +291,7 @@ exports.updateProgram = async (req, res) => {
         description,
         price: price != null ? parseInt(price) : undefined,
         ...(salePrice !== undefined && { salePrice: salePrice != null ? parseInt(salePrice) : null }),
+        ...(saleEndDate !== undefined && { saleEndDate: saleEndDate ? new Date(saleEndDate) : null }),
         thumbnail,
         chiefId: chiefId || null,
         authorName,
