@@ -28,11 +28,13 @@ const Home = () => {
     ]).then(([upcomingRes, featuredRes, newRes, studentWorksRes]) => {
       const featuredData = featuredRes?.data || featuredRes || [];
       const newData = newRes?.data || newRes || [];
+      const upcomingData = upcomingRes?.data || upcomingRes || [];
       
-      let heroSlides = featuredData;
+      // Prioritize actual upcoming programs (with countdowns) for the slider
+      // If none, fallback to featured programs, then to newest programs
+      let heroSlides = upcomingData;
       if (heroSlides.length === 0) {
-        // Fallback: If no featured, use new programs for slider
-        heroSlides = newData.slice(0, 3);
+        heroSlides = featuredData.length > 0 ? featuredData : newData.slice(0, 3);
       }
       
       setData({

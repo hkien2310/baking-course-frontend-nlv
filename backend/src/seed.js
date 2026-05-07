@@ -417,11 +417,19 @@ async function main() {
   // Seed programs — all VIDEO_COURSE (Premium Content)
   const chiefList = await prisma.chief.findMany();
   
+  // Define future dates for sessions (relative to May 2026)
+  const futureDate1 = new Date('2026-06-15T09:00:00Z');
+  const futureDate2 = new Date('2026-07-01T09:00:00Z');
+  const futureDate3 = new Date('2026-08-10T09:00:00Z');
+
   for (let i = 0; i < MOCK_DATA.programs.length; i++) {
     const p = MOCK_DATA.programs[i];
     
     // Assign a chief if available
     const chiefId = chiefList.length > 0 ? chiefList[i % chiefList.length].id : undefined;
+    
+    // Create session dates based on index to spread them out
+    const sessionDate = i % 3 === 0 ? futureDate1 : (i % 3 === 1 ? futureDate2 : futureDate3);
 
     await prisma.program.upsert({
       where: { slug: p.slug },
@@ -438,6 +446,16 @@ async function main() {
         classIncludes: p.classIncludes,
         curriculum: p.curriculum,
         ...(chiefId && { chiefId }),
+        classSessions: {
+          deleteMany: {},
+          create: [{
+            startDate: sessionDate,
+            endDate: new Date(sessionDate.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days later
+            enrollmentDeadline: new Date(sessionDate.getTime() - 7 * 24 * 60 * 60 * 1000),
+            dayOfWeek: 'Thứ 7 & Chủ Nhật',
+            timeRange: '08:00 - 11:00'
+          }]
+        }
       },
       create: {
         slug: p.slug,
@@ -453,6 +471,15 @@ async function main() {
         classIncludes: p.classIncludes,
         curriculum: p.curriculum,
         ...(chiefId && { chiefId }),
+        classSessions: {
+          create: [{
+            startDate: sessionDate,
+            endDate: new Date(sessionDate.getTime() + 30 * 24 * 60 * 60 * 1000),
+            enrollmentDeadline: new Date(sessionDate.getTime() - 7 * 24 * 60 * 60 * 1000),
+            dayOfWeek: 'Thứ 7 & Chủ Nhật',
+            timeRange: '08:00 - 11:00'
+          }]
+        }
       },
     });
     console.log(`  ✅ ${p.isFeatured ? '⭐' : '🆕'} ${p.title}`);
