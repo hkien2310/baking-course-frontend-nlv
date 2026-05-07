@@ -30,11 +30,15 @@ const Home = () => {
       const newData = newRes?.data || newRes || [];
       const discountedData = discountedRes?.data || discountedRes || [];
       
-      // Prioritize active flash sale programs for the slider
-      let heroSlides = discountedData;
+      // Only show programs with an actual expiration date in the Flash Sale slider
+      // Those without saleEndDate are ignored for the hero section
+      const heroSlides = discountedData.filter(p => p.saleEndDate);
+      
+      /* [FALLBACK REMOVED] - Only show slider if there are actual expiring flash sales
       if (heroSlides.length === 0) {
         heroSlides = featuredData.length > 0 ? featuredData : newData.slice(0, 3);
       }
+      */
       
       setData({
         upcomingSlides: heroSlides,
@@ -57,7 +61,7 @@ const Home = () => {
 
   return (
     <>
-      <HomeSlider slides={data.upcomingSlides} />
+      {data.upcomingSlides.length > 0 && <HomeSlider slides={data.upcomingSlides} />}
       <HomeClasses classes={data.featuredPrograms} />
       <HomeNewCourses classes={data.newPrograms} />
       <HomeAbout />
