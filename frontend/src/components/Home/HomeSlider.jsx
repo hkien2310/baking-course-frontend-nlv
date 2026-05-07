@@ -122,18 +122,6 @@ const HomeSlider = ({ slides }) => {
                             </h2>
                           </div>
                         </div>
-                        {slide.salePrice && (
-                           <div className="intro_layer" data-animation="fadeInUp">
-                             <div className="price-tag" style={{ fontSize: '24px', fontWeight: 'bold' }}>
-                               <span className="old-price" style={{ textDecoration: 'line-through', color: '#aaa', marginRight: '15px' }}>
-                                 {slide.price?.toLocaleString('vi-VN')}đ
-                               </span>
-                               <span className="new-price" style={{ color: '#fc834b' }}>
-                                 {slide.salePrice?.toLocaleString('vi-VN')}đ
-                               </span>
-                             </div>
-                           </div>
-                        )}
                         {(() => {
                           const targetDate = slide.saleEndDate;
                           if (!targetDate) return null;
