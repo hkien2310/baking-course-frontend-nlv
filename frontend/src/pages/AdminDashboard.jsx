@@ -11,7 +11,7 @@ import AdminOrders from '../components/Admin/AdminOrders';
 import AdminStudentWorks from '../components/Admin/AdminStudentWorks';
 import AdminSettings from './AdminSettings';
 import AdminOverviewLoading from '../components/Admin/AdminOverviewLoading';
-import { getDashboardStats } from '../services/api';
+import { getDashboardStats, logoutUser } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 
@@ -59,9 +59,8 @@ const AdminDashboard = ({ user }) => {
     };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
+  const handleLogout = async () => {
+    await logoutUser();
     navigate(ROUTES.AUTH);
   };
 

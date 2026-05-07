@@ -16,19 +16,75 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+function subscribeTokenRefresh(cb) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed(token) {
+  refreshSubscribers.map((cb) => cb(token));
+  refreshSubscribers = [];
+}
+
 // Interceptor to handle 401 Unauthorized errors (expired token)
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Clear local storage
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
+  async (error) => {
+    const { config, response } = error;
+    const originalRequest = config;
+
+    if (response && response.status === 401 && !originalRequest._retry) {
+      const refreshToken = localStorage.getItem('refreshToken');
       
-      // Redirect to auth page if not already there
+      if (refreshToken) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          try {
+            // Use basic axios or a separate instance to avoid interceptor loop
+            const { data } = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api'}/auth/refresh`, {
+              refreshToken
+            });
+            
+            const newAccessToken = data.token;
+            localStorage.setItem('token', newAccessToken);
+            isRefreshing = false;
+            onRefreshed(newAccessToken);
+            
+            // Retry original request
+            originalRequest._retry = true;
+            originalRequest.headers['x-auth-token'] = newAccessToken;
+            return api(originalRequest);
+          } catch (refreshError) {
+            isRefreshing = false;
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('role');
+            if (!window.location.pathname.startsWith('/auth')) {
+              window.location.href = `/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+            }
+            return Promise.reject(refreshError);
+          }
+        }
+
+        // If already refreshing, wait for it
+        const retryOriginalRequest = new Promise((resolve) => {
+          subscribeTokenRefresh((token) => {
+            originalRequest._retry = true;
+            originalRequest.headers['x-auth-token'] = token;
+            resolve(api(originalRequest));
+          });
+        });
+        return retryOriginalRequest;
+      }
+
+      // No refresh token, just logout
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('role');
       if (!window.location.pathname.startsWith('/auth')) {
-        const currentPath = window.location.pathname + window.location.search;
-        window.location.href = `/auth?redirect=${encodeURIComponent(currentPath)}`;
+        window.location.href = `/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
       }
     }
     return Promise.reject(error);
@@ -232,6 +288,19 @@ export const registerUser = async (userData) => {
 export const loginUser = async (credentials) => {
   const { data } = await api.post('/auth/login', credentials);
   return data;
+};
+
+export const logoutUser = async () => {
+  const refreshToken = localStorage.getItem('refreshToken');
+  try {
+    if (refreshToken) {
+      await api.post('/auth/logout', { refreshToken });
+    }
+  } finally {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('role');
+  }
 };
 
 export const getMe = async () => {

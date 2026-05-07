@@ -18,4 +18,14 @@ router.post('/register', authController.register);
 // @access  Private
 router.get('/me', authMiddleware, authController.getMe);
 
+// @route   POST api/auth/refresh
+// @desc    Làm mới access token bằng refresh token
+// @access  Public
+router.post('/refresh', authController.refreshToken);
+
+// @route   POST api/auth/logout
+// @desc    Đăng xuất và xóa refresh token
+// @access  Public
+router.post('/logout', authController.logout);
+
 module.exports = router;

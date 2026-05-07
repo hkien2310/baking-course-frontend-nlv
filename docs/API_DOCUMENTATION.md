@@ -13,6 +13,8 @@ All protected endpoints require the header: `Authorization: Bearer <valid_jwt_to
 | POST | `/auth/register` | No | `{ email, password, fullName }` | `{ token, user }` |
 | POST | `/auth/login` | No | `{ email, password }` | `{ token, user }` |
 | GET | `/auth/me` | Yes | — | `{ id, email, fullName, role }` |
+| POST | `/auth/refresh` | No | `{ refreshToken }` | `{ token }` (access token) |
+| POST | `/auth/logout` | No | `{ refreshToken }` | Logout and invalidate session |
 
 ---
 

@@ -48,6 +48,7 @@ const Auth = () => {
     try {
       const data = await loginUser(loginForm);
       localStorage.setItem('token', data.token);
+      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
       if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
       if (data.user?.role === 'ADMIN') navigate(ROUTES.ADMIN);
       else navigate(redirectTo || ROUTES.MY_ACCOUNT);
@@ -64,6 +65,7 @@ const Auth = () => {
     try {
       const data = await registerUser(regForm);
       localStorage.setItem('token', data.token);
+      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
       if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
       navigate(redirectTo || ROUTES.MY_ACCOUNT);
     } catch (err) {
