@@ -13,15 +13,7 @@ exports.getAllPrograms = async (req, res) => {
     const where = {};
     const AND = [];
 
-    if (hasDiscount === 'true') {
-      where.salePrice = { not: null };
-      AND.push({
-        OR: [
-          { saleEndDate: null },
-          { saleEndDate: { gte: now } }
-        ]
-      });
-    }
+    // Base filters (apply these first to build the core where clause)
     if (dayOfWeek) {
       where.classSessions = {
         some: { dayOfWeek }
@@ -34,41 +26,56 @@ exports.getAllPrograms = async (req, res) => {
       where.title = { contains: search, mode: 'insensitive' };
     }
     if (category) {
-      // Support multiple categories by splitting commas
       const categoryInputs = category.split(',').map(c => c.trim());
-      
-      // Look up names for the provided slugs (or names)
       const cats = await prisma.category.findMany({
         where: {
-          OR: [
-            { slug: { in: categoryInputs } },
-            { name: { in: categoryInputs } }
-          ],
+          OR: [{ slug: { in: categoryInputs } }, { name: { in: categoryInputs } }],
           type: 'PROGRAM'
         }
       });
-      
       const names = cats.map(c => c.name);
-      
-      // For backwards compatibility, if some inputs weren't slugs (or are deleted), we still query them exactly
-      const resolvedCategories = [...new Set([...names, ...categoryInputs])];
-      
-      where.category = { in: resolvedCategories };
+      where.category = { in: [...new Set([...names, ...categoryInputs])] };
     }
+
+    // Special Tiered Discount Logic
+    if (hasDiscount === 'true') {
+      // Step 1: Check if there are any expiring sales in the currently filtered set
+      const expiringSalesCount = await prisma.program.count({
+        where: {
+          ...where,
+          salePrice: { not: null },
+          saleEndDate: { gte: now }
+        }
+      });
+
+      if (expiringSalesCount > 0) {
+        // If expiring exist, ONLY return those
+        where.salePrice = { not: null };
+        where.saleEndDate = { gte: now };
+      } else {
+        // If not, return programs with perpetual discounts (no end date)
+        where.salePrice = { not: null };
+        where.saleEndDate = null;
+      }
+    }
+
     if (isFeatured !== undefined) {
       where.isFeatured = isFeatured === 'true';
     }
+    
     if (minPrice !== undefined || maxPrice !== undefined) {
       const min = !isNaN(parseInt(minPrice)) ? parseInt(minPrice) : 0;
       const max = !isNaN(parseInt(maxPrice)) ? parseInt(maxPrice) : 999999999;
-      // Filter logic: program effective price is salePrice if it exists, otherwise price.
-      // Prisma doesn't support complex OR conditions on computed fields easily, so we use OR:
       AND.push({
         OR: [
           { salePrice: { gte: min, lte: max } },
           { salePrice: null, price: { gte: min, lte: max } }
         ]
       });
+    }
+
+    if (AND.length > 0) {
+      where.AND = AND;
     }
 
     if (AND.length > 0) {
