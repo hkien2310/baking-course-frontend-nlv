@@ -453,3 +453,14 @@
   }
 }
 
+/* ═══ Homepage Hero Gap Fix ═══ */
+.page_slider .intro_layers {
+  gap: 30px !important; /* Increase gap between text lines */
+}
+
+@media (max-width: 767px) {
+  .page_slider .intro_layers {
+    gap: 15px !important;
+  }
+}
+
