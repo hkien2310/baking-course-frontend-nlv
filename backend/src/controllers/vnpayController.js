@@ -84,19 +84,17 @@ exports.createPaymentUrl = async (req, res) => {
  */
 exports.handleReturn = async (req, res) => {
   try {
-    const result = await vnpayService.processReturnCallback(req.query);
-
-    // [LOCAL DEV TRICK] 
-    // Since VNPay cannot reach localhost IPN, we manually trigger IPN logic
-    // right here in the return handler. In production, IPN handles this.
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        console.log('Local Dev: Triggering IPN fallback from Return URL...');
-        await vnpayService.processIpnCallback(req.query);
-      } catch (ipnError) {
-        console.error('Local Dev IPN fallback error:', ipnError);
-      }
+    // 1. Luôn trigger IPN logic ngay lập tức khi Return URL được gọi.
+    // Điều này giải quyết race condition khi VNPay gọi ReturnUrl nhanh hơn IPN Webhook.
+    // Vì processIpnCallback có cơ chế Idempotency, việc gọi 2 lần (từ Return và từ IPN) là an toàn.
+    try {
+      await vnpayService.processIpnCallback(req.query);
+    } catch (ipnError) {
+      console.error('IPN fallback error during Return URL processing:', ipnError);
     }
+
+    // 2. Lấy kết quả để redirect
+    const result = await vnpayService.processReturnCallback(req.query);
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const redirectUrl = `${frontendUrl}/payment/vnpay-return?orderId=${result.orderId || ''}&status=${result.status}`;
