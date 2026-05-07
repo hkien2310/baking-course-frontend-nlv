@@ -21,18 +21,17 @@ const Home = () => {
 
   useEffect(() => {
     Promise.all([
-      getUpcomingPrograms(3),
+      getPrograms({ hasDiscount: true, page: 1, limit: 5 }), // Fetch programs with active discount
       getPrograms({ isFeatured: true, page: 1, limit: 3 }),
       getPrograms({ isFeatured: false, page: 1, limit: 8 }),
       getApprovedStudentWorks()
-    ]).then(([upcomingRes, featuredRes, newRes, studentWorksRes]) => {
+    ]).then(([discountedRes, featuredRes, newRes, studentWorksRes]) => {
       const featuredData = featuredRes?.data || featuredRes || [];
       const newData = newRes?.data || newRes || [];
-      const upcomingData = upcomingRes?.data || upcomingRes || [];
+      const discountedData = discountedRes?.data || discountedRes || [];
       
-      // Prioritize actual upcoming programs (with countdowns) for the slider
-      // If none, fallback to featured programs, then to newest programs
-      let heroSlides = upcomingData;
+      // Prioritize active flash sale programs for the slider
+      let heroSlides = discountedData;
       if (heroSlides.length === 0) {
         heroSlides = featuredData.length > 0 ? featuredData : newData.slice(0, 3);
       }

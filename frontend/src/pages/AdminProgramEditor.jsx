@@ -61,8 +61,8 @@ const AdminProgramEditor = () => {
             description: prog.description || '',
             price: prog.price != null ? priceToDollars(prog.price) : '10000000',
             salePrice: prog.salePrice != null ? priceToDollars(prog.salePrice) : '',
-            thumbnail: prog.thumbnail || '',
-            isFeatured: prog.isFeatured || false,
+            saleEndDate: (prog.saleEndDate && !isNaN(new Date(prog.saleEndDate))) ? new Date(prog.saleEndDate).toISOString().slice(0, 16) : '',
+            thumbnail: prog.thumbnail || '',            isFeatured: prog.isFeatured || false,
             chiefId: prog.chiefId || '',
             authorName: prog.authorName || '',
             authorImage: prog.authorImage || '',
@@ -110,7 +110,8 @@ const AdminProgramEditor = () => {
       const payload = {
         ...formData,
         price: finalPrice,
-        salePrice: formData.salePrice ? dollarsToCents(formData.salePrice) : null
+        salePrice: formData.salePrice ? dollarsToCents(formData.salePrice) : null,
+        saleEndDate: formData.saleEndDate ? new Date(formData.saleEndDate).toISOString() : null
       };
       if (isEditing) {
         await updateProgram(id, payload);
@@ -239,6 +240,20 @@ const AdminProgramEditor = () => {
             </div>
             <div className="col-md-6">
               <AdminInput label="Giá khuyến mãi (đ)" name="salePrice" type="number" step="1000" min="0" value={formData.salePrice || ''} onChange={handleChange} placeholder="Để trống nếu không KM" />
+            </div>
+          </div>
+
+          <div className="row mt-3">
+            <div className="col-md-6">
+              <AdminInput 
+                label="Ngày hết hạn khuyến mãi" 
+                name="saleEndDate" 
+                type="datetime-local" 
+                value={formData.saleEndDate || ''} 
+                onChange={handleChange} 
+                placeholder="Chọn ngày" 
+              />
+              <small className="text-muted"><i className="fa fa-info-circle mr-1"></i> Sau ngày này, khóa học sẽ quay về giá gốc và biến mất khỏi Slider Flash Sale.</small>
             </div>
           </div>
 

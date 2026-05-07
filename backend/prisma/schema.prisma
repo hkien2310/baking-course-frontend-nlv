@@ -68,6 +68,7 @@ model Program {
   description String?
   price       Int?
   salePrice   Int?
+  saleEndDate DateTime?
   reviews     Int      @default(0)
   students    Int      @default(0)
   thumbnail     String?

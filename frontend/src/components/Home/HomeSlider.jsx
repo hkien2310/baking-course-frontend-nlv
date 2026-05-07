@@ -19,16 +19,22 @@ const HomeSlider = ({ slides }) => {
 
       // Initialize countdown timers for each slide
       slides.forEach((slide, index) => {
-        const firstUpcomingSession = slide.classSessions && slide.classSessions.find(cs => new Date(cs.startDate) > new Date());
-        const targetDate = firstUpcomingSession ? firstUpcomingSession.startDate : null;
+        const targetDate = slide.saleEndDate;
         
         if (targetDate && $.fn.countdown) {
           const countdownId = index === 0 ? '#flex-countdown' : `#flex-countdown${index + 1}`;
           const $counter = $(countdownId);
           if ($counter.length) {
             $counter.countdown('destroy');
+            const dateObj = new Date(targetDate);
+            // Format: March 29, 2018 10:00:00
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const dateString = `${monthNames[dateObj.getMonth()]} ${dateObj.getDate()}, ${dateObj.getFullYear()} ${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`;
+            
+            $counter.data('date', dateString);
             $counter.countdown({
-              until: new Date(targetDate),
+              until: dateObj,
+              format: 'DHMS',
               labels: ['Năm', 'Tháng', 'Tuần', 'Ngày', 'Giờ', 'Phút', 'Giây'],
               labels1: ['Năm', 'Tháng', 'Tuần', 'Ngày', 'Giờ', 'Phút', 'Giây'],
             });
@@ -106,10 +112,7 @@ const HomeSlider = ({ slides }) => {
                       <div className="intro_layers">
                         <div className="intro_layer" data-animation="fadeInUp">
                           <h6 className="intro_after_featured_word color-main">
-                            {(() => {
-                              const hasUpcoming = slide.classSessions && slide.classSessions.some(cs => new Date(cs.startDate) > new Date());
-                              return hasUpcoming ? 'Khóa học sắp tới' : 'Khóa học tiêu biểu';
-                            })()}
+                            {slide.saleEndDate ? 'Ưu đãi Flash Sale' : 'Khóa học tiêu biểu'}
                           </h6>
                         </div>
                         <div className="intro_layer" data-animation="fadeInUp">
@@ -119,15 +122,30 @@ const HomeSlider = ({ slides }) => {
                             </h2>
                           </div>
                         </div>
+                        {slide.salePrice && (
+                           <div className="intro_layer" data-animation="fadeInUp">
+                             <div className="price-tag" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                               <span className="old-price" style={{ textDecoration: 'line-through', color: '#aaa', marginRight: '15px' }}>
+                                 {slide.price?.toLocaleString('vi-VN')}đ
+                               </span>
+                               <span className="new-price" style={{ color: '#fc834b' }}>
+                                 {slide.salePrice?.toLocaleString('vi-VN')}đ
+                               </span>
+                             </div>
+                           </div>
+                        )}
                         {(() => {
-                          const firstUpcomingSession = slide.classSessions && slide.classSessions.find(cs => new Date(cs.startDate) > new Date());
-                          const targetDate = firstUpcomingSession ? firstUpcomingSession.startDate : null;
+                          const targetDate = slide.saleEndDate;
                           if (!targetDate) return null;
                           return (
                             <div className="intro_layer flex-countdown" data-animation="fadeInUp">
                               <div
                                 id={index === 0 ? 'flex-countdown' : `flex-countdown${index + 1}`}
-                                data-date={new Date(targetDate).toISOString()}
+                                data-date={(() => {
+                                  const dateObj = new Date(targetDate);
+                                  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                  return `${monthNames[dateObj.getMonth()]} ${dateObj.getDate()}, ${dateObj.getFullYear()} ${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}`;
+                                })()}
                               ></div>
                             </div>
                           );

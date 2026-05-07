@@ -7,9 +7,15 @@ exports.getAllPrograms = async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit) || 10;
-    const { dayOfWeek, chiefId, search, category, minPrice, maxPrice, sortBy, isFeatured } = req.query;
+    const { dayOfWeek, chiefId, search, category, minPrice, maxPrice, sortBy, isFeatured, hasDiscount } = req.query;
 
+    const now = new Date();
     const where = {};
+
+    if (hasDiscount === 'true') {
+      where.salePrice = { not: null };
+      where.saleEndDate = { gte: now };
+    }
     if (dayOfWeek) {
       where.classSessions = {
         some: { dayOfWeek }
@@ -80,8 +86,17 @@ exports.getAllPrograms = async (req, res) => {
         orderBy,
         include: { chief: true, classSessions: { include: { enrollments: true } } },
       });
+
+      // Process programs to expire sales
+      const processedPrograms = programs.map(p => {
+        if (p.saleEndDate && p.saleEndDate < now) {
+          return { ...p, salePrice: null, saleEndDate: null };
+        }
+        return p;
+      });
+
       return res.json({
-        data: programs,
+        data: processedPrograms,
         totalPages: Math.ceil(totalItems / limit),
         currentPage: page,
         totalItems
@@ -93,7 +108,15 @@ exports.getAllPrograms = async (req, res) => {
       orderBy,
       include: { chief: true, classSessions: { include: { enrollments: true } } },
     });
-    res.json(programs);
+
+    const processedPrograms = programs.map(p => {
+      if (p.saleEndDate && p.saleEndDate < now) {
+        return { ...p, salePrice: null, saleEndDate: null };
+      }
+      return p;
+    });
+
+    res.json(processedPrograms);
   } catch (error) {
     res.status(500).json({ error: 'Something went wrong while fetching programs' });
   }
