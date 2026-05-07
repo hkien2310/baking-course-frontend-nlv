@@ -206,6 +206,12 @@ exports.getProgramByIdOrSlug = async (req, res) => {
 exports.createProgram = async (req, res) => {
   try {
     const { title, category, description, price, salePrice, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
+    
+    // Price validation
+    if (salePrice != null && price != null && parseInt(salePrice) >= parseInt(price)) {
+      return res.status(400).json({ error: 'Giá khuyến mãi phải nhỏ hơn giá gốc.' });
+    }
+
     const finalSlug = slug || generateSlug(title);
     
     // Create nested classSessions
@@ -257,6 +263,15 @@ exports.updateProgram = async (req, res) => {
     const { id } = req.params;
     const { title, category, description, price, salePrice, thumbnail, slug, authorName, authorImage, learningGoals, classIncludes, curriculum, classSessions, chiefId, premiumContent, programType, students, reviews } = req.body;
     
+    // Price validation
+    if (salePrice !== undefined && price !== undefined) {
+       const p = price != null ? parseInt(price) : null;
+       const sp = salePrice != null ? parseInt(salePrice) : null;
+       if (sp != null && p != null && sp >= p) {
+         return res.status(400).json({ error: 'Giá khuyến mãi phải nhỏ hơn giá gốc.' });
+       }
+    }
+
     const finalSlug = slug || (title ? generateSlug(title) : undefined);
 
     let program = await prisma.program.update({

@@ -116,13 +116,22 @@ const AdminProgramEditor = () => {
     setSaving(true);
     try {
       const priceVal = formData.price ? dollarsToCents(formData.price) : null;
+      const salePriceVal = formData.salePrice ? dollarsToCents(formData.salePrice) : null;
+
+      // Price validation
+      if (salePriceVal != null && priceVal != null && salePriceVal >= priceVal) {
+        toast.error("Giá khuyến mãi phải nhỏ hơn giá gốc.");
+        setSaving(false);
+        return;
+      }
+
       // 10,000,000 is the "Unlimited" threshold. If reached, we send null to the API.
       const finalPrice = (priceVal >= 10000000) ? null : priceVal;
 
       const payload = {
         ...formData,
         price: finalPrice,
-        salePrice: formData.salePrice ? dollarsToCents(formData.salePrice) : null,
+        salePrice: salePriceVal,
         saleEndDate: formData.saleEndDate ? new Date(formData.saleEndDate).toISOString() : null
       };
       if (isEditing) {
