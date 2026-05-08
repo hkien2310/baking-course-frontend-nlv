@@ -80,7 +80,22 @@ const Checkout = ({ user }) => {
       const { taxCode, companyName, companyAddress, invoiceEmail } = invoiceData;
       if (!taxCode?.trim() || !companyName?.trim() || !companyAddress?.trim() || !invoiceEmail?.trim()) {
         toast.error('Vui lòng điền đầy đủ thông tin xuất hóa đơn (Mã số thuế, Tên công ty, Địa chỉ và Email).');
-        // Scroll to invoice section to notify user
+        const section = document.querySelector('.invoice-section');
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(invoiceEmail.trim())) {
+        toast.error('Email nhận hóa đơn không hợp lệ.');
+        const section = document.querySelector('.invoice-section');
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const taxCodeRegex = /^[0-9\-]{10,14}$/;
+      if (!taxCodeRegex.test(taxCode.trim())) {
+        toast.error('Mã số thuế không hợp lệ (cần 10-14 ký tự số hoặc dấu gạch ngang).');
         const section = document.querySelector('.invoice-section');
         if (section) section.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
