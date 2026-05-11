@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { DEFAULT_LOYALTY_CONFIG } = require('../services/loyaltyService');
 
 // The default config we fall back to if database is empty
 const DEFAULT_SITE_CONFIG = {
@@ -98,7 +99,59 @@ const updateSiteConfig = async (req, res) => {
   }
 };
 
+const getLoyaltyConfig = async (req, res) => {
+  try {
+    let setting = await prisma.setting.findUnique({ where: { key: 'loyaltyConfig' } });
+    if (!setting) {
+      setting = await prisma.setting.create({
+        data: { key: 'loyaltyConfig', value: DEFAULT_LOYALTY_CONFIG }
+      });
+    }
+    res.json(setting.value);
+  } catch (error) {
+    console.error('Error fetching loyaltyConfig:', error);
+    res.status(500).json({ error: 'Lỗi khi tải cấu hình loyalty' });
+  }
+};
+
+const updateLoyaltyConfig = async (req, res) => {
+  try {
+    const { determineTier } = require('../services/loyaltyService');
+    const config = req.body;
+    
+    const setting = await prisma.setting.upsert({
+      where: { key: 'loyaltyConfig' },
+      update: { value: config },
+      create: { key: 'loyaltyConfig', value: config }
+    });
+
+    // Background update all users' tiers based on new config
+    const users = await prisma.user.findMany({ select: { id: true, totalSpent: true, memberTier: true } });
+    const updatePromises = users.map(user => {
+      const newTier = determineTier(user.totalSpent || 0, config.tiers);
+      if (newTier !== user.memberTier) {
+        return prisma.user.update({
+          where: { id: user.id },
+          data: { memberTier: newTier }
+        });
+      }
+      return null;
+    }).filter(p => p !== null);
+
+    if (updatePromises.length > 0) {
+      Promise.all(updatePromises).catch(err => console.error('Error batch updating user tiers:', err));
+    }
+
+    res.json({ message: 'Cập nhật cấu hình loyalty thành công và đã đồng bộ hạng thành viên.', config: setting.value });
+  } catch (error) {
+    console.error('Error updating loyaltyConfig:', error);
+    res.status(500).json({ error: 'Lỗi khi lưu cấu hình loyalty' });
+  }
+};
+
 module.exports = {
   getSiteConfig,
-  updateSiteConfig
+  updateSiteConfig,
+  getLoyaltyConfig,
+  updateLoyaltyConfig,
 };

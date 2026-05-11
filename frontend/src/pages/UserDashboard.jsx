@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './UserDashboard.css';
 import PageTitle from '../components/Shared/PageTitle';
-import { getMe } from '../services/api';
+import { getMe, getLoyaltyConfig } from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { formatPrice, getOrderStatusBadge } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
@@ -10,18 +10,18 @@ import { imageUrl } from '../utils/imageUrl';
 
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
+  const [loyaltyConfig, setLoyaltyConfig] = useState(null);
   const [activeTab, setActiveTab] = useState('courses');
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
-    getMe().then(user => {
-      if (user.role === 'ADMIN') {
-        navigate(ROUTES.ADMIN, { replace: true });
-      } else {
-        setUser(user);
-      }
-    }).catch(() => navigate('/auth'));
+    Promise.all([getMe(), getLoyaltyConfig()])
+      .then(([me, config]) => {
+        if (me.role === 'ADMIN') { navigate(ROUTES.ADMIN, { replace: true }); return; }
+        setUser(me);
+        setLoyaltyConfig(config);
+      }).catch(() => navigate('/auth'));
   }, [navigate]);
 
   const handleLogout = () => {
@@ -38,13 +38,14 @@ const UserDashboard = () => {
 
   // Compute stats
   const confirmedOrders = user.orders?.filter(o => o.status === 'CONFIRMED') || [];
-  const totalSpent = confirmedOrders.reduce((sum, o) => sum + o.amount, 0);
+  const totalSpent = user.totalSpent || 0; // Use DB field as source of truth for loyalty
   const initials = user.fullName?.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || '?';
-  const memberSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : '';
+  const memberSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long' }) : '';
 
   const tabs = [
     { key: 'courses', icon: 'fa-graduation-cap', label: t('userDash.tabs.courses') },
     { key: 'orders', icon: 'fa-shopping-bag', label: t('userDash.tabs.orders') },
+    { key: 'loyalty', icon: 'fa-gift', label: 'Ưu đãi' },
   ];
 
   const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
@@ -64,12 +65,28 @@ const UserDashboard = () => {
             <div className="ud-profile-body">
               <div className="ud-avatar">{initials}</div>
               <div className="ud-info">
-                <h3 className="ud-name">{user.fullName}</h3>
+                <h3 className="ud-name">
+                  {user.fullName}
+                  {user.memberTier && user.memberTier !== 'NONE' && (
+                    <span className="ud-tier-badge" style={{ 
+                      marginLeft: 12, 
+                      fontSize: 12, 
+                      padding: '4px 12px', 
+                      borderRadius: 20, 
+                      backgroundColor: loyaltyConfig?.tiers?.find(t => t.name === user.memberTier)?.color || '#c19a5b',
+                      color: '#fff',
+                      verticalAlign: 'middle',
+                      boxShadow: `0 2px 8px ${loyaltyConfig?.tiers?.find(t => t.name === user.memberTier)?.color || '#c19a5b'}4d`,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      <i className="fa fa-star mr-1"></i>{user.memberTier}
+                    </span>
+                  )}
+                </h3>
                 <p className="ud-email"><i className="fa fa-envelope-o mr-2"></i>{user.email}</p>
                 <div className="ud-meta">
-                  <span className="ud-badge-role">
-                    <i className="fa fa-shield mr-1"></i>{user.role === 'ADMIN' ? t('userDash.admin') : t('userDash.student')}
-                  </span>
                   {memberSince && (
                     <span className="ud-member-since">
                       <i className="fa fa-calendar-o mr-1"></i>{t('userDash.memberSince', { date: memberSince })}
@@ -95,12 +112,20 @@ const UserDashboard = () => {
                 <div className="ud-stat-label">{t('userDash.stats.totalOrders')}</div>
               </div>
               <div className="ud-stat">
-                <div className="ud-stat-num">{formatPrice(totalSpent)}</div>
-                <div className="ud-stat-label">{t('userDash.stats.totalSpent')}</div>
+                <div className="ud-stat-num">{formatPrice(totalSpent, false)}</div>
+                <div className="ud-stat-label">Tổng chi tiêu</div>
               </div>
               <div className="ud-stat">
                 <div className="ud-stat-num">{user.enrollments?.length || 0}</div>
-                <div className="ud-stat-label">{t('userDash.stats.enrollments')}</div>
+                <div className="ud-stat-label">Khóa học của tôi</div>
+              </div>
+              <div className="ud-stat">
+                <div className="ud-stat-num" style={{ fontSize: 15, fontWeight: 700, color: 'var(--colorMain)' }}>{user.memberTier && user.memberTier !== 'NONE' ? user.memberTier : 'Thành viên'}</div>
+                <div className="ud-stat-label">Hạng thành viên</div>
+              </div>
+              <div className="ud-stat">
+                <div className="ud-stat-num">{(user.points || 0).toLocaleString()}</div>
+                <div className="ud-stat-label">Điểm tích lũy</div>
               </div>
             </div>
           </div>
@@ -239,6 +264,55 @@ const UserDashboard = () => {
               )}
             </div>
           )}
+
+          {/* ── Tab: Loyalty ── */}
+          {activeTab === 'loyalty' && (() => {
+            const tiers = loyaltyConfig?.tiers || [];
+            const currentTier = tiers.find(t => t.name === user.memberTier);
+            const sortedTiers = [...tiers].sort((a, b) => a.minSpent - b.minSpent);
+            const nextTier = sortedTiers.find(t => t.minSpent > (user.totalSpent || 0));
+            const spentVsNext = nextTier ? Math.min((user.totalSpent || 0) / nextTier.minSpent * 100, 100) : 100;
+            const redeemRate = loyaltyConfig?.points?.redeemRate || 1;
+            return (
+              <div className="ud-tab-content">
+                <div className="ud-loyalty-card" style={{ background: '#fff', borderRadius: 12, padding: 24, border: '1px solid #f0f1f5', marginBottom: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ fontSize: 13, color: '#888', marginBottom: 4 }}>Hạng thành viên hiện tại</div>
+                      <h4 style={{ margin: 0, color: 'var(--colorMain)', fontWeight: 700 }}>{user.memberTier && user.memberTier !== 'NONE' ? user.memberTier : 'Thành viên'}</h4>
+                      {currentTier && <div style={{ fontSize: 13, marginTop: 4, color: '#525f7f' }}>Ưu đãi: Giảm {currentTier.discountPercent}% mỗi lần mua</div>}
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: 13, color: '#888' }}>Tổng chi tiêu</div>
+                      <div style={{ fontWeight: 700, fontSize: 18 }}>{formatPrice(user.totalSpent || 0, false)}</div>
+                    </div>
+                  </div>
+                  {nextTier && (
+                    <div style={{ marginTop: 16 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#888', marginBottom: 6 }}>
+                        <span>Tiến trình lên hạng <strong>{nextTier.name}</strong></span>
+                        <span>Cần thêm {formatPrice(nextTier.minSpent - (user.totalSpent || 0), false)}</span>
+                      </div>
+                      <div className="progress" style={{ height: 8, borderRadius: 8 }}>
+                        <div className="progress-bar" style={{ width: `${spentVsNext}%`, background: 'var(--colorMain)', borderRadius: 8 }} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ background: '#fff', borderRadius: 12, padding: 24, border: '1px solid #f0f1f5' }}>
+                  <div style={{ fontSize: 13, color: '#888', marginBottom: 4 }}>Điểm tích lũy</div>
+                  <div style={{ fontSize: 32, fontWeight: 700, color: 'var(--colorMain)' }}>{(user.points || 0).toLocaleString()} điểm</div>
+                  <div style={{ fontSize: 14, color: '#525f7f', marginTop: 4 }}>Tương đương {formatPrice((user.points || 0) * redeemRate, false)} khi thanh toán</div>
+                  {loyaltyConfig?.points && loyaltyConfig.points.earnPer > 0 && (
+                    <div style={{ fontSize: 12, color: '#aaa', marginTop: 12, padding: '8px 12px', background: '#f8f9fa', borderRadius: 8 }}>
+                      Cứ mỗi {formatPrice(loyaltyConfig.points.earnPer, false)} chi tiêu → Nhận thêm {loyaltyConfig.points.earnRate.toLocaleString()} điểm
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
 
         </div>
       </section>

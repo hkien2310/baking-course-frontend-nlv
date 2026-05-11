@@ -18,6 +18,14 @@ jest.mock('@prisma/client', () => {
     paymentConfig: {
       findFirst: jest.fn(),
     },
+    setting: {
+      findUnique: jest.fn(),
+    },
+    user: {
+      findUnique: jest.fn(),
+      update: jest.fn(),
+    },
+    $transaction: jest.fn((callback) => callback(mPrisma)),
     $disconnect: jest.fn(),
   };
   return { PrismaClient: jest.fn(() => mPrisma) };
@@ -32,6 +40,23 @@ jest.mock('../src/middleware/authMiddleware', () => (req, res, next) => {
 jest.mock('../src/services/enrollmentService', () => ({
   createEnrollmentForOrder: jest.fn(),
 }));
+
+jest.mock('../src/services/loyaltyService', () => {
+  const actual = jest.requireActual('../src/services/loyaltyService');
+  return {
+    ...actual,
+    applyDiscounts: jest.fn(() => Promise.resolve({
+      promoCodeId: null,
+      promoCodeDiscount: 0,
+      tierDiscount: 0,
+      pointsUsed: 0,
+      pointsDiscount: 0,
+      finalPrice: 100000
+    })),
+    calculatePointsEarned: jest.fn(() => 5000),
+    determineTier: jest.fn(() => 'Silver')
+  };
+});
 
 const prisma = new PrismaClient();
 const enrollmentService = require('../src/services/enrollmentService');
@@ -54,12 +79,19 @@ describe('Order Controller', () => {
         price: 100000,
         programType: 'VIDEO_COURSE',
       };
+      const mockUser = {
+        id: 'user-123',
+        memberTier: 'NONE',
+        points: 100,
+        totalSpent: 0
+      };
       const mockPaymentConfig = {
         transferNote: 'BAKING {orderCode}',
         isActive: true,
       };
 
       prisma.program.findUnique.mockResolvedValue(mockProgram);
+      prisma.user.findUnique.mockResolvedValue(mockUser);
       prisma.order.findFirst.mockResolvedValue(null); // No existing or purchased order
       prisma.paymentConfig.findFirst.mockResolvedValue(mockPaymentConfig);
       prisma.order.create.mockResolvedValue({
@@ -120,15 +152,24 @@ describe('Order Controller', () => {
 
   describe('PATCH /api/orders/:id/confirm', () => {
     it('should confirm an order and create enrollment (Admin action)', async () => {
+      const mockUser = {
+        id: 'user-123',
+        totalSpent: 0,
+        points: 0
+      };
       const mockOrder = {
         id: 'order-1',
         status: 'AWAITING_CONFIRM',
         userId: 'user-123',
-        programId: 'prog-1'
+        programId: 'prog-1',
+        subTotal: 100000,
+        pointsEarned: 5000,
+        user: mockUser
       };
       
       prisma.order.findUnique.mockResolvedValue(mockOrder);
       prisma.order.update.mockResolvedValue({ ...mockOrder, status: 'CONFIRMED' });
+      prisma.user.update.mockResolvedValue({ ...mockUser, totalSpent: 100000, points: 5000 });
       enrollmentService.createEnrollmentForOrder.mockResolvedValue({ id: 'enrol-1' });
 
       const res = await request(app)
@@ -141,11 +182,17 @@ describe('Order Controller', () => {
         where: { id: 'order-1' },
         data: expect.objectContaining({ status: 'CONFIRMED' })
       }));
-      expect(enrollmentService.createEnrollmentForOrder).toHaveBeenCalledWith('order-1');
+      expect(enrollmentService.createEnrollmentForOrder).toHaveBeenCalledWith('order-1', expect.anything());
     });
 
     it('should return 400 if order is already confirmed', async () => {
-      prisma.order.findUnique.mockResolvedValue({ id: 'order-1', status: 'CONFIRMED' });
+      const mockOrder = {
+        id: 'order-1',
+        status: 'CONFIRMED',
+        userId: 'user-123',
+        user: { id: 'user-123' }
+      };
+      prisma.order.findUnique.mockResolvedValue(mockOrder);
 
       const res = await request(app)
         .patch('/api/orders/order-1/confirm')

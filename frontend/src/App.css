@@ -464,3 +464,12 @@
   }
 }
 
+/* ═══ Fix Owl Carousel Nav Arrows Drifting on Wide Screens ═══ */
+.owl-nav-bottom .owl-nav > div {
+  right: calc(50% - 30px);
+}
+.owl-nav-bottom .owl-nav > div:first-child {
+  left: calc(50% - 30px);
+  right: auto;
+}
+

@@ -5,6 +5,7 @@ import AdminContacts from '../components/Admin/AdminContacts';
 import AdminPosts from '../components/Admin/AdminPosts';
 import AdminSliders from '../components/Admin/AdminSliders';
 import AdminEnrollments from '../components/Admin/AdminEnrollments';
+import AdminLoyalty from '../components/Admin/AdminLoyalty';
 
 // [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
@@ -94,6 +95,8 @@ const AdminDashboard = ({ user }) => {
         return <AdminOrders />;
       case 'studentWorks':
         return <AdminStudentWorks />;
+      case 'loyalty':
+        return <AdminLoyalty />;
       case 'settings':
         return <AdminSettings />;
       case 'overview':
@@ -240,6 +243,11 @@ const AdminDashboard = ({ user }) => {
           <li className={activeTab === 'settings' ? 'active' : ''}>
             <a href="#settings" onClick={(e) => { e.preventDefault(); handleTabChange('settings'); }}>
               <i className="fa fa-cogs"></i> Cấu hình Website
+            </a>
+          </li>
+          <li className={activeTab === 'loyalty' ? 'active' : ''}>
+            <a href="#loyalty" onClick={(e) => { e.preventDefault(); handleTabChange('loyalty'); }}>
+              <i className="fa fa-gift"></i> Giảm giá & Tích điểm
             </a>
           </li>
         </ul>

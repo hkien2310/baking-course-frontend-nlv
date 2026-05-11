@@ -16,6 +16,8 @@ const {
   generateTxnRef,
 } = require('../utils/vnpay');
 
+const orderService = require('./orderService');
+
 const VNPAY_CONFIG = {
   get tmnCode() { return process.env.VNPAY_TMN_CODE; },
   get hashSecret() { return process.env.VNPAY_HASH_SECRET; },
@@ -122,27 +124,18 @@ async function processIpnCallback(queryParams) {
 
   // 6. Process based on response code
   if (vnpResponseCode === '00' && vnpTransactionStatus === '00') {
-    // Payment successful — confirm order
-    await prisma.order.update({
-      where: { id: order.id },
-      data: {
-        status: 'CONFIRMED',
-        paidAt: new Date(),
-        paidViaWebhook: true,
-        confirmedAt: new Date(),
-        paymentProvider: 'VNPAY',
-        gatewayTransactionNo: vnpTransactionNo || null,
-        gatewayResponseCode: vnpResponseCode,
-        gatewayTransactionStatus: vnpTransactionStatus,
-        rawGatewayPayload: rawPayload,
-        adminNote: 'Auto-confirmed via VNPay IPN.',
-      },
+    // Payment successful — confirm order via centralized OrderService
+    await orderService.completeOrder(order.id, {
+      paidAt: new Date(),
+      paidViaWebhook: true,
+      paymentProvider: 'VNPAY',
+      gatewayTransactionNo: vnpTransactionNo || null,
+      gatewayResponseCode: vnpResponseCode,
+      gatewayTransactionStatus: vnpTransactionStatus,
+      rawGatewayPayload: rawPayload,
+      adminNote: 'Auto-confirmed via VNPay IPN.',
     });
     console.log(`VNPay IPN: Order ${order.orderCode} CONFIRMED (txnRef: ${vnpTxnRef})`);
-
-    // Auto-create enrollment after successful VNPay payment
-    const enrollmentService = require('./enrollmentService');
-    await enrollmentService.createEnrollmentForOrder(order.id);
   } else {
     // Payment failed — update gateway info but keep PENDING
     await prisma.order.update({

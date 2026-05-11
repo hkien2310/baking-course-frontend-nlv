@@ -1,11 +1,14 @@
 /**
  * Format price from cents (Int) to display string
- * @param {number} priceInCents - Price in cents (e.g. 55000 = $550.00)
- * @returns {string} Formatted price string (e.g. "$550.00")
+ * @param {number} priceInCents - Price in cents
+ * @param {boolean} showFreeText - Whether to show "Miễn phí" for 0
+ * @returns {string} Formatted price string
  */
-export const formatPrice = (priceInCents) => {
+export const formatPrice = (priceInCents, showFreeText = true) => {
   if (priceInCents === null) return 'Liên hệ';
-  if (priceInCents === 0 || priceInCents === '0' || priceInCents == null) return 'Miễn phí';
+  if (priceInCents === 0 || priceInCents === '0' || priceInCents == null) {
+    return showFreeText ? 'Miễn phí' : '0đ';
+  }
   return `${Number(priceInCents).toLocaleString('vi-VN')}đ`;
 };
 

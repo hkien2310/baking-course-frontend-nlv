@@ -46,10 +46,10 @@ VITE_API_BASE_URL="https://your-api-domain.com/api"
 ## 2. Deployment Options
 
 ### Option A: PaaS (Render / Railway) — Recommended for ease
-1. **Database**: Create a PostgreSQL instance (e.g., on Render or Supabase).
+1. **Database**: Create a PostgreSQL instance (e.g., on Render or Supabase/Neon).
 2. **Backend**:
    - Connect your GitHub repo.
-   - Build Command: `cd backend && npm install && npx prisma generate`
+   - Build Command: `cd backend && npm install && npx prisma generate && npx prisma migrate deploy`
    - Start Command: `cd backend && node src/index.js`
    - Add Environment Variables.
 3. **Frontend (Vercel)**:

@@ -46,9 +46,20 @@ This file (`gemini.md`) acts as the persistent project-level context for Gemini/
 - **Pedagogical Alignment**: I will use the built-in "Tours" (`tour.json`) to onboard myself to unfamiliar modules before attempting to modify them.
 - **Verification**: After significant changes, I will update the graph if requested to ensure the "brain" stays in sync with the code.
 
-**The test:** Can I explain how this change affects the rest of the graph? If no, I haven't researched enough.
+## 7. Karpathy Auto-Loop Protocol (Shortcut: `loop`)
+**Khi người dùng yêu cầu `loop [module/file]`, tôi sẽ tự động thực hiện chu trình sau mà không cần hỏi lại:**
 
-## 6. Verification & Build
+1.  **Phase 1 (Test)**: Gọi `@test-agent` viết script reproduction chứng minh bug/vấn đề.
+2.  **Phase 2 (Fix)**: Gọi `@code-agent` sửa lỗi dựa trên log fail.
+3.  **Phase 3 (Verify)**: Gọi `@test-agent` chạy lại script. Loop lại Phase 2 nếu vẫn fail.
+4.  **Phase 4 (Review)**: Gọi `@review-agent` kiểm tra độ tối giản (Karpathy Audit).
+5.  **Phase 5 (Refine)**: Nếu Review có góp ý, lặp lại Fix & Test cho đến khi Review đạt ✅ PERFECT.
+
+**Quy tắc ngầm:**
+- Không dừng lại giữa chừng trừ khi gặp lỗi hệ thống không thể tự sửa.
+- Báo cáo kết quả cuối cùng bằng một bảng tổng hợp duy nhất.
+- Luôn giữ Git Diff sạch (Surgical).
+
 **Always verify locally before deployment.**
 
 - **Mandatory Build Check**: BEFORE any `git commit` or `git push`, I MUST run `npm run build` in the relevant directory (e.g., `cd frontend && npm run build`) to ensure there are no syntax errors or unresolved imports.

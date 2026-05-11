@@ -78,10 +78,6 @@ exports.getAllPrograms = async (req, res) => {
       where.AND = AND;
     }
 
-    if (AND.length > 0) {
-      where.AND = AND;
-    }
-
     let orderBy = {};
     if (sortBy === 'price_asc') {
       // Because price logic is complex, Prisma sorting might just use base price
@@ -230,14 +226,28 @@ exports.createProgram = async (req, res) => {
     
     // Create nested classSessions
     const nestedSessions = classSessions && Array.isArray(classSessions) ? {
-      create: classSessions.map(cs => ({
-        startDate: cs.startDate ? new Date(cs.startDate) : null,
-        endDate: cs.endDate ? new Date(cs.endDate) : null,
-        enrollmentDeadline: cs.enrollmentDeadline ? new Date(cs.enrollmentDeadline) : null,
-        dayOfWeek: cs.dayOfWeek || null,
-        timeRange: cs.timeRange || null,
-        instructorOverride: cs.instructorOverride || null,
-      }))
+      create: classSessions.map(cs => {
+        const start = cs.startDate ? new Date(cs.startDate) : null;
+        const end = cs.endDate ? new Date(cs.endDate) : null;
+        const now = new Date();
+        now.setHours(0,0,0,0);
+
+        if (start && start < now) {
+          throw new Error('Ngày bắt đầu khóa học không được ở quá khứ.');
+        }
+        if (start && end && end <= start) {
+          throw new Error('Ngày kết thúc khóa học phải lớn hơn ngày bắt đầu.');
+        }
+
+        return {
+          startDate: start,
+          endDate: end,
+          enrollmentDeadline: cs.enrollmentDeadline ? new Date(cs.enrollmentDeadline) : null,
+          dayOfWeek: cs.dayOfWeek || null,
+          timeRange: cs.timeRange || null,
+          instructorOverride: cs.instructorOverride || null,
+        };
+      })
     } : undefined;
 
     const program = await prisma.program.create({
@@ -285,6 +295,23 @@ exports.updateProgram = async (req, res) => {
        if (sp != null && p != null && sp >= p) {
          return res.status(400).json({ error: 'Giá khuyến mãi phải nhỏ hơn giá gốc.' });
        }
+    }
+
+    // Process sessions validation
+    if (classSessions && Array.isArray(classSessions)) {
+      classSessions.forEach(cs => {
+        const start = cs.startDate ? new Date(cs.startDate) : null;
+        const end = cs.endDate ? new Date(cs.endDate) : null;
+        const now = new Date();
+        now.setHours(0,0,0,0);
+
+        if (start && start < now) {
+          throw new Error('Ngày bắt đầu khóa học không được ở quá khứ.');
+        }
+        if (start && end && end <= start) {
+          throw new Error('Ngày kết thúc khóa học phải lớn hơn ngày bắt đầu.');
+        }
+      });
     }
 
     const finalSlug = slug || (title ? generateSlug(title) : undefined);
@@ -345,6 +372,7 @@ exports.updateProgram = async (req, res) => {
     }
     res.json(program);
   } catch (error) {
+    console.error('updateProgram error:', error);
     res.status(500).json({ error: 'Failed to update program' });
   }
 };

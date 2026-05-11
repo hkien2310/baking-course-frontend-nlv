@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getProgramBySlug, createProgram, updateProgram, getChiefs, getCategories } from '../services/api';
 import { toast } from 'react-toastify';
 import AdminImageUpload from '../components/Admin/AdminImageUpload';
-import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
+import { AdminInput, AdminSelect, AdminTextarea, AdminCurrencyInput } from '../components/Admin/Shared/AdminFormControls';
 import { ROUTES } from '../constants/routes';
 import { priceToDollars, dollarsToCents } from '../utils/formatters';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
@@ -58,18 +58,21 @@ const AdminProgramEditor = () => {
     }).catch(err => console.error("Failed to load chiefs", err));
 
     getCategories({ type: 'PROGRAM' }).then(res => {
-      setCategoriesList(res.filter(c => c.isActive) || []);
+      console.log("DEBUG: Loaded categories:", res);
+      const list = Array.isArray(res) ? res : (res?.data || []);
+      setCategoriesList(list.filter(c => c.isActive) || []);
     }).catch(err => console.error("Failed to load categories", err));
 
     if (isEditing) {
       // getProgramByIdOrSlug supports both
       getProgramBySlug(id)
         .then(prog => {
+          console.log("DEBUG: Loaded program category:", prog.category);
           setFormData({
-            programType: prog.programType || 'VIDEO_COURSE', // [TEMPORARILY HIDDEN] Was 'LIVE_CLASS'
+            programType: prog.programType || 'VIDEO_COURSE',
             title: prog.title || '',
             slug: prog.slug || '',
-            category: prog.category || '',
+            category: prog.category ? prog.category.trim() : '',
             description: prog.description || '',
             price: prog.price != null ? priceToDollars(prog.price) : '10000000',
             salePrice: prog.salePrice != null ? priceToDollars(prog.salePrice) : '',
@@ -241,16 +244,12 @@ const AdminProgramEditor = () => {
 
           <div className="row mt-3">
             <div className="col-md-6">
-              <AdminInput 
+              <AdminCurrencyInput 
                 label={<>Giá gốc (đ) <span className="text-danger">*</span></>} 
                 name="price" 
-                type="number" 
-                step="1000" 
-                min="0" 
-                max="10000000"
                 value={formData.price} 
                 onChange={handleChange} 
-                placeholder="500000" 
+                placeholder="500.000" 
                 required 
               />
               {Number(formData.price) >= 10000000 && (
@@ -260,7 +259,13 @@ const AdminProgramEditor = () => {
               )}
             </div>
             <div className="col-md-6">
-              <AdminInput label="Giá khuyến mãi (đ)" name="salePrice" type="number" step="1000" min="0" value={formData.salePrice || ''} onChange={handleChange} placeholder="Để trống nếu không KM" />
+              <AdminCurrencyInput 
+                label="Giá khuyến mãi (đ)" 
+                name="salePrice" 
+                value={formData.salePrice || ''} 
+                onChange={handleChange} 
+                placeholder="Để trống nếu không KM" 
+              />
             </div>
           </div>
 
@@ -414,13 +419,32 @@ const AdminProgramEditor = () => {
               </div>
               <div className="row">
                 <div className="col-md-4">
-                  <AdminInput label={<>Ngày khai giảng <span className="text-danger">*</span></>} type="datetime-local" value={session.startDate} onChange={e => handleArrayChange('classSessions', i, 'startDate', e.target.value)} required />
+                  <AdminInput 
+                    label={<>Ngày khai giảng <span className="text-danger">*</span></>} 
+                    type="datetime-local" 
+                    value={session.startDate} 
+                    onChange={e => handleArrayChange('classSessions', i, 'startDate', e.target.value)} 
+                    required 
+                  />
                 </div>
                 <div className="col-md-4">
-                  <AdminInput label={<>Ngày kết thúc <span className="text-danger">*</span></>} type="datetime-local" value={session.endDate} onChange={e => handleArrayChange('classSessions', i, 'endDate', e.target.value)} required />
+                  <AdminInput 
+                    label={<>Ngày kết thúc <span className="text-danger">*</span></>} 
+                    type="datetime-local" 
+                    value={session.endDate} 
+                    onChange={e => handleArrayChange('classSessions', i, 'endDate', e.target.value)} 
+                    required 
+                    error={session.startDate && session.endDate && new Date(session.endDate) <= new Date(session.startDate) ? 'Ngày kết thúc phải sau ngày khai giảng' : ''}
+                  />
                 </div>
                 <div className="col-md-4">
-                  <AdminInput label="Hạn chót đăng ký" type="datetime-local" value={session.enrollmentDeadline} onChange={e => handleArrayChange('classSessions', i, 'enrollmentDeadline', e.target.value)} />
+                  <AdminInput 
+                    label="Hạn chót đăng ký" 
+                    type="datetime-local" 
+                    value={session.enrollmentDeadline} 
+                    onChange={e => handleArrayChange('classSessions', i, 'enrollmentDeadline', e.target.value)} 
+                    error={session.startDate && session.enrollmentDeadline && new Date(session.enrollmentDeadline) > new Date(session.startDate) ? 'Hạn chót phải trước ngày khai giảng' : ''}
+                  />
                 </div>
               </div>
 

@@ -4,9 +4,9 @@ import AdminConfirmModal from './AdminConfirmModal';
 import AdminModal from './AdminModal';
 import AdminButton from './Shared/AdminButton';
 import AdminActionBtn from './Shared/AdminActionBtn';
+import AdminLoadingBlock from './AdminLoadingBlock';
 import Pagination from '../Shared/Pagination';
 import { getContacts, deleteContact } from '../../services/api';
-import AdminPageShell from './AdminPageShell';
 import usePendingAction from './usePendingAction';
 
 const AdminContacts = () => {
@@ -49,7 +49,18 @@ const AdminContacts = () => {
     }
   };
 
-  if (loading) return <AdminPageShell loading loadingRows={5} />;
+  if (loading) return (
+    <>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexShrink: 0 }}>
+        <h3 className="mb-0">Tin nhắn Liên hệ</h3>
+      </div>
+      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        <AdminLoadingBlock compact rows={5} />
+      </div>
+    </div>
+    </>
+  );
 
   const totalPages = Math.ceil(contacts.length / itemsPerPage) || 1;
   const safePage = Math.min(currentPage, totalPages);

@@ -7,6 +7,7 @@ const auth = require('../middleware/authMiddleware');
 router.use(auth);
 
 // User routes
+router.post('/preview', orderController.previewOrder);
 router.post('/', orderController.createOrder);
 router.get('/my', orderController.getMyOrders);
 router.get('/:id', orderController.getOrderById);

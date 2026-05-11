@@ -2,6 +2,7 @@ import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
+import PageLoading from '../components/Shared/PageLoading';
 import { getChiefById, submitContact } from '../services/api';
 import { ROUTES } from '../constants/routes';
 import { toast } from 'react-toastify';
@@ -59,10 +60,17 @@ const ChiefDetail = () => {
 
   if (loading) {
     return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('chiefDetail.loading') || 'Loading Instructor Profile...'}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
+      <>
+        <PageTitle 
+          title={t('chiefDetail.pageTitle') || 'Thông Tin Giảng Viên'}
+          breadcrumbs={[
+            { label: t('header.home'), link: '/' }, 
+            { label: t('header.instructors') || 'Giảng Viên', link: ROUTES.CHIEFS }, 
+            { label: '...' }
+          ]}
+        />
+        <PageLoading />
+      </>
     );
   }
 

@@ -422,4 +422,46 @@ export const deleteStudentWork = async (id) => {
   return data;
 };
 
+// ── LOYALTY CONFIG ──
+export const getLoyaltyConfig = async () => {
+  const { data } = await api.get('/settings/loyalty');
+  return data;
+};
+
+export const updateLoyaltyConfig = async (payload) => {
+  const { data } = await api.put('/settings/loyalty', payload);
+  return data;
+};
+
+// ── PROMO CODES ──
+export const getPromoCodes = async () => {
+  const { data } = await api.get('/promo-codes');
+  return data;
+};
+
+export const createPromoCode = async (payload) => {
+  const { data } = await api.post('/promo-codes', payload);
+  return data;
+};
+
+export const updatePromoCode = async (id, payload) => {
+  const { data } = await api.put(`/promo-codes/${id}`, payload);
+  return data;
+};
+
+export const deletePromoCode = async (id) => {
+  const { data } = await api.delete(`/promo-codes/${id}`);
+  return data;
+};
+
+export const previewOrder = async (payload) => {
+  const { data } = await api.post('/orders/preview', payload);
+  return data;
+};
+
+export const validatePromoCode = async (code, orderAmount) => {
+  const { data } = await api.post('/promo-codes/validate', { code, orderAmount });
+  return data;
+};
+
 export default api;

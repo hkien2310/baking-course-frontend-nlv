@@ -3,10 +3,12 @@ const router = express.Router();
 const settingController = require('../controllers/settingController');
 const auth = require('../middleware/authMiddleware');
 
-// Public route to get config
+// Public routes
 router.get('/siteConfig', settingController.getSiteConfig);
+router.get('/loyalty', settingController.getLoyaltyConfig);
 
-// Admin route to update config
+// Admin routes
 router.put('/siteConfig', auth, settingController.updateSiteConfig);
+router.put('/loyalty', auth, settingController.updateLoyaltyConfig);
 
 module.exports = router;

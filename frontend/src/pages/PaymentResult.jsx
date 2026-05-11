@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
+import PageLoading from '../components/Shared/PageLoading';
 import { getOrderById } from '../services/api';
 import { formatPrice } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
@@ -22,6 +23,7 @@ const PaymentResult = () => {
   const POLL_INTERVAL = 3000;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (!orderId) {
       setLoading(false);
       return;
@@ -88,10 +90,13 @@ const PaymentResult = () => {
 
   if (loading) {
     return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('common.loading')}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
+      <>
+        <PageTitle 
+          title={t('payment.resultTitle') || 'Kết quả giao dịch'}
+          breadcrumbs={[{ label: t('header.home') || 'Trang chủ', link: '/' }, { label: t('payment.resultTitle') || 'Kết quả giao dịch' }]}
+        />
+        <PageLoading />
+      </>
     );
   }
 

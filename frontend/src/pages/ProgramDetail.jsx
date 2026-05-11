@@ -3,7 +3,8 @@ import './ProgramDetail.css';
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
-import { getProgramBySlug, submitStudentWork, uploadImage } from '../services/api';
+import PageLoading from '../components/Shared/PageLoading';
+import { getProgramBySlug, submitStudentWork, uploadImage, getMe } from '../services/api';
 import { toast } from 'react-toastify';
 import { formatPrice, formatStudentCount, calcDiscountPercent } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
@@ -31,6 +32,7 @@ const ProgramDetail = () => {
   const [premiumTab, setPremiumTab] = useState('videos');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitData, setSubmitData] = useState({ studentName: '', description: '' });
+  const [currentUserName, setCurrentUserName] = useState('');
   const [submitImage, setSubmitImage] = useState(null);
   const [submitImagePreview, setSubmitImagePreview] = useState('');
   const [submittingWork, setSubmittingWork] = useState(false);
@@ -72,16 +74,30 @@ const ProgramDetail = () => {
         console.error("Failed to fetch Program details", err);
         setLoading(false);
       });
+
+    // Fetch current user name for auto-fill in submit modal
+    getMe()
+      .then(data => {
+        if (data?.fullName) setCurrentUserName(data.fullName);
+      })
+      .catch(() => {}); // Silent fail — user might not be logged in
   }, [slug]);
 
   useInitOnLoaded(loading);
 
   if (loading) {
     return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('programDetail.loading')}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
+      <>
+        <PageTitle 
+          title={t('programDetail.title') || 'Chi Tiết Khóa Học'}
+          breadcrumbs={[
+            { label: t('header.home'), link: '/' }, 
+            { label: t('header.programs') || 'Khóa Học', link: ROUTES.PROGRAM }, 
+            { label: '...' }
+          ]}
+        />
+        <PageLoading />
+      </>
     );
   }
 
@@ -326,7 +342,10 @@ const ProgramDetail = () => {
                     <i className="fa fa-camera" style={{ fontSize: '36px', color: 'var(--colorMain)' }}></i>
                     <h5 className="mt-2 mb-1">Nộp sản phẩm của bạn</h5>
                     <p className="text-muted small mb-3">Chia sẻ thành quả học tập của bạn để được trưng bày trên trang "Sản phẩm của học viên"</p>
-                    <button className="btn btn-maincolor" onClick={() => setShowSubmitModal(true)}>
+                    <button className="btn btn-maincolor" onClick={() => {
+                      setSubmitData(prev => ({ ...prev, studentName: prev.studentName || currentUserName }));
+                      setShowSubmitModal(true);
+                    }}>
                       <i className="fa fa-upload mr-1"></i> Trả bài khóa học
                     </button>
                   </div>
@@ -428,8 +447,8 @@ const ProgramDetail = () => {
 
       {/* Submit Work Modal */}
       {showSubmitModal && (
-        <div className="admin-modal-overlay" onClick={() => setShowSubmitModal(false)} style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '550px', background: '#fff', borderRadius: '12px', padding: 'clamp(20px, 5vw, 30px)', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="admin-modal-overlay" onClick={() => !submittingWork && setShowSubmitModal(false)} style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
+          <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 'min(90vw, 650px)', background: '#fff', borderRadius: '12px', padding: 'clamp(20px, 5vw, 30px)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h5 style={{ margin: 0 }}><i className="fa fa-camera color-main mr-2"></i>Nộp sản phẩm — {program.title}</h5>
               <button onClick={() => setShowSubmitModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>
@@ -502,7 +521,7 @@ const ProgramDetail = () => {
             </div>
 
             <div className="d-flex mt-4" style={{ gap: '15px' }}>
-              <button type="button" className="btn btn-outline-dark flex-grow-1 m-0" onClick={() => setShowSubmitModal(false)}>Hủy</button>
+              <button type="button" className="btn btn-outline-dark flex-grow-1 m-0" onClick={() => setShowSubmitModal(false)} disabled={submittingWork}>Hủy</button>
               <button
                 type="button"
                 className="btn btn-maincolor flex-grow-1 m-0 d-flex justify-content-center align-items-center"

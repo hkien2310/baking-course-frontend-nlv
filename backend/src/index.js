@@ -32,6 +32,7 @@ const vnpayRoutes = require('./routes/vnpayRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const settingRoutes = require('./routes/settingRoutes');
 const studentWorkRoutes = require('./routes/studentWorkRoutes');
+const promoCodeRoutes = require('./routes/promoCodeRoutes');
 
 app.use('/api/programs', programRoutes);
 app.use('/api/posts', postRoutes);
@@ -50,6 +51,7 @@ app.use('/api/vnpay', vnpayRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/student-work', studentWorkRoutes);
+app.use('/api/promo-codes', promoCodeRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

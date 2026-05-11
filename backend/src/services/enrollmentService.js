@@ -5,9 +5,10 @@ const prisma = new PrismaClient();
  * Creates an Enrollment record for a confirmed Order
  * Automatically handles VIDEO_COURSE vs LIVE_CLASS
  */
-exports.createEnrollmentForOrder = async (orderId) => {
+exports.createEnrollmentForOrder = async (orderId, tx = null) => {
+  const client = tx || prisma;
   try {
-    const order = await prisma.order.findUnique({
+    const order = await client.order.findUnique({
       where: { id: orderId },
       include: {
         user: true,
@@ -21,12 +22,12 @@ exports.createEnrollmentForOrder = async (orderId) => {
     }
 
     if (order.status !== 'CONFIRMED') {
-      console.error(`createEnrollmentForOrder: Cannot enroll for non-confirmed order ${orderId}`);
+      console.error(`createEnrollmentForOrder: Cannot enroll for non-confirmed order ${orderId} (Status: ${order.status})`);
       return null;
     }
 
     // Check if already enrolled to avoid duplicates
-    const existing = await prisma.enrollment.findFirst({
+    const existing = await client.enrollment.findFirst({
       where: {
         userId: order.userId,
         programId: order.programId
@@ -39,7 +40,7 @@ exports.createEnrollmentForOrder = async (orderId) => {
     }
 
     // Create enrollment
-    const enrollment = await prisma.enrollment.create({
+    const enrollment = await client.enrollment.create({
       data: {
         classSessionId: order.classSessionId, // will be null for VIDEO_COURSE
         userId: order.userId,

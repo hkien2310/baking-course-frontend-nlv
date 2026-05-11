@@ -59,4 +59,45 @@
   transform: translateX(20px) !important;
 }
 
+/* Loyalty Option Card */
+.loyalty-option-card {
+  margin-bottom: 12px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 10px;
+  border: 2px solid #f0f1f5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
+.loyalty-option-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: #e0e0e0;
+}
+
+.loyalty-option-card.selected {
+  background: #fff5f0;
+  border-color: var(--colorMain, #c19a5b) !important;
+}
+
+.loyalty-option-radio {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+
+.loyalty-option-card.selected .loyalty-option-radio {
+  border-color: var(--colorMain, #c19a5b);
+  background: var(--colorMain, #c19a5b);
+}
+
+.loyalty-option-card.selected .loyalty-option-title {
+  color: var(--colorMain, #c19a5b) !important;
+}

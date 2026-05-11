@@ -29,16 +29,21 @@ const AdminPostEditor = () => {
     document.body.classList.add('admin-mode');
     
     getCategories({ type: 'POST' })
-      .then(res => setCategories(res))
+      .then(res => {
+        console.log("DEBUG: Loaded POST categories:", res);
+        const list = Array.isArray(res) ? res : (res?.data || []);
+        setCategories(list);
+      })
       .catch(() => console.error("Could not load categories"));
 
     if (isEditing) {
       getPostBySlug(id)
         .then(post => {
+          console.log("DEBUG: Loaded post category:", post.category);
           setFormData({
             title: post.title || '',
             slug: post.slug || '',
-            category: post.category || '',
+            category: post.category ? post.category.trim() : '',
             type: post.type || 'BLOG',
             thumbnail: post.thumbnail || '',
             authorName: post.authorName || 'Admin',

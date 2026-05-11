@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const orderService = require('../services/orderService');
 
 /**
  * POST /api/webhook/payment
@@ -93,16 +94,11 @@ exports.handlePaymentWebhook = async (req, res) => {
       });
     }
 
-    // 6. Auto-confirm the order
-    const updated = await prisma.order.update({
-      where: { orderCode },
-      data: {
-        status: 'CONFIRMED',
-        paidViaWebhook: true,
-        transactionRef: transactionId || null,
-        confirmedAt: new Date(),
-        adminNote: 'Auto-confirmed via payment webhook.'
-      }
+    // 6. Auto-confirm the order via centralized OrderService
+    const updated = await orderService.completeOrder(order.id, {
+      paidViaWebhook: true,
+      transactionRef: transactionId || null,
+      adminNote: 'Auto-confirmed via payment webhook.'
     });
 
     console.log(`Webhook: Order ${orderCode} auto-confirmed | User: ${order.user.fullName} | Course: ${order.program.title}`);

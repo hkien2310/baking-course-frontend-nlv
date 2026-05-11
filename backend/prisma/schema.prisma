@@ -7,6 +7,256 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  fullName      String
+  role          Role           @default(USER)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  memberTier    String         @default("NONE")
+  points        Int            @default(0)
+  totalSpent    Int            @default(0)
+  enrollments   Enrollment[]
+  orders        Order[]
+  posts         Post[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Program {
+  id             String         @id @default(uuid())
+  slug           String         @unique
+  title          String
+  description    String?
+  reviews        Int            @default(0)
+  students       Int            @default(0)
+  thumbnail      String?
+  authorName     String?
+  authorImage    String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  isFeatured     Boolean        @default(false)
+  classIncludes  Json?
+  curriculum     Json?
+  learningGoals  Json?
+  chiefId        String?
+  premiumContent Json?
+  price          Int?
+  programType    ProgramType    @default(LIVE_CLASS)
+  salePrice      Int?
+  category       String?
+  saleEndDate    DateTime?
+  classSessions  ClassSession[]
+  enrollments    Enrollment[]
+  orders         Order[]
+  chief          Chief?         @relation(fields: [chiefId], references: [id])
+  studentWorks   StudentWork[]
+}
+
+model ClassSession {
+  id                 String       @id @default(uuid())
+  programId          String
+  startDate          DateTime?
+  endDate            DateTime?
+  enrollmentDeadline DateTime?
+  dayOfWeek          String?
+  timeRange          String?
+  instructorOverride String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  program            Program      @relation(fields: [programId], references: [id])
+  enrollments        Enrollment[]
+}
+
+model Post {
+  id         String   @id @default(uuid())
+  slug       String   @unique
+  title      String
+  content    String
+  desc       String?
+  category   String?
+  type       PostType @default(BLOG)
+  thumbnail  String?
+  authorId   String?
+  authorName String?
+  dateIso    DateTime @default(now())
+  dateString String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  author     User?    @relation(fields: [authorId], references: [id])
+}
+
+model Chief {
+  id         String    @id @default(uuid())
+  name       String
+  role       String
+  image      String?
+  socialFb   String?
+  socialTw   String?
+  socialIn   String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  bio        String?
+  biography  String?
+  highlights String?
+  skills     String?
+  programs   Program[]
+}
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  excerpt   String
+  text      String
+  name      String
+  role      String
+  signature String?
+  createdAt DateTime @default(now())
+}
+
+model Enrollment {
+  id             String           @id @default(uuid())
+  fullName       String
+  email          String
+  phone          String?
+  status         EnrollmentStatus @default(PENDING)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  userId         String?
+  classSessionId String?
+  programId      String
+  classSession   ClassSession?    @relation(fields: [classSessionId], references: [id])
+  program        Program          @relation(fields: [programId], references: [id])
+  user           User?            @relation(fields: [userId], references: [id])
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  fullName  String
+  email     String
+  subject   String?
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id                       String      @id @default(uuid())
+  orderCode                String      @unique
+  userId                   String
+  programId                String
+  classSessionId           String?
+  amount                   Int
+  transferContent          String?
+  proofImage               String?
+  transactionRef           String?
+  status                   OrderStatus @default(PENDING)
+  adminNote                String?
+  confirmedAt              DateTime?
+  paidViaWebhook           Boolean     @default(false)
+  createdAt                DateTime    @default(now())
+  updatedAt                DateTime    @updatedAt
+  gatewayResponseCode      String?
+  gatewayTransactionNo     String?
+  gatewayTransactionStatus String?
+  gatewayTxnRef            String?
+  paidAt                   DateTime?
+  paymentExpiresAt         DateTime?
+  paymentInitiatedAt       DateTime?
+  paymentMethod            String?
+  paymentProvider          String?
+  paymentUrl               String?
+  rawGatewayPayload        Json?
+  companyAddress           String?
+  companyName              String?
+  invoiceEmail             String?
+  requiresInvoice          Boolean     @default(false)
+  subTotal                 Int         @default(0)
+  taxCode                  String?
+  vatAmount                Int         @default(0)
+  appliedDiscounts         String[]    @default([])
+  pointsDiscount           Int         @default(0)
+  pointsEarned             Int         @default(0)
+  pointsUsed               Int         @default(0)
+  promoCodeDiscount        Int         @default(0)
+  promoCodeId              String?
+  tierDiscount             Int         @default(0)
+  program                  Program     @relation(fields: [programId], references: [id])
+  promoCode                PromoCode?  @relation(fields: [promoCodeId], references: [id])
+  user                     User        @relation(fields: [userId], references: [id])
+}
+
+model PaymentConfig {
+  id            String   @id @default(uuid())
+  bankName      String
+  accountNumber String
+  accountHolder String
+  qrImage       String?
+  transferNote  String?
+  webhookSecret String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Category {
+  id        String       @id @default(uuid())
+  name      String
+  slug      String
+  sortOrder Int          @default(0)
+  isActive  Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  type      CategoryType @default(PROGRAM)
+
+  @@unique([name, type])
+  @@unique([slug, type])
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model PromoCode {
+  id            String    @id @default(uuid())
+  code          String    @unique
+  type          String
+  value         Int
+  maxDiscount   Int?
+  minOrderValue Int       @default(0)
+  usageLimit    Int?
+  usedCount     Int       @default(0)
+  startDate     DateTime?
+  endDate       DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  orders        Order[]
+}
+
+model StudentWork {
+  id          String   @id @default(uuid())
+  studentName String
+  imageUrl    String
+  description String
+  programId   String
+  userId      String?
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+  program     Program  @relation(fields: [programId], references: [id])
+}
+
 enum Role {
   ADMIN
   EDITOR
@@ -37,242 +287,7 @@ enum ProgramType {
   LIVE_CLASS
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  fullName  String
-  role        Role         @default(USER)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  posts       Post[]
-  enrollments Enrollment[]
-  orders      Order[]
-  refreshTokens RefreshToken[]
-}
-
-model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-}
-model Program {
-  id          String   @id @default(uuid())
-  slug        String   @unique
-  title       String
-  category    String?
-  programType ProgramType @default(LIVE_CLASS)
-  description String?
-  price       Int?
-  salePrice   Int?
-  saleEndDate DateTime?
-  reviews     Int      @default(0)
-  students    Int      @default(0)
-  thumbnail     String?
-  authorName    String?
-  authorImage   String?
-  learningGoals Json?
-  classIncludes Json?
-  curriculum    Json?
-  premiumContent Json?
-  isFeatured    Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  chiefId       String?
-  chief         Chief?   @relation(fields: [chiefId], references: [id])
-  classSessions ClassSession[]
-  orders        Order[]
-  enrollments   Enrollment[]
-  studentWorks  StudentWork[]
-}
-
-model ClassSession {
-  id                 String   @id @default(uuid())
-  programId          String
-  program            Program  @relation(fields: [programId], references: [id])
-  startDate          DateTime?
-  endDate            DateTime?
-  enrollmentDeadline DateTime?
-  dayOfWeek          String?
-  timeRange          String?
-  instructorOverride String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  enrollments        Enrollment[]
-}
-
-model Post {
-  id          String   @id @default(uuid())
-  slug        String   @unique
-  title       String
-  content     String
-  desc        String?
-  category    String?
-  type        PostType @default(BLOG)
-  thumbnail   String?
-  authorId    String?
-  authorName  String?
-  dateIso     DateTime @default(now())
-  dateString  String?
-  author      User?    @relation(fields: [authorId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Chief {
-  id         String   @id @default(uuid())
-  name       String
-  role       String
-  image      String?
-  bio        String?
-  biography  String?
-  highlights String?
-  skills     String?
-  socialFb   String?
-  socialTw   String?
-  socialIn   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  
-  programs   Program[]
-}
-
-model Testimonial {
-  id        String   @id @default(uuid())
-  excerpt   String
-  text      String
-  name      String
-  role      String
-  signature String?
-  createdAt DateTime @default(now())
-}
-
-model Enrollment {
-  id             String           @id @default(uuid())
-  classSessionId String?
-  userId         String?
-  programId      String
-  fullName       String
-  email          String
-  phone          String?
-  status         EnrollmentStatus @default(PENDING)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  
-  classSession   ClassSession?    @relation(fields: [classSessionId], references: [id])
-  user           User?            @relation(fields: [userId], references: [id])
-  program        Program          @relation(fields: [programId], references: [id])
-}
-
-model Contact {
-  id        String   @id @default(uuid())
-  fullName  String
-  email     String
-  subject   String?
-  message   String
-  createdAt DateTime @default(now())
-}
-
-model Order {
-  id              String      @id @default(uuid())
-  orderCode       String      @unique
-  userId          String
-  programId       String
-  classSessionId  String?
-
-  amount          Int
-  subTotal        Int       @default(0)
-  vatAmount       Int       @default(0)
-  transferContent String?
-
-  proofImage      String?
-  transactionRef  String?
-
-  // Invoice info
-  requiresInvoice Boolean   @default(false)
-  taxCode         String?
-  companyName     String?
-  companyAddress  String?
-  invoiceEmail    String?
-
-  // Payment gateway fields (VNPay integration)
-  paymentMethod          String?   // "MANUAL_BANK" | "VNPAY"
-  paymentProvider        String?   // "VNPAY"
-  paymentUrl             String?   // VNPay redirect URL (debug/audit)
-  paymentInitiatedAt     DateTime?
-  paymentExpiresAt       DateTime?
-  gatewayTxnRef          String?   // maps to vnp_TxnRef (unique per payment attempt)
-  gatewayTransactionNo   String?   // VNPay transaction number
-  gatewayResponseCode    String?   // vnp_ResponseCode
-  gatewayTransactionStatus String? // vnp_TransactionStatus
-  paidAt                 DateTime?
-  rawGatewayPayload      Json?     // verified callback payload
-
-  status          OrderStatus @default(PENDING)
-  adminNote       String?
-  confirmedAt     DateTime?
-  paidViaWebhook  Boolean     @default(false)
-
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-
-  user            User        @relation(fields: [userId], references: [id])
-  program         Program     @relation(fields: [programId], references: [id])
-}
-
-model PaymentConfig {
-  id              String   @id @default(uuid())
-  bankName        String
-  accountNumber   String
-  accountHolder   String
-  qrImage         String?
-  transferNote    String?
-  webhookSecret   String?
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
-
 enum CategoryType {
   PROGRAM
   POST
-}
-
-model Category {
-  id        String       @id @default(uuid())
-  name      String       
-  slug      String       
-  type      CategoryType @default(PROGRAM)
-  sortOrder Int          @default(0)
-  isActive  Boolean      @default(true)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-
-  @@unique([name, type])
-  @@unique([slug, type])
-}
-
-model Setting {
-  id        String   @id @default(uuid())
-  key       String   @unique
-  value     Json
-  updatedAt DateTime @updatedAt
-}
-
-model StudentWork {
-  id          String   @id @default(uuid())
-  studentName String
-  imageUrl    String
-  description String
-  programId   String
-  userId      String?
-  status      String   @default("PENDING") // PENDING | APPROVED | REJECTED
-  createdAt   DateTime @default(now())
-
-  program     Program  @relation(fields: [programId], references: [id])
 }

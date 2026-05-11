@@ -91,12 +91,18 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const { determineTier, DEFAULT_LOYALTY_CONFIG } = require('../services/loyaltyService');
+    const loyaltySetting = await prisma.setting.findUnique({ where: { key: 'loyaltyConfig' } });
+    const loyaltyConfig = loyaltySetting ? loyaltySetting.value : DEFAULT_LOYALTY_CONFIG;
+    const initialTier = determineTier(0, loyaltyConfig.tiers);
+
     user = await prisma.user.create({
       data: {
         fullName,
         email,
         password: hashedPassword,
-        role: 'USER' // Mặc định tất cả user mới là Khách hàng
+        role: 'USER',
+        memberTier: initialTier
       }
     });
 
@@ -191,6 +197,10 @@ exports.getMe = async (req, res) => {
         email: true,
         role: true,
         createdAt: true,
+        // Loyalty fields
+        totalSpent: true,
+        points: true,
+        memberTier: true,
         enrollments: {
           include: { 
             classSession: {

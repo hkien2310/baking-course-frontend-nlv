@@ -44,13 +44,15 @@ async function main() {
     update: {
       password: userHash,
       role: 'USER',
-      fullName: 'Customer User'
+      fullName: 'Customer User',
+      points: 1000
     },
     create: {
       email: userEmail,
       password: userHash,
       role: 'USER',
-      fullName: 'Customer User'
+      fullName: 'Customer User',
+      points: 1000
     }
   });
 

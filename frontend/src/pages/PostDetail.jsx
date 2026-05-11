@@ -32,7 +32,15 @@ const PostDetail = () => {
   useInitOnLoaded(loading);
 
   if (loading) {
-    return <PageLoading />;
+    return (
+      <>
+        <PageTitle 
+          title={t('postDetail.title') || 'Bài Viết'}
+          breadcrumbs={[{ label: t('header.home'), link: '/' }, { label: t('receipt.title') || 'Cẩm Nang', link: ROUTES.RECEIPT }, { label: '...' }]}
+        />
+        <PageLoading />
+      </>
+    );
   }
 
   if (!post) {

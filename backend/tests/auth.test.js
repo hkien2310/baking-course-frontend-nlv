@@ -11,6 +11,10 @@ jest.mock('@prisma/client', () => {
       findUnique: jest.fn(),
       create: jest.fn(),
     },
+    refreshToken: {
+      create: jest.fn(),
+      deleteMany: jest.fn(),
+    },
   };
   return {
     PrismaClient: jest.fn(() => mockPrisma),

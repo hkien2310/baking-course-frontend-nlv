@@ -4,11 +4,14 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Cleaning up existing data (Except Users/Admin)...');
   await prisma.enrollment.deleteMany({});
+  await prisma.studentWork.deleteMany({});
+  await prisma.order.deleteMany({});
   await prisma.classSession.deleteMany({});
   await prisma.program.deleteMany({});
   await prisma.chief.deleteMany({});
   await prisma.post.deleteMany({});
   await prisma.testimonial.deleteMany({});
+  await prisma.contact.deleteMany({});
   console.log('Cleanup completed!');
 
   console.log('Seeding Chiefs...');
@@ -19,31 +22,30 @@ async function main() {
       image: '/baking/images/team/01.jpg',
       bio: 'Michelin-starred master with 20 years of experience.',
       biography: `
-        <p>A culinary artist and master pastry chef with over 20 years of experience in Michelin-starred restaurants across Paris and London.</p>
-        <blockquote>"Baking is both a precise science and an exquisite art." - Gordon</blockquote>
-        <p>Specializes in molecular gastronomy and artisan sourdough breads, combining traditional techniques with avant-garde presentations. His dedication to sourcing the finest organic ingredients has shaped the new standard for European baking.</p>
+        <p>Gordon is a world-renowned master baker known for his precision and uncompromising standards. With over two decades in the industry, he has opened some of the finest patisseries in London and Paris.</p>
+        <p>His teaching style is rigorous yet rewarding, focusing on the foundational techniques that make a good baker great. "Baking is a science," he often says, "but the final product is pure art."</p>
         <ul>
-            <li>Winner of the 2021 World Pastry Cup</li>
-            <li>Author of the bestseller <em>'The Golden Crumb'</em></li>
-            <li>Executive Pastry Chef at Le Bernardin</li>
+            <li>Executive Pastry Chef at The Ritz</li>
+            <li>Author of "Modern Classics in Baking"</li>
+            <li>Judge on World Pastry Cup</li>
         </ul>
       `,
       highlights: 'Master Chocolatier, Bread Artisan',
       skills: 'Sourdough, Lamination, French Pastry',
       socialFb: 'https://facebook.com',
       socialTw: 'https://twitter.com',
-      socialIn: 'https://instagram.com'
+      socialIn: 'https://linkedin.com'
     }
   });
 
   const chief2 = await prisma.chief.create({
     data: {
       name: 'Paul Hollywood',
-      role: 'Head Pastry Chef',
+      role: 'Artisan Bread Master',
       image: '/baking/images/team/02.jpg',
-      bio: 'The king of bread and traditional British baking.',
+      bio: 'The authority on traditional and modern bread making.',
       biography: `
-        <p>Renowned for his unyielding standards and deep understanding of yeast, Paul has revolutionized the way modern bakers approach traditional bread.</p>
+        <p>Paul's passion for bread began in his father's bakery as a teenager. Since then, he has traveled the world discovering ancient grains and fermentation methods.</p>
         <p>From baguettes to brioche, his expertise covers the entire spectrum of doughs. He encourages students to feel the dough, understanding its hydration and elasticity purely by touch.</p>
         <blockquote>"A good bread doesn't just taste good; it tells a story of fermentation, patience, and love."</blockquote>
       `,
@@ -85,6 +87,7 @@ async function main() {
     data: {
       slug: 'mastering-french-pastry',
       title: 'Mastering French Pastry',
+      category: 'Bánh Ngọt',
       description: `
         <p><strong>Mastering French Pastry</strong> is a comprehensive 8-week intensive designed to elevate your baking skills to professional standards.</p>
         <p>In this course, we will dive deep into the laminating methods for perfect croissants, the emulsion techniques for ganaches, and the precision required for delicate macarons. You will be guided step-by-step through the most notoriously difficult desserts.</p>
@@ -118,6 +121,7 @@ async function main() {
     data: {
       slug: 'artisan-sourdough-breads',
       title: 'Artisan Sourdough Breads',
+      category: 'Bánh Mì',
       description: `
         <p>Unlock the secrets of wild yeast and natural fermentation in this immersive 4-week Artisan Sourdough course.</p>
         <p>We'll cover everything from capturing wild yeast to maintaining a robust starter, achieving the perfect open crumb, and scoring beautiful patterns onto your crusts.</p>
@@ -154,6 +158,7 @@ async function main() {
     data: {
       slug: 'modern-cake-decorating',
       title: 'Modern Cake Decorating',
+      category: 'Bánh Ngọt',
       description: `
         <p>Take your cakes from ordinary to extraordinary. This course focuses entirely on aesthetics, structure, and contemporary decorating trends.</p>
         <div class="row pt-2 mb-3">
@@ -190,7 +195,6 @@ async function main() {
 
   console.log('Seeding Posts...');
   
-  // We need to fetch an Admin user to attribute the posts to.
   const admin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
   
   await prisma.post.createMany({
@@ -198,7 +202,7 @@ async function main() {
       {
         slug: 'the-secret-to-a-perfect-sourdough-starter',
         title: 'The Secret to a Perfect Sourdough Starter',
-        category: 'Recipes',
+        category: 'Công thức',
         type: 'BLOG',
         thumbnail: '/baking/images/gallery/02.jpg',
         authorId: admin ? admin.id : null,
@@ -223,7 +227,7 @@ async function main() {
       {
         slug: '5-baking-mistakes-you-are-making',
         title: '5 Baking Mistakes You Are Probably Making',
-        category: 'Tips',
+        category: 'Mẹo vặt',
         type: 'BLOG',
         thumbnail: '/baking/images/gallery/03.jpg',
         authorId: admin ? admin.id : null,
@@ -248,74 +252,64 @@ async function main() {
       {
         slug: 'history-of-the-croissant',
         title: 'The Fascinating History of the Croissant',
-        category: 'History',
+        category: 'Kiến thức',
+        type: 'BLOG',
+        thumbnail: '/baking/images/gallery/04.jpg',
+        authorId: admin ? admin.id : null,
+        authorName: 'Admin',
+        desc: 'Discover how this iconic pastry traveled from Vienna to the heart of Paris.',
+        content: `
+          <h3>From Kipferl to Croissant</h3>
+          <p>The story of the croissant is often shrouded in myth, but its actual history is a journey of culinary evolution. It didn't start in France, but in Austria with the <em>kipferl</em>.</p>
+          <img src="/baking/images/gallery/14.jpg" alt="Croissant History" class="img-fluid rounded mb-4 mt-2">
+          <p>In 1839, an Austrian artillery officer, August Zang, opened a Viennese bakery in Paris. The Parisians fell in love with his crescent-shaped pastries. Over time, French bakers replaced the heavy dough with a puff pastry technique (laminating with butter), creating the light, flaky masterpiece we know today.</p>
+          <p>At YUM Saigon, we honor this heritage by using traditional slow-fermentation and premium butter, ensuring every bite takes you back to that historical transition.</p>
+        `,
+        dateIso: new Date('2024-11-01'),
+        dateString: '01 Nov, 2024'
+      },
+      {
+        slug: 'ultimate-guide-to-vegan-baking',
+        title: 'The Ultimate Guide to Vegan Baking Substitutions',
+        category: 'Kiến thức',
         type: 'BLOG',
         thumbnail: '/baking/images/gallery/05.jpg',
         authorId: admin ? admin.id : null,
         authorName: 'Admin',
-        desc: 'Uncovering the Viennese origins of France\'s most famous pastry.',
+        desc: 'Can you really bake without eggs and butter? Absolutely!',
         content: `
-          <h3>Not Entirely French?</h3>
-          <p>When you think of a croissant, you undoubtedly picture a Parisian café, a cup of espresso, and the Eiffel Tower. But the buttery, flaky pastry we know and love today actually traces its roots back to Austria.</p>
-          <img src="/baking/images/gallery/10.jpg" alt="Croissants" class="img-fluid rounded mb-4 mt-2">
-          <h4>The Kipferl</h4>
-          <p>The ancestor of the croissant is the <em>kipferl</em>, a crescent-shaped baked good referenced in Austrian records as far back as the 13th century. It wasn't until the 19th century that August Zang, an Austrian artillery officer, opened a Viennese bakery ("Boulangerie Viennoise") in Paris.</p>
-          <p>Zang introduced Parisians to the kipferl, which they quickly embraced. French bakers eventually adapted the recipe, utilizing layered yeast-leavened dough (pâte feuilletée) packed with butter, resulting in the modern croissant.</p>
-          <blockquote>The croissant is a beautiful example of culinary evolution—a Viennese concept perfected by French technique.</blockquote>
-          <p>Next time you bite into that shatteringly crisp exterior, take a moment to appreciate the centuries of history baked into every layer.</p>
+          <h3>Plant-Based Baking Mastery</h3>
+          <p>The rise of veganism has challenged bakers to rethink classic chemistry. How do we achieve lift without eggs? How do we get rich flavor without butter?</p>
+          <h4>Essential Substitutions:</h4>
+          <ul>
+              <li><strong>Flax Eggs:</strong> 1 tbsp ground flaxseed + 3 tbsp water. Perfect for binding muffins and brownies.</li>
+              <li><strong>Aquafaba:</strong> The liquid from a can of chickpeas. It whips exactly like egg whites for perfect meringues.</li>
+              <li><strong>Coconut Oil:</strong> A fantastic substitute for butter in pie crusts due to its high saturated fat content.</li>
+          </ul>
+          <p>Explore our upcoming Vegan Pastry course to see these ingredients in action!</p>
         `,
-        dateIso: new Date('2024-11-02'),
-        dateString: '02 Nov, 2024'
+        dateIso: new Date('2024-11-20'),
+        dateString: '20 Nov, 2024'
       },
       {
-        slug: 'essential-equipments-for-home-bakers',
+        slug: 'essential-equipments-for-home-baker',
         title: 'Essential Equipments Every Home Baker Needs',
-        category: 'Tools',
-        type: 'BLOG',
-        thumbnail: '/baking/images/gallery/07.jpg',
-        authorId: admin ? admin.id : null,
-        authorName: 'Admin',
-        desc: 'Stop wasting money on gadgets. Here is what you actually need to buy.',
-        content: `
-          <h3>Build Your Kitchen Arsenal</h3>
-          <p>It's easy to get overwhelmed by the endless array of baking gadgets available at culinary supply stores. However, professional pastry kitchens operate on remarkably few, highly versatile tools.</p>
-          <div class="row mb-3">
-              <div class="col-md-4">
-                  <img src="/baking/images/gallery/06.jpg" alt="Tools" class="img-fluid rounded">
-              </div>
-              <div class="col-md-8">
-                  <h4>The Non-Negotiables</h4>
-                  <ol>
-                      <li><strong>Digital Kitchen Scale:</strong> Essential for consistent accuracy.</li>
-                      <li><strong>Stand Mixer:</strong> Specifically a tilt-head or bowl-lift model with a dough hook and whisk attachment.</li>
-                      <li><strong>Offset Spatula:</strong> The undisputed king of icing cakes and spreading batters evenly.</li>
-                      <li><strong>Bench Scraper:</strong> Excellent for dividing dough, scraping work surfaces cleanly, and smoothing cake sides.</li>
-                      <li><strong>Oven Thermometer:</strong> Because your built-in oven sensor is likely wrong by 10-25 degrees.</li>
-                  </ol>
-              </div>
-          </div>
-          <p>Investing heavily in these five core items will yield significantly better results than filling your drawers with novelty slice-and-dice contraptions!</p>
-        `,
-        dateIso: new Date('2024-11-18'),
-        dateString: '18 Nov, 2024'
-      },
-      {
-        slug: 'vegan-baking-substitutions',
-        title: 'The Ultimate Guide to Vegan Baking Substitutions',
-        category: 'Recipes',
+        category: 'Nhà bếp',
         type: 'BLOG',
         thumbnail: '/baking/images/gallery/06.jpg',
         authorId: admin ? admin.id : null,
         authorName: 'Admin',
-        desc: 'How to bake incredible desserts without eggs, dairy, or honey.',
+        desc: 'Start your baking journey right with these non-negotiable kitchen tools.',
         content: `
-          <h3>Plant-Based Perfection</h3>
-          <p>Traditional baking relies heavily on the binding properties of eggs and the fat structures of dairy butter. Transitioning to a vegan lifestyle doesn't mean giving up on decadent cakes or chewy cookies. It just requires a deep understanding of plant-based substitutes.</p>
-          <h4>Replacing Eggs</h4>
-          <p>In recipes where eggs act as a binder (like cookies or brownies), flax eggs are incredible: Mix 1 tbsp of ground flaxseed with 3 tbsp of warm water and let it gel for 5 minutes. For recipes requiring leavening (like light sponge cakes), aquafaba (chickpea brine) whips up astonishingly similar to egg whites!</p>
-          <h4>Replacing Butter</h4>
-          <p>While coconut oil is a popular substitute, it behaves differently under temperature changes compared to butter. We recommend using a high-quality vegan block butter made from a blend of oils (like macadamia or olive) for laminating pastry or creating fluffy buttercreams.</p>
-          <blockquote>"Modern vegan baking is no longer a compromise; it's a creative playground."</blockquote>
+          <h3>Your Baking Starter Kit</h3>
+          <p>Don't get overwhelmed by fancy gadgets. To produce bakery-quality results at home, you only need a few core items:</p>
+          <ol>
+              <li><strong>Digital Scale:</strong> In baking, 5g can change the entire result. Measuring by weight is non-negotiable.</li>
+              <li><strong>Oven Thermometer:</strong> Most home ovens are off by 10-20 degrees. Knowing the true temperature is key.</li>
+              <li><strong>Bench Scraper:</strong> For handling wet doughs and cleaning your workstation efficiently.</li>
+              <li><strong>Cooling Racks:</strong> Proper airflow prevents the bottom of your loaves from getting soggy.</li>
+          </ol>
+          <p>Invest in quality over quantity, and your pastries will thank you.</p>
         `,
         dateIso: new Date('2024-12-05'),
         dateString: '05 Dec, 2024'
@@ -327,22 +321,25 @@ async function main() {
   await prisma.testimonial.createMany({
     data: [
       {
-        name: 'Sarah Jenkins',
-        role: 'Bakery Owner',
-        excerpt: 'Transformative for my career.',
-        text: 'Attending the Artisan Sourdough course completely shifted my perspective on natural fermentation. The facilities are world-class and the instructors are incredibly patient.'
+        name: 'Anna Maria',
+        role: 'Home Baker',
+        excerpt: 'Gordon is an incredible teacher!',
+        text: 'I never thought I could make a croissant at home until I took the Mastering French Pastry course. Gordon is an incredible teacher!',
+        createdAt: new Date()
       },
       {
-        name: 'Michael Chang',
-        role: 'Home Enthusiast',
-        excerpt: 'I finally conquered macarons!',
-        text: 'Before this, my macarons were always hollow or cracked. Chef Gordon broke down the chemistry of Italian meringue in a way that finally made sense to me. Highly recommend.'
+        name: 'James Wilson',
+        role: 'Culinary Student',
+        excerpt: 'Life changing course.',
+        text: "The sourdough course changed my life. I finally understand the 'why' behind fermentation, not just the 'how'.",
+        createdAt: new Date()
       },
       {
-        name: 'Elena Rostova',
-        role: 'Pastry Student',
-        excerpt: 'Worth every penny.',
-        text: 'The Modern Cake Decorating program gave me the confidence to start my own wedding cake business. The techniques taught here are lightyears ahead of online tutorials.'
+        name: 'Linh Nguyen',
+        role: 'Pastry Enthusiast',
+        excerpt: 'Start my own business.',
+        text: 'Modern Cake Decorating helped me start my own small business from home. The support from the instructors is unmatched.',
+        createdAt: new Date()
       }
     ]
   });

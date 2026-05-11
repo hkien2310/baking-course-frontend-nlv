@@ -1,16 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import './Checkout.css';
 import { toast } from 'react-toastify';
 import PageTitle from '../components/Shared/PageTitle';
-import { getProgramBySlug, getPaymentConfig, createOrder, getOrderById, submitOrderProof, cancelOrder, uploadImage, createVnpayPaymentUrl, getMyOrders } from '../services/api';
+import PageLoading from '../components/Shared/PageLoading';
+import { getProgramBySlug, getPaymentConfig, createOrder, getOrderById, submitOrderProof, cancelOrder, uploadImage, createVnpayPaymentUrl, getMyOrders, getLoyaltyConfig, validatePromoCode, previewOrder } from '../services/api';
+import { getMe } from '../services/api';
 import { formatPrice, getOrderStatusBadge } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 
+const getImgSrc = (src) => {
+  if (!src) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
+  if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL)) return src;
+  return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
+};
+
 const STEPS = {
   SUMMARY: 1,
   STATUS: 2
+};
+
+const stripHtml = (html) => {
+  const tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
 };
 
 const Checkout = ({ user }) => {
@@ -26,9 +40,26 @@ const Checkout = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('VNPAY');
-  const [usePoints, setUsePoints] = useState(false);
-  const [discountCode, setDiscountCode] = useState('');
-  const [appliedDiscount, setAppliedDiscount] = useState(0);
+  // Loyalty
+  const [loyaltyConfig, setLoyaltyConfig] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  // Discount selection
+  const [appliedDiscounts, setAppliedDiscounts] = useState([]);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoValidated, setPromoValidated] = useState(null);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [pointsToUse, setPointsToUse] = useState(0);
+  const [priceBreakdown, setPriceBreakdown] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [lastAppliedParams, setLastAppliedParams] = useState(null);
+
+  // Derived state: check if current inputs match what was last applied to the price breakdown
+  const currentParams = JSON.stringify({
+    appliedDiscounts: appliedDiscounts.sort(),
+    promoCode: appliedDiscounts.includes('PROMO') ? promoCode : null,
+    pointsToUse: appliedDiscounts.includes('POINTS') ? pointsToUse : 0,
+  });
+  const isPriceApplied = lastAppliedParams === currentParams;
   
   const [requiresInvoice, setRequiresInvoice] = useState(false);
   const [invoiceData, setInvoiceData] = useState({
@@ -41,8 +72,57 @@ const Checkout = ({ user }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const prog = await getProgramBySlug(slug);
+        const [prog, config, me] = await Promise.all([
+          getProgramBySlug(slug),
+          getLoyaltyConfig(),
+          getMe(),
+        ]);
         setProgram(prog);
+        setLoyaltyConfig(config);
+        setUserInfo({ memberTier: me.memberTier || 'NONE', points: me.points || 0, totalSpent: me.totalSpent || 0 });
+
+        // Initial price calculation locally to avoid flickering/blocking loading state
+        const subTotal = (prog.salePrice !== null && prog.salePrice !== undefined && prog.price > prog.salePrice) 
+          ? prog.salePrice 
+          : prog.price;
+        const vatAmount = Math.round(subTotal * 0.08);
+        
+        // Local points earned calculation
+        let pointsEarned = 0;
+        if (config?.points?.earnPer && subTotal > 0) {
+          pointsEarned = Math.floor(subTotal / config.points.earnPer) * config.points.earnRate;
+        }
+
+        setPriceBreakdown({
+          originalPrice: prog.price,
+          subTotal,
+          saleDiscount: prog.price - subTotal,
+          promoCodeDiscount: 0,
+          tierDiscount: 0,
+          pointsDiscount: 0,
+          pointsUsed: 0,
+          finalPrice: subTotal,
+          vatAmount,
+          totalPayment: subTotal + vatAmount,
+          pointsEarned,
+          memberTier: me.memberTier,
+          userPoints: me.points
+        });
+
+        // Optional: fetch real preview in background without showing loading
+        const initialParams = JSON.stringify({
+          appliedDiscounts: [],
+          promoCode: null,
+          pointsToUse: 0
+        });
+        setLastAppliedParams(initialParams);
+
+        previewOrder({
+          programId: prog.id,
+          appliedDiscounts: [],
+          promoCode: null,
+          pointsToUse: 0
+        }).then(res => setPriceBreakdown(res)).catch(() => {});
 
         // If already purchased, redirect to program detail
         if (prog.hasPurchased) {
@@ -66,6 +146,11 @@ const Checkout = ({ user }) => {
           }
         }
       } catch (err) {
+        if (err.response?.status === 401) {
+          toast.error('Vui lòng đăng nhập lại.');
+          navigate(ROUTES.LOGIN);
+          return;
+        }
         console.error('Checkout init error:', err);
         toast.error(t('checkout.toast.orderCreateFailed') || 'Failed to load checkout information.');
       } finally {
@@ -74,6 +159,33 @@ const Checkout = ({ user }) => {
     };
     init();
   }, [slug, navigate, t]);
+
+  const handleApplyDiscounts = async () => {
+    if (!program?.id) return;
+    setPreviewLoading(true);
+    try {
+      const params = {
+        programId: program.id,
+        appliedDiscounts,
+        promoCode: appliedDiscounts.includes('PROMO') ? promoCode : null,
+        pointsToUse: appliedDiscounts.includes('POINTS') ? (pointsToUse || 0) : 0,
+      };
+      const result = await previewOrder(params);
+      setPriceBreakdown(result);
+      setLastAppliedParams(JSON.stringify({
+        appliedDiscounts: appliedDiscounts.sort(),
+        promoCode: params.promoCode,
+        pointsToUse: params.pointsToUse,
+      }));
+      toast.success('Đã cập nhật bảng giá ưu đãi!');
+    } catch (err) {
+      console.error('Preview error:', err);
+      toast.error(err.response?.data?.error || 'Không thể áp dụng ưu đãi.');
+      setPriceBreakdown(null);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
 
   const handleCreateOrder = async () => {
     if (requiresInvoice) {
@@ -104,16 +216,33 @@ const Checkout = ({ user }) => {
 
     setSubmitting(true);
     try {
-      const res = await createOrder({ 
-        programId: program.id, 
+      const res = await createOrder({
+        programId: program.id,
         classSessionId: sessionId,
         requiresInvoice,
-        ...invoiceData
+        ...invoiceData,
+        appliedDiscounts,
+        promoCode: appliedDiscounts.includes('PROMO') ? promoCode : null,
+        pointsToUse: appliedDiscounts.includes('POINTS') ? pointsToUse : 0,
       });
+      
+      // Update local state in background
       setOrder(res.order);
-      // Immediately call VNPay
+      setStep(STEPS.STATUS);
+
+      if (res.isFree) {
+        toast.success('Đăng ký khóa học thành công!');
+        setSubmitting(false);
+        return;
+      }
+      
+      // Directly initiate payment redirect
       const vnpayRes = await createVnpayPaymentUrl(res.order.id);
-      window.location.href = vnpayRes.paymentUrl;
+      if (vnpayRes.paymentUrl) {
+        window.location.assign(vnpayRes.paymentUrl);
+      } else {
+        throw new Error('Không nhận được liên kết thanh toán.');
+      }
     } catch (err) {
       toast.error(err.response?.data?.error || t('checkout.toast.orderCreateFailed'));
       setSubmitting(false);
@@ -163,10 +292,17 @@ const Checkout = ({ user }) => {
 
   if (loading) {
     return (
-      <div className="text-center" style={{ padding: '150px 0' }}>
-        <h2>{t('checkout.loading')}</h2>
-        <div className="spinner-border" role="status"></div>
-      </div>
+      <>
+        <PageTitle 
+          title={t('checkout.pageTitle') || 'Thanh Toán'}
+          breadcrumbs={[
+            { label: t('header.home') || 'Trang Chủ', link: '/' },
+            { label: t('header.programs') || 'Khóa Học', link: ROUTES.PROGRAM },
+            { label: '...' }
+          ]}
+        />
+        <PageLoading />
+      </>
     );
   }
 
@@ -211,15 +347,7 @@ const Checkout = ({ user }) => {
                 ))}
               </div>
 
-              {/* Helper for image src */}
-              {(() => {
-                window.imgSrc = (src) => {
-                  if (!src) return `${import.meta.env.BASE_URL}images/gallery/09.jpg`;
-                  if (src.startsWith('http') || src.startsWith(import.meta.env.BASE_URL)) return src;
-                  return `${import.meta.env.BASE_URL}${src.replace(/^\//, '')}`;
-                };
-                return null;
-              })()}
+
 
               {/* STEP 1: Order Summary */}
               {step === STEPS.SUMMARY && (
@@ -230,7 +358,7 @@ const Checkout = ({ user }) => {
                     <div className="d-flex align-items-start mb-4" style={{ gap: '20px' }}>
                       {program.thumbnail && (
                         <img 
-                          src={window.imgSrc(program.thumbnail)} 
+                          src={getImgSrc(program.thumbnail)} 
                           alt={program.title} 
                           style={{ width: '120px', height: '90px', objectFit: 'cover', borderRadius: '8px' }}
                         />
@@ -238,92 +366,225 @@ const Checkout = ({ user }) => {
                       <div>
                         <h5 className="mb-1">{program.title}</h5>
                         {program.chief && <p className="small-text color-main mb-1">{t('programDetail.instructor') || 'Giảng viên'}: {program.chief.name}</p>}
-                        <p className="text-muted small mb-0">{program.description?.substring(0, 120)}...</p>
+                        <p className="text-muted small mb-0">{stripHtml(program.description)?.substring(0, 120)}...</p>
                       </div>
                     </div>
 
                     <div className="divider-15"></div>
 
-                    <div className="discount-code-section mb-4">
-                      <div className="input-group">
-                        <input 
-                          type="text" 
-                          className="form-control" 
-                          placeholder="Nhập mã giảm giá..." 
-                          value={discountCode}
-                          onChange={(e) => setDiscountCode(e.target.value)}
-                          style={{ height: '44px' }}
-                        />
-                        <div className="input-group-append">
+                    {/* ── LOYALTY DISCOUNT SECTION ── */}
+                    {loyaltyConfig && (
+                      <div className="loyalty-discount-section mb-4" style={{ background: '#f8f9fa', borderRadius: 10, padding: '16px 20px' }}>
+                        <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--greyColor)', marginBottom: 12 }}>
+                          <i className="fa fa-gift mr-2" style={{ color: 'var(--colorMain)' }} />Ưu đãi thanh toán
+                        </div>
+
+                        {/* Render discount options theo discountOrder */}
+                        {loyaltyConfig.discountOrder.filter(t => loyaltyConfig.enabledTypes.includes(t)).map(type => {
+                          const isSelected = appliedDiscounts.includes(type);
+                          const InputTag = loyaltyConfig.discountMode === 'SINGLE' ? 'input' : 'input';
+                          const inputType = loyaltyConfig.discountMode === 'SINGLE' ? 'radio' : 'checkbox';
+                          const handleToggle = (e) => {
+                            if (e) e.preventDefault(); // Ngăn label click event trigger 2 lần
+                            if (loyaltyConfig.discountMode === 'SINGLE') {
+                              setAppliedDiscounts([type]); // SINGLE mode không cho click để tắt
+                              if (type !== 'PROMO') setPromoValidated(null);
+                            } else {
+                              if (isSelected) {
+                                setAppliedDiscounts(prev => prev.filter(t2 => t2 !== type));
+                                if (type === 'PROMO') setPromoValidated(null);
+                              } else {
+                                setAppliedDiscounts(prev => [...prev, type]);
+                              }
+                            }
+                          };
+
+                          return (
+                            <div 
+                              key={type} 
+                              className={`loyalty-option-card ${isSelected ? 'selected' : ''}`}
+                              onClick={handleToggle}
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === ' ' || e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleToggle(e);
+                                }
+                              }}
+                            >
+                              <input 
+                                type={inputType} 
+                                className="sr-only" 
+                                checked={isSelected} 
+                                tabIndex={-1} 
+                                readOnly 
+                                aria-hidden="true"
+                              />
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <div 
+                                  className="loyalty-option-radio" 
+                                  style={{ borderRadius: inputType === 'radio' ? '50%' : 4 }}
+                                >
+                                  {isSelected && <i className="fa fa-check" style={{ color: '#fff', fontSize: 10 }} />}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                  {type === 'PROMO' && (
+                                    <div className="loyalty-option-title" style={{ fontWeight: 600, fontSize: 14, color: 'var(--darkgreyColor)' }}>🏷️ Mã giảm giá</div>
+                                  )}
+                                  {type === 'TIER' && (
+                                    <div className="loyalty-option-title" style={{ fontWeight: 600, fontSize: 14, color: 'var(--darkgreyColor)' }}>
+                                      🎖️ Giảm giá hạng thành viên
+                                      {userInfo?.memberTier !== 'NONE' && (
+                                        <span style={{ 
+                                          marginLeft: 8, 
+                                          fontSize: 11, 
+                                          padding: '2px 8px', 
+                                          borderRadius: 12, 
+                                          backgroundColor: loyaltyConfig?.tiers?.find(t => t.name === userInfo.memberTier)?.color || 'var(--colorMain)',
+                                          color: '#fff'
+                                        }}>
+                                          {userInfo.memberTier} — {loyaltyConfig.tiers.find(t => t.name === userInfo?.memberTier)?.discountPercent || 0}%
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
+                                  {type === 'POINTS' && (
+                                    <div className="loyalty-option-title" style={{ fontWeight: 600, fontSize: 14, color: 'var(--darkgreyColor)' }}>💰 Dùng điểm tích lũy <span style={{ fontWeight: 400, color: '#888', fontSize: 12 }}>(Có: {(userInfo?.points || 0).toLocaleString()} điểm)</span></div>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div style={{ paddingLeft: 32 }}>
+                                {type === 'PROMO' && isSelected && (
+                                  <div style={{ marginTop: 12 }}>
+                                    <input 
+                                      className="form-control" 
+                                      style={{ height: 42 }} 
+                                      placeholder="Nhập mã giảm giá..." 
+                                      value={promoCode} 
+                                      onClick={e => e.stopPropagation()}
+                                      onChange={e => { setPromoCode(e.target.value.toUpperCase()); }} 
+                                    />
+                                  </div>
+                                )}
+
+                                {type === 'TIER' && userInfo?.memberTier === 'NONE' && (
+                                  <div style={{ fontSize: 13, color: '#aaa', marginTop: 4 }}>Bạn chưa đạt hạng thành viên (Cần nâng hạng để nhận ưu đãi)</div>
+                                )}
+
+                                {type === 'POINTS' && isSelected && userInfo?.points > 0 && (
+                                  <div style={{ marginTop: 12 }}>
+                                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                      <input 
+                                        className="form-control" 
+                                        type="number" min={0} max={userInfo.points} step={1}
+                                        style={{ width: '100%', height: 42 }}
+                                        value={pointsToUse} 
+                                        placeholder="Số điểm muốn dùng..."
+                                        onClick={e => e.stopPropagation()}
+                                        onKeyDown={e => {
+                                          if (e.key === '.' || e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault();
+                                        }}
+                                        onChange={e => {
+                                          if (e.target.value === "") {
+                                            setPointsToUse("");
+                                            return;
+                                          }
+                                          const val = parseInt(e.target.value, 10);
+                                          if (!isNaN(val)) {
+                                            setPointsToUse(Math.min(val, userInfo.points));
+                                          }
+                                        }} 
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {type === 'POINTS' && (!userInfo?.points || userInfo.points === 0) && (
+                                  <div style={{ fontSize: 13, color: '#aaa', marginTop: 4 }}>Bạn chưa có điểm tích lũy</div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+
+                        {/* Nút Áp dụng tập trung */}
+                        <div className="mt-3">
                           <button 
-                            className="btn btn-maincolor" 
                             type="button"
-                            onClick={() => {
-                              if (discountCode) toast.info('Tính năng mã giảm giá đang được cập nhật!');
-                            }}
-                            style={{ margin: 0, height: '44px', lineHeight: '44px', padding: '0 20px' }}
+                            className={`btn ${isPriceApplied ? 'btn-success' : 'btn-outline-maincolor'} w-100`}
+                            style={{ height: 45, fontWeight: 600, borderStyle: isPriceApplied ? 'solid' : 'dashed', borderColor: isPriceApplied ? '#28a745' : 'var(--colorMain)' }}
+                            onClick={handleApplyDiscounts}
+                            disabled={previewLoading || (appliedDiscounts.length === 0)}
                           >
-                            Áp dụng
+                            {previewLoading ? (
+                              <span className="spinner-border spinner-border-sm mr-2" />
+                            ) : isPriceApplied ? (
+                              <><i className="fa fa-check-circle mr-2" />Đã áp dụng ưu đãi</>
+                            ) : (
+                              <><i className="fa fa-calculator mr-2" />Áp dụng ưu đãi & Cập nhật giá</>
+                            )}
                           </button>
                         </div>
                       </div>
-                    </div>
+                    )}
 
-                    <div className="summary-list" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '20px' }}>
-                      {(() => {
-                        const originalPrice = program.price || 0;
-                        const salePrice = program.salePrice && program.price > program.salePrice ? program.salePrice : originalPrice;
-                        const promoDiscount = originalPrice - salePrice;
-                        const finalPrice = salePrice - appliedDiscount;
-                        const vatAmount = Math.round(finalPrice * 0.08);
-                        const totalPayment = finalPrice + vatAmount;
-                        
-                        return (
-                          <>
-                            <div className="d-flex justify-content-between mb-2">
-                              <span>Tạm tính</span>
-                              <span>{formatPrice(originalPrice)}</span>
-                            </div>
-                            <div className="d-flex justify-content-between mb-2">
-                              <span>Giảm giá khuyến mại</span>
-                              <span>{promoDiscount > 0 ? `- ${formatPrice(promoDiscount)}` : '0 đ'}</span>
-                            </div>
-                            <div className="d-flex justify-content-between mb-2">
-                              <span>Giảm giá thành viên</span>
-                              <span>0 đ</span>
-                            </div>
-                            <div className="d-flex justify-content-between align-items-center mb-3">
-                              <span className="d-flex align-items-center" style={{ gap: '8px' }}>
-                                Tích điểm (*)
-                                <label className="switch mb-0">
-                                  <input type="checkbox" checked={usePoints} onChange={(e) => setUsePoints(e.target.checked)} />
-                                  <span className="slider round"></span>
-                                </label>
-                              </span>
-                              <span>0 đ</span>
-                            </div>
-                            
-                            <div className="divider-15" style={{borderTop: '1px solid #ddd'}}></div>
-                            
-                            <div className="d-flex justify-content-between mb-2 mt-3">
-                              <span style={{ fontSize: '16px', fontWeight: '600' }}>Tổng cộng</span>
-                              <span style={{ fontSize: '16px', fontWeight: '600' }}>
-                                {formatPrice(finalPrice)}
-                              </span>
-                            </div>
-                            <div className="d-flex justify-content-between mb-2">
-                              <span>VAT 8%</span>
-                              <span>{formatPrice(vatAmount)}</span>
-                            </div>
-                            <div className="d-flex justify-content-between align-items-center mt-3">
-                              <span style={{ fontSize: '18px', fontWeight: '600' }}>Tiền thanh toán</span>
-                              <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--colorMain)' }}>
-                                {formatPrice(totalPayment)}
-                              </span>
-                            </div>
-                          </>
-                        );
-                      })()}
+                    {/* ── PRICE SUMMARY (from BE) ── */}
+                    <div className="summary-list" style={{ 
+                      backgroundColor: '#f8f9fa', 
+                      borderRadius: '8px', 
+                      padding: '20px', 
+                      position: 'relative', 
+                      border: '1px solid #eee',
+                      opacity: isPriceApplied ? 1 : 0.7,
+                      transition: 'opacity 0.3s ease'
+                    }}>
+                      {!isPriceApplied && (
+                        <div style={{ 
+                          position: 'absolute', 
+                          top: -10, 
+                          left: '50%', 
+                          transform: 'translateX(-50%)', 
+                          background: '#fff3cd', 
+                          color: '#856404', 
+                          fontSize: '11px', 
+                          padding: '2px 10px', 
+                          borderRadius: '10px',
+                          border: '1px solid #ffeeba',
+                          whiteSpace: 'nowrap',
+                          fontWeight: 600,
+                          zIndex: 1
+                        }}>
+                          <i className="fa fa-exclamation-triangle mr-1" /> Vui lòng nhấn "Áp dụng" để cập nhật giá mới
+                        </div>
+                      )}
+                      {previewLoading && (
+                        <div style={{ position: 'absolute', top: 10, right: 16 }}>
+                          <span className="spinner-border spinner-border-sm text-muted" />
+                        </div>
+                      )}
+                      {priceBreakdown ? (
+                        <>
+                          <div className="d-flex justify-content-between mb-2"><span>Tạm tính</span><span>{formatPrice(priceBreakdown.originalPrice)}</span></div>
+                          {priceBreakdown.saleDiscount > 0 && <div className="d-flex justify-content-between mb-2" style={{ color: 'var(--colorMain)' }}><span>Giảm giá khuyến mại</span><span>- {formatPrice(priceBreakdown.saleDiscount)}</span></div>}
+                          {priceBreakdown.promoCodeDiscount > 0 && <div className="d-flex justify-content-between mb-2" style={{ color: 'var(--colorMain)' }}><span>Mã giảm giá ({promoCode})</span><span>- {formatPrice(priceBreakdown.promoCodeDiscount)}</span></div>}
+                          {priceBreakdown.tierDiscount > 0 && <div className="d-flex justify-content-between mb-2" style={{ color: 'var(--colorMain)' }}><span>Giảm giá hạng {priceBreakdown.memberTier === 'NONE' ? 'Thành viên' : priceBreakdown.memberTier}</span><span>- {formatPrice(priceBreakdown.tierDiscount)}</span></div>}
+                          {priceBreakdown.pointsDiscount > 0 && <div className="d-flex justify-content-between mb-2" style={{ color: 'var(--colorMain)' }}><span>Dùng {priceBreakdown.pointsUsed.toLocaleString()} điểm</span><span>- {formatPrice(priceBreakdown.pointsDiscount)}</span></div>}
+
+                          <div className="divider-15" style={{ borderTop: '1px solid #ddd' }}></div>
+
+                          <div className="d-flex justify-content-between mb-2 mt-3"><span style={{ fontSize: '15px', fontWeight: '500', color: '#666' }}>Tổng sau giảm giá</span><span style={{ fontSize: '16px', fontWeight: '600' }}>{formatPrice(priceBreakdown.finalPrice)}</span></div>
+                          <div className="d-flex justify-content-between mb-2"><span>VAT (8%)</span><span>{formatPrice(priceBreakdown.vatAmount)}</span></div>
+                          <div className="d-flex justify-content-between align-items-center mt-3" style={{ background: 'rgba(193,154,91,0.05)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(193,154,91,0.1)' }}>
+                            <span style={{ fontSize: '18px', fontWeight: '600' }}>Tiền thanh toán</span>
+                            <span style={{ fontSize: '24px', fontWeight: '700', color: 'var(--colorMain)' }}>{formatPrice(priceBreakdown.totalPayment)}</span>
+                          </div>
+                          {priceBreakdown.pointsEarned > 0 && <div className="d-flex justify-content-between mt-2" style={{ fontSize: 12, color: '#888' }}><span>Điểm tích được sau đơn này</span><span>+{priceBreakdown.pointsEarned.toLocaleString()} điểm</span></div>}
+                        </>
+                      ) : (
+                        <div className="text-center text-muted py-3">
+                          <span className="spinner-border spinner-border-sm mr-2" /> Đang tính giá...
+                        </div>
+                      )}
                     </div>
 
                     <div className="divider-30"></div>
@@ -377,16 +638,18 @@ const Checkout = ({ user }) => {
                       <button 
                         type="submit"
                         className="btn btn-maincolor btn-lg px-5" 
-                        disabled={submitting}
+                        disabled={submitting || !isPriceApplied}
                       >
                         {submitting ? (
-                          <><span className="spinner-border spinner-border-sm mr-2"></span> Đang kết nối VNPay...</>
+                          <><span className="spinner-border spinner-border-sm mr-2"></span> {(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? 'Đang đăng ký...' : 'Đang kết nối VNPay...'}</>
+                        ) : !isPriceApplied ? (
+                          <><i className="fa fa-refresh mr-2"></i> Cập nhật giá trước khi thanh toán</>
                         ) : (
-                          <><i className="fa fa-lock mr-2"></i> Trả tiền qua VNPay</>
+                          <>{(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? <><i className="fa fa-pencil-square-o mr-2"></i> Đăng ký ngay</> : <><i className="fa fa-lock mr-2"></i> Trả tiền qua VNPay</>}</>
                         )}
                       </button>
                       <p className="text-muted small mt-3">
-                        <i className="fa fa-shield mr-1"></i> Thanh toán an toàn qua cổng VNPay
+                        <i className="fa fa-shield mr-1"></i> {(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? 'Đăng ký an toàn & nhanh chóng' : 'Thanh toán an toàn qua cổng VNPay'}
                       </p>
                     </div>
                   </div>
