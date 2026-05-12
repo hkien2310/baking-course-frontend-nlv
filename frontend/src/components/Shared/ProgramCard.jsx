@@ -22,6 +22,19 @@ const ProgramCard = ({ cls }) => {
     return 'Khóa học';
   };
 
+  const stripHtmlAndTruncate = (html, length = 120) => {
+    if (!html) return '';
+    try {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const text = doc.body.textContent || "";
+      return text.length > length ? text.substring(0, length) + '...' : text;
+    } catch(e) {
+      // Fallback regex if DOMParser fails (e.g. some SSR environments, though we are in Vite client)
+      const text = html.replace(/<[^>]*>?/gm, '');
+      return text.length > length ? text.substring(0, length) + '...' : text;
+    }
+  };
+
   return (
     <div className="program-card-v3 bordered">
       {/* Image */}
@@ -39,7 +52,7 @@ const ProgramCard = ({ cls }) => {
         <h5 className="pc3-title">
           <Link to={ROUTES.PROGRAM_DETAIL(cls.slug)}>{cls.title}</Link>
         </h5>
-        <p className="pc3-desc">{cls.description}</p>
+        <p className="pc3-desc">{stripHtmlAndTruncate(cls.description, 140)}</p>
       </div>
 
       {/* Footer: stats + buy button */}
