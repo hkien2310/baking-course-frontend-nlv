@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
 import ContactForm from '../components/Contact/ContactForm';
 import ContactInfo from '../components/Contact/ContactInfo';
@@ -8,6 +9,20 @@ import { useTranslation } from '../i18n/LanguageContext';
 const Contact = () => {
 	const { siteConfig } = useSiteConfig();
 	const { t } = useTranslation();
+	const location = useLocation();
+
+	useEffect(() => {
+		if (location.hash === '#contact-form-section') {
+			setTimeout(() => {
+				const element = document.getElementById('contact-form-section');
+				if (element) {
+					// Use standard DOM scroll behavior
+					element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				}
+			}, 300); // slight delay for DOM mount
+		}
+	}, [location]);
+
 	return (
 		<>
 			<PageTitle
@@ -56,7 +71,7 @@ const Contact = () => {
 				</div>
 			</section>
 
-			<section className="ls s-pt-50 s-pb-130 c-gutter-60 contacts">
+			<section id="contact-form-section" className="ls s-pt-50 s-pb-130 c-gutter-60 contacts">
 				<div className="container">
 					<div className="row">
 						<div className="divider-20 d-none d-xl-block"></div>

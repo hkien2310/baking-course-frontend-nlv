@@ -141,7 +141,7 @@ const HomeSlider = ({ slides }) => {
                         <div className="intro_layer flex-btn" data-animation="fadeInUp">
                           <div className="d-inline-flex" style={{ gap: '15px' }}>
                             <Button to={`/program/${slide.slug}`} variant="main">{t('home.slider.enrollNow')}</Button>
-                            <Button href="#testimonials" variant="outline">{t('home.slider.ourFeedback')}</Button>
+                            <Button to="/contact#contact-form-section" variant="outline">{t('home.slider.ourFeedback')}</Button>
                           </div>
                         </div>
                       </div>
