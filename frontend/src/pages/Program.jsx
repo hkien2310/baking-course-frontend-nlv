@@ -131,7 +131,7 @@ const Program = () => {
             <aside className="col-lg-3 order-lg-1">
               <div className="sidebar-filter">
                 {/* Search Widget */}
-                <div className="widget widget_search">
+                <div className="widget">
                   <h3 className="widget-title">Tìm kiếm</h3>
                   <div className="d-flex position-relative">
                     <Input 

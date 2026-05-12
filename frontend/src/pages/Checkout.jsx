@@ -517,7 +517,7 @@ const Checkout = ({ user }) => {
                             disabled={previewLoading || (appliedDiscounts.length === 0)}
                           >
                             {previewLoading ? (
-                              <span className="spinner-border spinner-border-sm mr-2" />
+                              <><span className="spinner-border spinner-border-sm mr-2" />Đang tính...</>
                             ) : isPriceApplied ? (
                               <><i className="fa fa-check-circle mr-2" />Đã áp dụng ưu đãi</>
                             ) : (

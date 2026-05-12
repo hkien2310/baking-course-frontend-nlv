@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
 import './UserDashboard.css';
 import PageTitle from '../components/Shared/PageTitle';
 import { getMe, getLoyaltyConfig } from '../services/api';
@@ -49,6 +50,8 @@ const UserDashboard = () => {
   ];
 
   const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
+
+  useInitOnLoaded(!user);
 
   return (
     <>
@@ -118,10 +121,6 @@ const UserDashboard = () => {
               <div className="ud-stat">
                 <div className="ud-stat-num">{user.enrollments?.length || 0}</div>
                 <div className="ud-stat-label">Khóa học của tôi</div>
-              </div>
-              <div className="ud-stat">
-                <div className="ud-stat-num" style={{ fontSize: 15, fontWeight: 700, color: 'var(--colorMain)' }}>{user.memberTier && user.memberTier !== 'NONE' ? user.memberTier : 'Thành viên'}</div>
-                <div className="ud-stat-label">Hạng thành viên</div>
               </div>
               <div className="ud-stat">
                 <div className="ud-stat-num">{(user.points || 0).toLocaleString()}</div>
