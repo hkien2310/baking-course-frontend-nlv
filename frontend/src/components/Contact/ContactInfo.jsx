@@ -46,7 +46,7 @@ const ContactInfo = () => {
         <span className="icon-styled color-main2 fs-14">
           <i className="fa fa-clock-o"></i>
         </span>
-        <span>{t('contact.hours') || 'Weekdays: 9 am - 7 pm'}</span>
+        <span>{siteConfig.contact?.workingHours || t('contact.hours') || 'Weekdays: 9 am - 7 pm'}</span>
       </p>
 
       <div className="widget_social_icons mt-4">
