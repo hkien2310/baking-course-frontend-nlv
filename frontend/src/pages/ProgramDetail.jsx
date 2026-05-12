@@ -50,7 +50,20 @@ const ProgramDetail = () => {
     // Vimeo: vimeo.com/ID → player.vimeo.com/video/ID
     const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
     if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?title=0&byline=0&portrait=0`;
-    // Google Drive or other → return as-is
+    
+    // Google Drive Folder
+    const gDriveFolderMatch = url.match(/drive\.google\.com\/drive\/folders\/([\w-]+)/);
+    if (gDriveFolderMatch) return `https://drive.google.com/embeddedfolderview?id=${gDriveFolderMatch[1]}#grid`;
+    
+    // Google Drive File (view/preview)
+    const gDriveFileMatch = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+    if (gDriveFileMatch) return `https://drive.google.com/file/d/${gDriveFileMatch[1]}/preview`;
+    
+    // Google Drive Open format
+    const gDriveOpenMatch = url.match(/drive\.google\.com\/open\?id=([\w-]+)/);
+    if (gDriveOpenMatch) return `https://drive.google.com/file/d/${gDriveOpenMatch[1]}/preview`;
+
+    // Return as-is for other formats
     return url;
   };
 
