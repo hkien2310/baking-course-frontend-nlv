@@ -170,8 +170,11 @@ exports.getProgramByIdOrSlug = async (req, res) => {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_123');
         const userId = decoded.user?.id;
+        const userRole = decoded.user?.role;
         
-        if (userId) {
+        if (userRole === 'ADMIN') {
+          hasPurchased = true;
+        } else if (userId) {
           const order = await prisma.order.findFirst({
             where: { userId, programId: program.id },
             orderBy: { createdAt: 'desc' }

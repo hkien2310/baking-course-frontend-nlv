@@ -109,7 +109,8 @@ const ProgramDetail = () => {
     );
   }
 
-  const hasPurchased = program.hasPurchased === true;
+  const isAdmin = localStorage.getItem('role') === 'ADMIN';
+  const hasPurchased = program.hasPurchased === true || isAdmin;
   const orderStatus = program.orderStatus;
   const premiumContent = program.premiumContent;
 

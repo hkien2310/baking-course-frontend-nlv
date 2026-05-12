@@ -52,12 +52,6 @@ const Header = () => {
             <div className="col-xl-8 col-lg-5 col-1 text-sm-center">
               <nav className="top-nav">
                 <ul className="nav sf-menu">
-                  <li className={isHome ? "active" : ""}>
-                    <Link to={ROUTES.HOME}>{t('header.home')}</Link>
-                  </li>
-                  <li className={location.pathname === "/about" ? "active" : ""}>
-                    <Link to={ROUTES.ABOUT}>{t('header.about')}</Link>
-                  </li>
                   <li className={location.pathname.startsWith("/program") ? "active" : ""}>
                     <Link to={ROUTES.PROGRAM}>{t('header.programs')}</Link>
                     {categories.length > 0 && (
@@ -73,13 +67,8 @@ const Header = () => {
                       </ul>
                     )}
                   </li>
-                  {/* [HIDDEN] Ẩn menu Giảng viên theo yêu cầu khách hàng
-                  <li className={location.pathname === "/chiefs" ? "active" : ""}>
-                    <Link to={ROUTES.CHIEFS}>{t('header.instructors')}</Link>
-                  </li>
-                  */}
                   <li className={location.pathname === "/receipt" || location.pathname.startsWith("/post") ? "active" : ""}>
-                    <Link to={ROUTES.RECEIPT}>{t('header.recipes')}</Link>
+                    <Link to={ROUTES.RECEIPT}>{t('header.recipes') || 'Chia sẻ'}</Link>
                   </li>
                   <li className={location.pathname === "/student-work" ? "active" : ""}>
                     <Link to={ROUTES.STUDENT_WORK}>{t('header.studentWork')}</Link>

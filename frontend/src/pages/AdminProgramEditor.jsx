@@ -116,6 +116,62 @@ const AdminProgramEditor = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    // --- Custom Validation --- //
+    // Tab 0
+    if (!formData.title || formData.title.trim().length < 5) {
+      setActiveTab(0);
+      toast.error("Vui lòng nhập Tên Khóa Học (ít nhất 5 ký tự).");
+      return;
+    }
+    if (!formData.category) {
+      setActiveTab(0);
+      toast.error("Vui lòng chọn Danh mục.");
+      return;
+    }
+    if (!formData.price && formData.price !== 0 && formData.price !== '0') {
+      setActiveTab(0);
+      toast.error("Vui lòng nhập Giá gốc.");
+      return;
+    }
+
+    // Tab 1
+    if (!formData.description || formData.description.trim().length < 20) {
+      setActiveTab(1);
+      toast.error("Vui lòng nhập Mô tả tổng quát (ít nhất 20 ký tự).");
+      return;
+    }
+
+    // Tab 2
+    if (formData.curriculum && formData.curriculum.length > 0) {
+      const invalidIndex = formData.curriculum.findIndex(c => !c.title || !c.content);
+      if (invalidIndex !== -1) {
+        setActiveTab(2);
+        toast.error(`Vui lòng điền đủ tiêu đề và nội dung cho Chương ${invalidIndex + 1}.`);
+        return;
+      }
+    }
+
+    // Tab 3
+    if (formData.premiumContent) {
+      const videos = formData.premiumContent.videos || [];
+      const invalidVideoIndex = videos.findIndex(v => !v.title || !v.url);
+      if (invalidVideoIndex !== -1) {
+        setActiveTab(3);
+        toast.error(`Vui lòng điền đủ tiêu đề và link cho Video Bài Giảng ${invalidVideoIndex + 1}.`);
+        return;
+      }
+      
+      const resources = formData.premiumContent.resources || [];
+      const invalidResIndex = resources.findIndex(r => !r.title || !r.url);
+      if (invalidResIndex !== -1) {
+        setActiveTab(3);
+        toast.error(`Vui lòng điền đủ tên và link cho Tài Liệu ${invalidResIndex + 1}.`);
+        return;
+      }
+    }
+    // --- End Validation --- //
+
     setSaving(true);
     try {
       const priceVal = formData.price ? dollarsToCents(formData.price) : null;
@@ -123,6 +179,7 @@ const AdminProgramEditor = () => {
 
       // Price validation
       if (salePriceVal != null && priceVal != null && salePriceVal >= priceVal) {
+        setActiveTab(0);
         toast.error("Giá khuyến mãi phải nhỏ hơn giá gốc.");
         setSaving(false);
         return;
@@ -223,8 +280,6 @@ const AdminProgramEditor = () => {
                 value={formData.title} 
                 onChange={handleChange}
                 placeholder="Làm Bánh Ngọt Pháp Cơ Bản..."
-                required
-                minLength={5}
               />
             </div>
             <div className="col-md-4">
@@ -237,7 +292,6 @@ const AdminProgramEditor = () => {
                   { value: '', label: '-- Chọn danh mục --' },
                   ...categoriesList.map(c => ({ value: c.name, label: c.name }))
                 ]}
-                required
               />
             </div>
           </div>
@@ -250,7 +304,6 @@ const AdminProgramEditor = () => {
                 value={formData.price} 
                 onChange={handleChange} 
                 placeholder="500.000" 
-                required 
               />
               {Number(formData.price) >= 10000000 && (
                 <div className="text-success mt-1" style={{ fontSize: '13px', fontWeight: '500' }}>
@@ -397,8 +450,6 @@ const AdminProgramEditor = () => {
                 value={formData.description} 
                 onChange={handleChange} 
                 placeholder="Nhập thông tin khóa học..."
-                required
-                minLength={20}
               />
 
         {/* [TEMPORARILY HIDDEN] Ẩn phần Lịch học & Ngày khai giảng */}
@@ -501,8 +552,8 @@ const AdminProgramEditor = () => {
                 <i className="fa fa-trash"></i>
               </button>
             </div>
-            <AdminInput value={mod.title} onChange={e => handleArrayChange('curriculum', i, 'title', e.target.value)} placeholder="Tiêu đề chương" required />
-            <AdminTextarea value={mod.content} onChange={e => handleArrayChange('curriculum', i, 'content', e.target.value)} rows="3" placeholder="Nội dung chi tiết chương học..." required minLength={10} />
+            <AdminInput value={mod.title} onChange={e => handleArrayChange('curriculum', i, 'title', e.target.value)} placeholder="Tiêu đề chương" />
+            <AdminTextarea value={mod.content} onChange={e => handleArrayChange('curriculum', i, 'content', e.target.value)} rows="3" placeholder="Nội dung chi tiết chương học..." />
           </div>
         ))}
         <button type="button" className="btn btn-add-array mt-3" onClick={addCurriculum}>
