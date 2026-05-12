@@ -308,9 +308,10 @@ exports.updateProgram = async (req, res) => {
         const now = new Date();
         now.setHours(0,0,0,0);
 
-        if (start && start < now) {
-          throw new Error('Ngày bắt đầu khóa học không được ở quá khứ.');
-        }
+        // We don't check start < now here because we might be editing an ongoing or past class.
+        // if (start && start < now) {
+        //   throw new Error('Ngày bắt đầu khóa học không được ở quá khứ.');
+        // }
         if (start && end && end <= start) {
           throw new Error('Ngày kết thúc khóa học phải lớn hơn ngày bắt đầu.');
         }

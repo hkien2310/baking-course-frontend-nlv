@@ -36,6 +36,7 @@ const ProgramDetail = () => {
   const [submitImage, setSubmitImage] = useState(null);
   const [submitImagePreview, setSubmitImagePreview] = useState('');
   const [submittingWork, setSubmittingWork] = useState(false);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
 
   // Convert regular YouTube/Vimeo URLs to embeddable format + strip overlays
   const toEmbedUrl = (url) => {
@@ -260,22 +261,53 @@ const ProgramDetail = () => {
 
                     {/* Videos Panel */}
                     {premiumTab === 'videos' && premiumContent.videos?.length > 0 && (
-                      <div>
-                        {premiumContent.videos.map((video, i) => (
-                          <div className="video-card mb-4" key={i}>
-                            <div className="video-wrapper" onContextMenu={e => e.preventDefault()}>
-                              <iframe 
-                                src={toEmbedUrl(video.url)} 
-                                title={video.title || `Lesson ${i + 1}`} 
-                                allowFullScreen
-                              ></iframe>
-                            </div>
-                            <div className="video-info">
-                              <span className="video-num">{t('premium.lessonNum', { num: i + 1 })}</span>
-                              <h6>{video.title || t('premium.lessonFallback', { num: i + 1 })}</h6>
+                      <div className="video-player-container">
+                        {/* Main Video Player */}
+                        <div className="video-card mb-4 main-player">
+                          <div className="video-wrapper" onContextMenu={e => e.preventDefault()}>
+                            <iframe 
+                              src={toEmbedUrl(premiumContent.videos[activeVideoIndex]?.url)} 
+                              title={premiumContent.videos[activeVideoIndex]?.title || `Lesson ${activeVideoIndex + 1}`} 
+                              allowFullScreen
+                            ></iframe>
+                          </div>
+                          <div className="video-info">
+                            <span className="video-num">{t('premium.lessonNum', { num: activeVideoIndex + 1 })}</span>
+                            <h5 className="mb-0" style={{ fontSize: '18px', fontWeight: '600' }}>{premiumContent.videos[activeVideoIndex]?.title || t('premium.lessonFallback', { num: activeVideoIndex + 1 })}</h5>
+                          </div>
+                        </div>
+
+                        {/* Playlist (Only show if > 1 video) */}
+                        {premiumContent.videos.length > 1 && (
+                          <div className="playlist-wrapper">
+                            <div className="playlist-container">
+                              <h6 className="mb-3 font-weight-bold" style={{ color: '#333' }}>Danh sách bài giảng ({premiumContent.videos.length})</h6>
+                              <div className="playlist-scroll">
+                                {premiumContent.videos.map((video, i) => (
+                                  <div 
+                                    className={`playlist-item ${i === activeVideoIndex ? 'active' : ''}`} 
+                                    key={i}
+                                    onClick={() => setActiveVideoIndex(i)}
+                                  >
+                                    <div className="playlist-icon">
+                                      {i === activeVideoIndex ? <i className="fa fa-play-circle color-main"></i> : <i className="fa fa-play text-muted" style={{ fontSize: '12px' }}></i>}
+                                    </div>
+                                    <div className="playlist-title">
+                                      <div className="font-weight-600" style={{ fontSize: '15px', color: i === activeVideoIndex ? '#c19a5b' : '#333' }}>
+                                        Bài {i + 1}: {video.title || t('premium.lessonFallback', { num: i + 1 })}
+                                      </div>
+                                    </div>
+                                    {i === activeVideoIndex && (
+                                      <div className="playlist-status">
+                                        <span className="badge badge-success" style={{ backgroundColor: '#c19a5b' }}>Đang phát</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                        ))}
+                        )}
                       </div>
                     )}
 

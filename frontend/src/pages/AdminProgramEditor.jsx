@@ -33,7 +33,7 @@ const AdminProgramEditor = () => {
     programType: 'VIDEO_COURSE', // [TEMPORARILY HIDDEN] Was 'LIVE_CLASS'
     category: '',
     authorName: '', authorImage: '', chiefId: '',
-    learningGoals: [], classIncludes: [], curriculum: [], classSessions: [],
+    learningGoals: [], classIncludes: [], curriculum: [],
     premiumContent: { videos: [], resources: [], guides: '' },
     saleEndDate: ''
   });
@@ -84,15 +84,6 @@ const AdminProgramEditor = () => {
             learningGoals: Array.isArray(prog.learningGoals) ? prog.learningGoals.map(g => typeof g === 'string' ? { skill: g, percent: 50 } : g) : [],
             classIncludes: Array.isArray(prog.classIncludes) ? prog.classIncludes : [],
             curriculum: Array.isArray(prog.curriculum) ? prog.curriculum : [],
-            classSessions: Array.isArray(prog.classSessions) ? prog.classSessions.map(cs => {
-              const safeIso = (dateStr) => (dateStr && !isNaN(new Date(dateStr))) ? new Date(dateStr).toISOString().slice(0, 16) : '';
-              return {
-                ...cs,
-                startDate: safeIso(cs.startDate),
-                endDate: safeIso(cs.endDate),
-                enrollmentDeadline: safeIso(cs.enrollmentDeadline)
-              };
-            }) : [],
             students: prog.students || 0,
             reviews: prog.reviews || 0,
             premiumContent: prog.premiumContent || { videos: [], resources: [], guides: '' }
@@ -136,6 +127,11 @@ const AdminProgramEditor = () => {
     }
 
     // Tab 1
+    if (!formData.thumbnail) {
+      setActiveTab(1);
+      toast.error("Vui lòng tải lên Ảnh Đại Diện (Thumbnail).");
+      return;
+    }
     if (!formData.description || formData.description.trim().length < 20) {
       setActiveTab(1);
       toast.error("Vui lòng nhập Mô tả tổng quát (ít nhất 20 ký tự).");
@@ -174,8 +170,8 @@ const AdminProgramEditor = () => {
 
     setSaving(true);
     try {
-      const priceVal = formData.price ? dollarsToCents(formData.price) : null;
-      const salePriceVal = formData.salePrice ? dollarsToCents(formData.salePrice) : null;
+      const priceVal = (formData.price || formData.price === 0) ? dollarsToCents(formData.price) : null;
+      const salePriceVal = (formData.salePrice || formData.salePrice === 0) ? dollarsToCents(formData.salePrice) : null;
 
       // Price validation
       if (salePriceVal != null && priceVal != null && salePriceVal >= priceVal) {
@@ -190,9 +186,11 @@ const AdminProgramEditor = () => {
 
       const payload = {
         ...formData,
+        programType: 'VIDEO_COURSE', // Force all to video course
         price: finalPrice,
         salePrice: salePriceVal,
-        saleEndDate: formData.saleEndDate ? new Date(formData.saleEndDate).toISOString() : null
+        saleEndDate: formData.saleEndDate ? new Date(formData.saleEndDate).toISOString() : null,
+        classSessions: [] // Always clear class sessions since there are no live classes
       };
       if (isEditing) {
         await updateProgram(id, payload);
@@ -231,10 +229,6 @@ const AdminProgramEditor = () => {
 
   const addCurriculum = () => {
     setFormData({ ...formData, curriculum: [...formData.curriculum, { title: '', content: '' }] });
-  };
-
-  const addClassSession = () => {
-    setFormData({ ...formData, classSessions: [...formData.classSessions, { startDate: '', endDate: '', enrollmentDeadline: '', dayOfWeek: '', timeRange: '', instructorOverride: '' }] });
   };
 
   useInitOnLoaded(loading);
@@ -441,7 +435,7 @@ const AdminProgramEditor = () => {
               <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Nội dung & Hình ảnh</h5>
 
               <div className="mb-4">
-                <AdminImageUpload label="Ảnh Đại Diện (Thumbnail)" name="thumbnail" value={formData.thumbnail} onChange={(url) => setFormData({ ...formData, thumbnail: url })} />
+                <AdminImageUpload label={<>Ảnh Đại Diện (Thumbnail) <span className="text-danger">*</span></>} name="thumbnail" value={formData.thumbnail} onChange={(url) => setFormData({ ...formData, thumbnail: url })} />
               </div>
               
               <AdminTextarea 
@@ -451,91 +445,6 @@ const AdminProgramEditor = () => {
                 onChange={handleChange} 
                 placeholder="Nhập thông tin khóa học..."
               />
-
-        {/* [TEMPORARILY HIDDEN] Ẩn phần Lịch học & Ngày khai giảng */}
-        {false && formData.programType === 'LIVE_CLASS' && (
-        <div className="admin-paper p-4 mb-4">
-          <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Lịch học & Ngày khai giảng</h5>
-          <p className="text-muted"><small>Thêm các lịch học cụ thể. Học viên sẽ chọn lịch này khi đăng ký ghi danh.</small></p>
-          
-          {formData.classSessions.map((session, i) => (
-            <div key={i} className="mt-4 p-4 position-relative" style={{ backgroundColor: 'var(--admin-glass-bg)', borderRadius: '12px', border: '1px solid var(--admin-glass-border)', transition: 'all 0.3s' }}>
-              <div className="d-flex justify-content-between align-items-center mb-4 pb-3" style={{borderBottom: '1px solid var(--admin-glass-border)'}}>
-                <h6 className="m-0" style={{ color: 'var(--admin-primary)', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <i className="fa fa-calendar-check-o"></i> Lịch học #{i + 1}
-                </h6>
-                <button type="button" className="btn btn-sm btn-danger rounded-pill px-3" onClick={() => removeArrayItem('classSessions', i)}>
-                  <i className="fa fa-trash mr-1"></i> Xóa
-                </button>
-              </div>
-              <div className="row">
-                <div className="col-md-4">
-                  <AdminInput 
-                    label={<>Ngày khai giảng <span className="text-danger">*</span></>} 
-                    type="datetime-local" 
-                    value={session.startDate} 
-                    onChange={e => handleArrayChange('classSessions', i, 'startDate', e.target.value)} 
-                    required 
-                  />
-                </div>
-                <div className="col-md-4">
-                  <AdminInput 
-                    label={<>Ngày kết thúc <span className="text-danger">*</span></>} 
-                    type="datetime-local" 
-                    value={session.endDate} 
-                    onChange={e => handleArrayChange('classSessions', i, 'endDate', e.target.value)} 
-                    required 
-                    error={session.startDate && session.endDate && new Date(session.endDate) <= new Date(session.startDate) ? 'Ngày kết thúc phải sau ngày khai giảng' : ''}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <AdminInput 
-                    label="Hạn chót đăng ký" 
-                    type="datetime-local" 
-                    value={session.enrollmentDeadline} 
-                    onChange={e => handleArrayChange('classSessions', i, 'enrollmentDeadline', e.target.value)} 
-                    error={session.startDate && session.enrollmentDeadline && new Date(session.enrollmentDeadline) > new Date(session.startDate) ? 'Hạn chót phải trước ngày khai giảng' : ''}
-                  />
-                </div>
-              </div>
-
-              <div className="row mt-2">
-                <div className="col-md-4">
-                  <AdminSelect 
-                    label={<>Ngày trong tuần <span className="text-danger">*</span></>} 
-                    value={session.dayOfWeek} 
-                    onChange={e => handleArrayChange('classSessions', i, 'dayOfWeek', e.target.value)}
-                    required 
-                    options={[
-                      {label: '- Chọn ngày -', value: ''},
-                      {label: 'Thứ Hai', value: 'Monday'},
-                      {label: 'Thứ Ba', value: 'Tuesday'},
-                      {label: 'Thứ Tư', value: 'Wednesday'},
-                      {label: 'Thứ Năm', value: 'Thursday'},
-                      {label: 'Thứ Sáu', value: 'Friday'},
-                      {label: 'Thứ Bảy', value: 'Saturday'},
-                      {label: 'Chủ Nhật', value: 'Sunday'}
-                    ]}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <AdminInput label="Giờ học" value={session.timeRange} onChange={e => handleArrayChange('classSessions', i, 'timeRange', e.target.value)} placeholder="VD: 10:00 AM - 12:00 PM" />
-                </div>
-                <div className="col-md-4">
-                  <AdminInput label="Ghi chú Giảng viên" value={session.instructorOverride || ''} onChange={e => handleArrayChange('classSessions', i, 'instructorOverride', e.target.value)} placeholder="Giảng viên khác dạy thay" />
-                </div>
-              </div>
-            </div>
-          ))}
-          <button type="button" className="btn btn-info rounded-pill px-4 mt-4" style={{ fontWeight: '600', letterSpacing: '0.5px' }} onClick={addClassSession}>
-            <i className="fa fa-plus mr-2"></i> Thêm Lịch học
-          </button>
-        </div>
-        )}
-
-
-
-
       </div>
       )}
 
