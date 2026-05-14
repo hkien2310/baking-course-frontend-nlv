@@ -77,8 +77,8 @@ exports.deleteChief = async (req, res) => {
     await prisma.chief.delete({ where: { id: req.params.id } });
 
     // Clean up uploaded image
-    const { deleteUploadedFile } = require('../utils/fileCleanup');
-    deleteUploadedFile(chief.image);
+    const { deleteFromCloudinary } = require('../utils/cloudinaryUtils');
+    if (chief.image) await deleteFromCloudinary(chief.image);
 
     res.json({ message: 'Deleted successfully' });
   } catch (e) {

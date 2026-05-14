@@ -104,8 +104,9 @@ exports.deletePost = async (req, res) => {
     await prisma.post.delete({ where: { id: existingPost.id } });
 
     // Clean up uploaded thumbnail
-    const { deleteUploadedFile } = require('../utils/fileCleanup');
-    deleteUploadedFile(existingPost.thumbnail);
+    const { deleteFromCloudinary } = require('../utils/cloudinaryUtils');
+    if (existingPost.thumbnail) await deleteFromCloudinary(existingPost.thumbnail);
+    if (existingPost.coverImage) await deleteFromCloudinary(existingPost.coverImage);
 
     res.json({ message: 'Deleted successfully' });
   } catch (e) {

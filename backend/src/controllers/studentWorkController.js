@@ -41,11 +41,15 @@ exports.getApprovedWorks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 9;
+    const programId = req.query.programId;
     const skip = (page - 1) * limit;
+
+    const where = { status: 'APPROVED' };
+    if (programId) where.programId = programId;
 
     const [works, total] = await Promise.all([
       prisma.studentWork.findMany({
-        where: { status: 'APPROVED' },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
@@ -53,7 +57,7 @@ exports.getApprovedWorks = async (req, res) => {
           program: { select: { id: true, title: true, slug: true } }
         }
       }),
-      prisma.studentWork.count({ where: { status: 'APPROVED' } })
+      prisma.studentWork.count({ where })
     ]);
 
     res.json({
@@ -150,10 +154,66 @@ exports.rejectWork = async (req, res) => {
 // DELETE /api/student-work/:id — Admin deletes
 exports.deleteWork = async (req, res) => {
   try {
+    const work = await prisma.studentWork.findUnique({ where: { id: req.params.id } });
+    if (work?.imageUrl) {
+      const { deleteFromCloudinary } = require('../utils/cloudinaryUtils');
+      await deleteFromCloudinary(work.imageUrl);
+    }
     await prisma.studentWork.delete({ where: { id: req.params.id } });
     res.json({ message: 'Đã xóa bài nộp.' });
   } catch (error) {
     console.error('deleteWork error:', error);
     res.status(500).json({ error: 'Lỗi khi xóa bài.' });
+  }
+};
+
+// POST /api/student-work/admin — Admin creates work
+exports.adminCreateWork = async (req, res) => {
+  try {
+    const { studentName, imageUrl, description, programId, status } = req.body;
+    if (!studentName || !imageUrl || !description || !programId) {
+      return res.status(400).json({ error: 'Vui lòng điền đầy đủ thông tin.' });
+    }
+    const work = await prisma.studentWork.create({
+      data: {
+        studentName,
+        imageUrl,
+        description,
+        programId,
+        status: status || 'APPROVED',
+        userId: req.user?.id || null
+      },
+      include: {
+        program: { select: { id: true, title: true, slug: true } }
+      }
+    });
+    res.status(201).json({ message: 'Tạo sản phẩm thành công', work });
+  } catch (error) {
+    console.error('adminCreateWork error:', error);
+    res.status(500).json({ error: 'Lỗi khi tạo sản phẩm.' });
+  }
+};
+
+// PUT /api/student-work/:id — Admin updates work
+exports.updateWork = async (req, res) => {
+  try {
+    const { studentName, imageUrl, description, programId, status } = req.body;
+    const work = await prisma.studentWork.update({
+      where: { id: req.params.id },
+      data: {
+        studentName,
+        imageUrl,
+        description,
+        programId,
+        status
+      },
+      include: {
+        program: { select: { id: true, title: true, slug: true } }
+      }
+    });
+    res.json({ message: 'Cập nhật thành công', work });
+  } catch (error) {
+    console.error('updateWork error:', error);
+    res.status(500).json({ error: 'Lỗi khi cập nhật sản phẩm.' });
   }
 };

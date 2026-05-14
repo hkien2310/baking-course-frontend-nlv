@@ -9,6 +9,9 @@ import { ROUTES } from '../constants/routes';
 import { priceToDollars, dollarsToCents } from '../utils/formatters';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
 import AdminEditorLayout from '../components/Admin/Shared/AdminEditorLayout';
+import LessonCollapse from '../components/Shared/LessonCollapse';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import './AdminDesign.css';
 
 const AdminProgramEditor = () => {
@@ -41,13 +44,12 @@ const AdminProgramEditor = () => {
   const [chiefsList, setChiefsList] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [expandedLessonIndex, setExpandedLessonIndex] = useState(0);
   const [saving, setSaving] = useState(false);
 
   const TABS = [
-    { id: 0, label: 'Thông tin chung' },
-    { id: 1, label: 'Nội dung & Hình ảnh' },
-    { id: 2, label: 'Giáo trình (Curriculum)' },
-    { id: 3, label: 'Nội dung Premium' }
+    { id: 0, label: 'Thông tin chung & Hình ảnh' },
+    { id: 1, label: 'Quản lý nội dung' }
   ];
 
   useEffect(() => {
@@ -68,6 +70,22 @@ const AdminProgramEditor = () => {
       getProgramBySlug(id)
         .then(prog => {
           console.log("DEBUG: Loaded program category:", prog.category);
+          let pContent = prog.premiumContent || { videos: [] };
+          if (!pContent.videos) pContent.videos = [];
+          let oldResources = pContent.resources || [];
+          let oldGuides = pContent.guides || '';
+          
+          if (oldResources.length > 0 || oldGuides) {
+             if (pContent.videos.length === 0) {
+               pContent.videos.push({ title: 'Bài 1', url: '', resources: oldResources, guides: oldGuides });
+             } else {
+               pContent.videos[0].resources = [...(pContent.videos[0].resources || []), ...oldResources];
+               pContent.videos[0].guides = pContent.videos[0].guides ? (pContent.videos[0].guides + oldGuides) : oldGuides;
+             }
+             delete pContent.resources;
+             delete pContent.guides;
+          }
+
           setFormData({
             programType: prog.programType || 'VIDEO_COURSE',
             title: prog.title || '',
@@ -86,7 +104,7 @@ const AdminProgramEditor = () => {
             curriculum: Array.isArray(prog.curriculum) ? prog.curriculum : [],
             students: prog.students || 0,
             reviews: prog.reviews || 0,
-            premiumContent: prog.premiumContent || { videos: [], resources: [], guides: '' }
+            premiumContent: pContent
           });
           setLoading(false);
         })
@@ -126,44 +144,35 @@ const AdminProgramEditor = () => {
       return;
     }
 
-    // Tab 1
+    // General Info Thumbnail & Description
     if (!formData.thumbnail) {
-      setActiveTab(1);
+      setActiveTab(0);
       toast.error("Vui lòng tải lên Ảnh Đại Diện (Thumbnail).");
       return;
     }
     if (!formData.description || formData.description.trim().length < 20) {
-      setActiveTab(1);
+      setActiveTab(0);
       toast.error("Vui lòng nhập Mô tả tổng quát (ít nhất 20 ký tự).");
       return;
     }
 
-    // Tab 2
-    if (formData.curriculum && formData.curriculum.length > 0) {
-      const invalidIndex = formData.curriculum.findIndex(c => !c.title || !c.content);
-      if (invalidIndex !== -1) {
-        setActiveTab(2);
-        toast.error(`Vui lòng điền đủ tiêu đề và nội dung cho Chương ${invalidIndex + 1}.`);
-        return;
-      }
-    }
-
-    // Tab 3
+    // Tab 1: Premium Content
     if (formData.premiumContent) {
       const videos = formData.premiumContent.videos || [];
-      const invalidVideoIndex = videos.findIndex(v => !v.title || !v.url);
-      if (invalidVideoIndex !== -1) {
-        setActiveTab(3);
-        toast.error(`Vui lòng điền đủ tiêu đề và link cho Video Bài Giảng ${invalidVideoIndex + 1}.`);
-        return;
-      }
-      
-      const resources = formData.premiumContent.resources || [];
-      const invalidResIndex = resources.findIndex(r => !r.title || !r.url);
-      if (invalidResIndex !== -1) {
-        setActiveTab(3);
-        toast.error(`Vui lòng điền đủ tên và link cho Tài Liệu ${invalidResIndex + 1}.`);
-        return;
+      for (let i = 0; i < videos.length; i++) {
+        const v = videos[i];
+        if (!v.title) {
+          setActiveTab(1);
+          toast.error(`Vui lòng điền đủ tiêu đề cho Video Bài Giảng ${i + 1}.`);
+          return;
+        }
+        const resources = v.resources || [];
+        const invalidResIndex = resources.findIndex(r => !r.title || !r.url);
+        if (invalidResIndex !== -1) {
+          setActiveTab(1);
+          toast.error(`Vui lòng điền đủ tên và link cho Tài Liệu đính kèm trong Bài Giảng ${i + 1}.`);
+          return;
+        }
       }
     }
     // --- End Validation --- //
@@ -174,6 +183,18 @@ const AdminProgramEditor = () => {
       const salePriceVal = (formData.salePrice || formData.salePrice === 0) ? dollarsToCents(formData.salePrice) : null;
 
       // Price validation
+      if (priceVal != null && priceVal > 2000000000) {
+        setActiveTab(0);
+        toast.error("Giá gốc quá lớn (tối đa 2 tỷ VNĐ).");
+        setSaving(false);
+        return;
+      }
+      if (salePriceVal != null && salePriceVal > 2000000000) {
+        setActiveTab(0);
+        toast.error("Giá khuyến mãi quá lớn (tối đa 2 tỷ VNĐ).");
+        setSaving(false);
+        return;
+      }
       if (salePriceVal != null && priceVal != null && salePriceVal >= priceVal) {
         setActiveTab(0);
         toast.error("Giá khuyến mãi phải nhỏ hơn giá gốc.");
@@ -181,13 +202,10 @@ const AdminProgramEditor = () => {
         return;
       }
 
-      // 10,000,000 is the "Unlimited" threshold. If reached, we send null to the API.
-      const finalPrice = (priceVal >= 10000000) ? null : priceVal;
-
       const payload = {
         ...formData,
         programType: 'VIDEO_COURSE', // Force all to video course
-        price: finalPrice,
+        price: priceVal,
         salePrice: salePriceVal,
         saleEndDate: formData.saleEndDate ? new Date(formData.saleEndDate).toISOString() : null,
         classSessions: [] // Always clear class sessions since there are no live classes
@@ -227,9 +245,6 @@ const AdminProgramEditor = () => {
 
 
 
-  const addCurriculum = () => {
-    setFormData({ ...formData, curriculum: [...formData.curriculum, { title: '', content: '' }] });
-  };
 
   useInitOnLoaded(loading);
 
@@ -299,11 +314,6 @@ const AdminProgramEditor = () => {
                 onChange={handleChange} 
                 placeholder="500.000" 
               />
-              {Number(formData.price) >= 10000000 && (
-                <div className="text-success mt-1" style={{ fontSize: '13px', fontWeight: '500' }}>
-                  <i className="fa fa-info-circle mr-1"></i> (Không giới hạn) - Hệ thống sẽ không thu phí khóa học này.
-                </div>
-              )}
             </div>
             <div className="col-md-6">
               <AdminCurrencyInput 
@@ -427,161 +437,168 @@ const AdminProgramEditor = () => {
 
 
 
+            <div className="row mt-4">
+              <div className="col-12 mb-4">
+                <AdminImageUpload label={<>Ảnh Đại Diện (Thumbnail) <span className="text-danger">*</span></>} name="thumbnail" value={formData.thumbnail} onChange={(url) => setFormData({ ...formData, thumbnail: url })} />
+              </div>
+              <div className="col-12 mb-4">
+                <label className="admin-form-label" style={{ fontWeight: '600', marginBottom: '8px', display: 'block' }}>Mô tả tổng quát <span className="text-danger">*</span></label>
+                <div style={{ background: '#fff' }}>
+                  <ReactQuill 
+                    theme="snow" 
+                    value={formData.description || ''} 
+                    onChange={(content) => setFormData({ ...formData, description: content })} 
+                    placeholder="Nhập thông tin khóa học..."
+                    style={{ height: '300px', marginBottom: '50px' }}
+                  />
+                </div>
+              </div>
+            </div>
+
           </div>
           )}
 
-          {activeTab === 1 && (
-            <div className="admin-tab-content admin-paper p-4 mb-4">
-              <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Nội dung & Hình ảnh</h5>
-
-              <div className="mb-4">
-                <AdminImageUpload label={<>Ảnh Đại Diện (Thumbnail) <span className="text-danger">*</span></>} name="thumbnail" value={formData.thumbnail} onChange={(url) => setFormData({ ...formData, thumbnail: url })} />
-              </div>
-              
-              <AdminTextarea 
-                label={<>Mô tả tổng quát <span className="text-danger">*</span></>} 
-                name="description" 
-                value={formData.description} 
-                onChange={handleChange} 
-                placeholder="Nhập thông tin khóa học..."
-              />
-      </div>
-      )}
-
-      {/* TAB 2: CURRICULUM */}
-      {activeTab === 2 && (
-      <div className="admin-tab-content admin-paper p-4 mb-4">
-        <h5 className="mb-4" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px'}}>Chương Trình Học (Giáo trình)</h5>
-        
-        {formData.curriculum.map((mod, i) => (
-          <div key={i} className="admin-array-card">
-            <div className="admin-array-card-header">
-              <h6 className="admin-array-card-title">Chương {i + 1}</h6>
-              <button type="button" className="btn-remove-array" title="Xóa chương" onClick={() => removeArrayItem('curriculum', i)}>
-                <i className="fa fa-trash"></i>
-              </button>
-            </div>
-            <AdminInput value={mod.title} onChange={e => handleArrayChange('curriculum', i, 'title', e.target.value)} placeholder="Tiêu đề chương" />
-            <AdminTextarea value={mod.content} onChange={e => handleArrayChange('curriculum', i, 'content', e.target.value)} rows="3" placeholder="Nội dung chi tiết chương học..." />
-          </div>
-        ))}
-        <button type="button" className="btn btn-add-array mt-3" onClick={addCurriculum}>
-          <i className="fa fa-plus"></i> Thêm Chương Mới
-        </button>
-      </div>
-      )}
 
       {/* TAB 3: PREMIUM CONTENT */}
-      {activeTab === 3 && (
+      {activeTab === 1 && (
       <div className="admin-tab-content admin-paper p-4 mb-4">
         <h5 className="mb-2" style={{borderBottom: '1px solid var(--admin-border-light)', paddingBottom: '10px', color: '#c19a5b'}}>
-          <i className="fa fa-star mr-2"></i> Nội Dung Private (Premium)
+          <i className="fa fa-folder-open mr-2"></i> Quản lý nội dung
         </h5>
         <p className="text-muted mb-4" style={{ fontSize: '14px' }}>
-          Nội dung này chỉ hiển thị cho học viên đã sở hữu khóa học. Hệ thống sẽ tự động chuyển đổi link YouTube/Vimeo sang định dạng nhúng.
+          Tạo và sắp xếp các bài giảng. Bạn có thể thiết lập bài giảng hiển thị miễn phí (Học thử) hoặc yêu cầu phải mua khóa học (Premium). Link video có thể bỏ trống nếu bài học chỉ có nội dung/tài liệu.
         </p>
 
-        {/* ─── Videos ─── */}
+        {/* ─── Lessons ─── */}
         <div className="mb-5">
           <h6 className="mb-3 font-weight-bold d-flex align-items-center" style={{ gap: '8px' }}>
-            <i className="fa fa-play-circle" style={{ color: '#c19a5b' }}></i> Video Bài Giảng
+            <i className="fa fa-play-circle" style={{ color: '#c19a5b' }}></i> Danh sách Bài Giảng
           </h6>
           {(formData.premiumContent?.videos || []).map((video, i) => (
-            <div key={i} className="admin-array-card p-3 mb-3">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <span style={{ fontWeight: '700', fontSize: '13px', color: '#c19a5b' }}>Bài {i + 1}</span>
-                <button type="button" className="btn-remove-array" onClick={() => {
+            <LessonCollapse
+              key={i}
+              index={i}
+              title={video.title}
+              isFree={video.isFree}
+              isOpen={expandedLessonIndex === i}
+              onToggle={() => setExpandedLessonIndex(expandedLessonIndex === i ? -1 : i)}
+              mode="admin"
+              rightActions={
+                <button type="button" className="btn-remove-array" onClick={(e) => {
+                    e.stopPropagation();
                     const updated = [...(formData.premiumContent?.videos || [])];
                     updated.splice(i, 1);
                     setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
                 }}>
                   <i className="fa fa-trash"></i>
                 </button>
-              </div>
-              <div className="row">
-                <div className="col-md-5">
-                  <label className="small text-muted mb-1">Tiêu đề video</label>
-                  <input type="text" className="admin-form-control shadow-none w-100" value={video.title || ''} onChange={e => {
-                    const updated = [...(formData.premiumContent?.videos || [])];
-                    updated[i] = { ...updated[i], title: e.target.value };
-                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
-                  }} placeholder="VD: Bài 1 - Kỹ thuật trộn bột" />
+              }
+            >
+              <div>
+                {/* Lesson Access Type */}
+                <div className="mb-3 p-3" style={{ background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h6 className="mb-1" style={{ fontSize: '14px', fontWeight: 'bold' }}>Chỉ học viên</h6>
+                      <p className="mb-0 text-muted" style={{ fontSize: '12px' }}>Bật lựa chọn này để giới hạn bài học chỉ dành cho người đã mua khóa. Tắt để mở Học thử.</p>
+                    </div>
+                    <div className="custom-control custom-switch">
+                      <input type="checkbox" className="custom-control-input" id={`isPremium-${i}`} checked={!video.isFree} onChange={e => {
+                        const updated = [...(formData.premiumContent?.videos || [])];
+                        updated[i] = { ...updated[i], isFree: !e.target.checked };
+                        setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                      }} />
+                      <label className="custom-control-label" htmlFor={`isPremium-${i}`} style={{ fontSize: '14px', fontWeight: 'bold', color: !video.isFree ? '#ffc107' : '#999', cursor: 'pointer', userSelect: 'none' }}>
+                        Chỉ học viên
+                      </label>
+                    </div>
+                  </div>
                 </div>
-                <div className="col-md-7">
-                  <label className="small text-muted mb-1">Link video (YouTube, Vimeo hoặc link nhúng)</label>
-                  <input type="text" className="admin-form-control shadow-none w-100" value={video.url || ''} onChange={e => {
-                    const updated = [...(formData.premiumContent?.videos || [])];
-                    updated[i] = { ...updated[i], url: e.target.value };
-                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
-                  }} placeholder="https://www.youtube.com/watch?v=..." />
-                  <small className="text-muted d-block mt-1" style={{ fontSize: '11px' }}>
-                    <i className="fa fa-info-circle mr-1"></i>Chấp nhận link YouTube, Vimeo, Google Drive. Hệ thống tự chuyển đổi.
-                  </small>
+
+                <div className="row mb-3">
+                  <div className="col-md-5">
+                    <label className="small text-muted mb-1">Tiêu đề bài giảng <span className="text-danger">*</span></label>
+                    <input type="text" className="admin-form-control shadow-none w-100" value={video.title || ''} onChange={e => {
+                      const updated = [...(formData.premiumContent?.videos || [])];
+                      updated[i] = { ...updated[i], title: e.target.value };
+                      setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                    }} placeholder="VD: Bài 1 - Kỹ thuật trộn bột" />
+                  </div>
+                  <div className="col-md-7">
+                    <label className="small text-muted mb-1">Link video (YouTube, Vimeo hoặc link nhúng) <span className="text-muted">(Không bắt buộc)</span></label>
+                    <input type="text" className="admin-form-control shadow-none w-100" value={video.url || ''} onChange={e => {
+                      const updated = [...(formData.premiumContent?.videos || [])];
+                      updated[i] = { ...updated[i], url: e.target.value };
+                      setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                    }} placeholder="https://www.youtube.com/watch?v=..." />
+                  </div>
+                </div>
+
+                {/* Lesson Resources */}
+                <div className="mb-3 mt-4">
+                  <label className="small font-weight-bold mb-2 d-block"><i className="fa fa-paperclip mr-1"></i> Tài liệu đính kèm</label>
+                  {(video.resources || []).map((res, rIndex) => (
+                    <div key={rIndex} className="p-3 mb-2" style={{ background: '#fff', border: '1px dashed #ccc', borderRadius: '8px' }}>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span style={{ fontSize: '13px', fontWeight: '600', color: '#555' }}>Tài liệu {rIndex + 1}</span>
+                        <button type="button" className="btn btn-sm btn-outline-danger" style={{ padding: '2px 6px', fontSize: '12px' }} onClick={() => {
+                          const updated = [...(formData.premiumContent?.videos || [])];
+                          updated[i].resources.splice(rIndex, 1);
+                          setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                        }}><i className="fa fa-trash"></i> Xoá</button>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-5">
+                          <input type="text" className="admin-form-control shadow-none w-100" style={{ fontSize: '13px' }} value={res.title || ''} onChange={e => {
+                            const updated = [...(formData.premiumContent?.videos || [])];
+                            if (!updated[i].resources) updated[i].resources = [];
+                            updated[i].resources[rIndex] = { ...updated[i].resources[rIndex], title: e.target.value };
+                            setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                          }} placeholder="Tên tài liệu..." />
+                        </div>
+                        <div className="col-md-7">
+                          <input type="text" className="admin-form-control shadow-none w-100" style={{ fontSize: '13px' }} value={res.url || ''} onChange={e => {
+                            const updated = [...(formData.premiumContent?.videos || [])];
+                            if (!updated[i].resources) updated[i].resources = [];
+                            updated[i].resources[rIndex] = { ...updated[i].resources[rIndex], url: e.target.value };
+                            setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                          }} placeholder="Link Google Drive, PDF..." />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                <button type="button" className="btn btn-sm" style={{ background: '#eee', color: '#555', fontSize: '12px' }} onClick={() => {
+                  const updated = [...(formData.premiumContent?.videos || [])];
+                  if (!updated[i].resources) updated[i].resources = [];
+                  updated[i].resources.push({ title: '', url: '' });
+                  setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                }}><i className="fa fa-plus mr-1"></i> Thêm file đính kèm</button>
+              </div>
+
+              {/* Lesson Guides */}
+              <div className="mt-4">
+                <label className="small font-weight-bold mb-2 d-block"><i className="fa fa-file-text-o mr-1"></i> Nội dung</label>
+                <div style={{ background: '#fff' }}>
+                  <ReactQuill 
+                    theme="snow" 
+                    value={video.guides || ''} 
+                    onChange={(content) => {
+                      const updated = [...(formData.premiumContent?.videos || [])];
+                      updated[i].guides = content;
+                      setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                    }} 
+                    placeholder="Nhập công thức chi tiết cho bài này..."
+                    style={{ height: '200px', marginBottom: '40px' }}
+                  />
                 </div>
               </div>
-            </div>
+
+              </div>
+            </LessonCollapse>
           ))}
           <button type="button" className="btn btn-add-array mt-2" onClick={() => {
-            setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: [...(formData.premiumContent?.videos || []), { title: '', url: '' }] } });
-          }}><i className="fa fa-plus mr-2"></i> Thêm Video Bài Giảng</button>
-        </div>
-
-        {/* ─── Resources ─── */}
-        <div className="mb-5">
-          <h6 className="mb-3 font-weight-bold d-flex align-items-center" style={{ gap: '8px' }}>
-            <i className="fa fa-download" style={{ color: '#c19a5b' }}></i> Tài Nguyên Tải Xuống
-          </h6>
-          {(formData.premiumContent?.resources || []).map((res, i) => (
-            <div key={i} className="admin-array-card p-3 mb-3">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <span style={{ fontWeight: '700', fontSize: '13px', color: '#c19a5b' }}>Tài liệu {i + 1}</span>
-                <button type="button" className="btn-remove-array" onClick={() => {
-                    const updated = [...(formData.premiumContent?.resources || [])];
-                    updated.splice(i, 1);
-                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
-                }}>
-                  <i className="fa fa-trash"></i>
-                </button>
-              </div>
-              <div className="row">
-                <div className="col-md-5">
-                  <label className="small text-muted mb-1">Tên tài liệu</label>
-                  <input type="text" className="admin-form-control shadow-none w-100" value={res.title || ''} onChange={e => {
-                    const updated = [...(formData.premiumContent?.resources || [])];
-                    updated[i] = { ...updated[i], title: e.target.value };
-                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
-                  }} placeholder="VD: Công thức Bánh Croissant PDF" />
-                </div>
-                <div className="col-md-7">
-                  <label className="small text-muted mb-1">Link tải xuống</label>
-                  <input type="text" className="admin-form-control shadow-none w-100" value={res.url || ''} onChange={e => {
-                    const updated = [...(formData.premiumContent?.resources || [])];
-                    updated[i] = { ...updated[i], url: e.target.value };
-                    setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: updated } });
-                  }} placeholder="https://drive.google.com/..." />
-                </div>
-              </div>
-            </div>
-          ))}
-          <button type="button" className="btn btn-add-array mt-2" onClick={() => {
-            setFormData({ ...formData, premiumContent: { ...formData.premiumContent, resources: [...(formData.premiumContent?.resources || []), { title: '', url: '' }] } });
-          }}><i className="fa fa-plus mr-2"></i> Thêm Tài Liệu</button>
-        </div>
-
-        {/* ─── Guides ─── */}
-        <div>
-          <h6 className="mb-3 font-weight-bold d-flex align-items-center" style={{ gap: '8px' }}>
-            <i className="fa fa-book" style={{ color: '#c19a5b' }}></i> Hướng Dẫn Chi Tiết
-          </h6>
-          <p className="text-muted mb-2" style={{ fontSize: '13px' }}>
-            Viết nội dung hướng dẫn, công thức, lưu ý dành riêng cho học viên. Hỗ trợ HTML cơ bản.
-          </p>
-          <AdminTextarea 
-            value={formData.premiumContent?.guides || ''} 
-            onChange={e => setFormData({ ...formData, premiumContent: { ...formData.premiumContent, guides: e.target.value } })}
-            rows="8"
-            placeholder="<h3>Công thức chi tiết</h3>\n<p>Bước 1: Chuẩn bị nguyên liệu...</p>"
-          />
+            setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: [...(formData.premiumContent?.videos || []), { title: '', url: '', isFree: false, resources: [], guides: '' }] } });
+          }}><i className="fa fa-plus mr-2"></i> Thêm Bài Giảng</button>
         </div>
       </div>
       )}

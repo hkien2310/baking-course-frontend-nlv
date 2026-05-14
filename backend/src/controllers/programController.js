@@ -102,11 +102,13 @@ exports.getAllPrograms = async (req, res) => {
         include: { chief: true, classSessions: { include: { enrollments: true } } },
       });
 
-      // Process programs to expire sales
+      // Process programs to expire sales and strip premium content
       const processedPrograms = programs.map(p => {
         if (p.saleEndDate && p.saleEndDate < now) {
-          return { ...p, salePrice: null, saleEndDate: null };
+          p.salePrice = null;
+          p.saleEndDate = null;
         }
+        p.premiumContent = undefined; // Don't expose premium content in list
         return p;
       });
 
@@ -126,8 +128,10 @@ exports.getAllPrograms = async (req, res) => {
 
     const processedPrograms = programs.map(p => {
       if (p.saleEndDate && p.saleEndDate < now) {
-        return { ...p, salePrice: null, saleEndDate: null };
+        p.salePrice = null;
+        p.saleEndDate = null;
       }
+      p.premiumContent = undefined; // Don't expose premium content in list
       return p;
     });
 
@@ -204,9 +208,19 @@ exports.getProgramByIdOrSlug = async (req, res) => {
       response.saleEndDate = null;
     }
 
-    // Strip premiumContent if not purchased
-    if (!hasPurchased) {
-      response.premiumContent = null;
+    // Strip premium content if not purchased, but keep titles for the playlist
+    if (!hasPurchased && response.premiumContent && Array.isArray(response.premiumContent.videos)) {
+      response.premiumContent.videos = response.premiumContent.videos.map(video => {
+        if (video.isFree) {
+          return video; // Keep everything for free lessons
+        } else {
+          return {
+            title: video.title,
+            isFree: false
+            // Explicitly stripping url, resources, guides
+          };
+        }
+      });
     }
 
     res.json(response);
@@ -391,9 +405,9 @@ exports.deleteProgram = async (req, res) => {
     await prisma.program.delete({ where: { id } });
 
     // Clean up uploaded images
-    const { deleteUploadedFile } = require('../utils/fileCleanup');
-    deleteUploadedFile(program.thumbnail);
-    deleteUploadedFile(program.authorImage);
+    const { deleteFromCloudinary } = require('../utils/cloudinaryUtils');
+    if (program.thumbnail) await deleteFromCloudinary(program.thumbnail);
+    if (program.authorImage) await deleteFromCloudinary(program.authorImage);
 
     res.json({ message: 'Program deleted successfully' });
   } catch (error) {

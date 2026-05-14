@@ -2,15 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('cloudinary').v2;
+const { cloudinary } = require('../utils/cloudinaryUtils');
 const auth = require('../middleware/authMiddleware');
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 // Setup Cloudinary Storage
 const storage = new CloudinaryStorage({

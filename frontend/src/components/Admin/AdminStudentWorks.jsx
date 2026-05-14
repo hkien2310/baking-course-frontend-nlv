@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getAllStudentWorks, approveStudentWork, rejectStudentWork, deleteStudentWork } from '../../services/api';
+import { 
+  getAllStudentWorks, approveStudentWork, rejectStudentWork, deleteStudentWork,
+  createStudentWork, updateStudentWork, getPrograms 
+} from '../../services/api';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import Pagination from '../Shared/Pagination';
 import { imageUrl } from '../../utils/imageUrl';
 import AdminActionBtn from './Shared/AdminActionBtn';
 import AdminButton from './Shared/AdminButton';
 import AdminConfirmModal from './AdminConfirmModal';
+import AdminModal from './AdminModal';
+import AdminImageUpload from './AdminImageUpload';
 
 const AdminStudentWorks = () => {
   const [works, setWorks] = useState([]);
@@ -18,6 +23,11 @@ const AdminStudentWorks = () => {
   const [previewWork, setPreviewWork] = useState(null);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [programs, setPrograms] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState({ id: null, studentName: '', imageUrl: '', description: '', programId: '', status: 'APPROVED' });
+  const [isSaving, setIsSaving] = useState(false);
+  const [showMediaModal, setShowMediaModal] = useState(false);
 
   const fetchWorks = async () => {
     try {
@@ -34,6 +44,45 @@ const AdminStudentWorks = () => {
   };
 
   useEffect(() => { fetchWorks(); }, [page, filter]);
+
+  useEffect(() => {
+    getPrograms().then(res => {
+      setPrograms(res.data || res || []);
+    }).catch(console.error);
+  }, []);
+
+  const openModal = (work = null) => {
+    if (work) {
+      setEditData({ ...work });
+    } else {
+      setEditData({ id: null, studentName: '', imageUrl: '', description: '', programId: programs[0]?.id || '', status: 'APPROVED' });
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (!editData.studentName || !editData.imageUrl || !editData.programId) {
+      toast.error('Vui lòng điền đủ thông tin bắt buộc');
+      return;
+    }
+    setIsSaving(true);
+    try {
+      if (editData.id) {
+        await updateStudentWork(editData.id, editData);
+        toast.success('Cập nhật thành công');
+      } else {
+        await createStudentWork(editData);
+        toast.success('Thêm mới thành công');
+      }
+      setIsModalOpen(false);
+      fetchWorks();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Lỗi khi lưu bài nộp');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleApprove = async (id) => {
     try {
@@ -78,9 +127,12 @@ const AdminStudentWorks = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <div className="admin-content-header">
-        <h2>Sản Phẩm Học Viên</h2>
-        <p style={{ color: '#88929e' }}>Duyệt và quản lý bài nộp từ học viên</p>
+      <div className="admin-content-header d-flex justify-content-between align-items-center">
+        <div>
+          <h2>Sản Phẩm Học Viên</h2>
+          <p style={{ color: '#88929e' }}>Duyệt và quản lý bài nộp từ học viên</p>
+        </div>
+        <AdminButton variant="primary" onClick={() => openModal()} label="Thêm sản phẩm" icon="fa-plus" />
       </div>
 
       {/* Filter Tabs */}
@@ -174,6 +226,7 @@ const AdminStudentWorks = () => {
                       </td>
                       <td className="text-right">
                         <div className="d-flex justify-content-end" style={{ gap: '6px' }}>
+                          <AdminActionBtn variant="edit" onClick={() => openModal(work)} title="Sửa" />
                           {work.status === 'PENDING' && (
                             <>
                               <AdminActionBtn variant="approve" onClick={() => handleApprove(work.id)} title="Duyệt" />
@@ -279,6 +332,80 @@ const AdminStudentWorks = () => {
           </div>
         </div>
       )}
+
+      {/* Create/Edit Modal */}
+      <AdminModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={editData.id ? 'Sửa Sản Phẩm' : 'Thêm Sản Phẩm Mới'}
+        size="lg"
+      >
+        <form onSubmit={handleSave}>
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label className="small text-muted mb-1">Tên học viên <span className="text-danger">*</span></label>
+              <input 
+                type="text" 
+                className="admin-form-control w-100" 
+                value={editData.studentName} 
+                onChange={e => setEditData({...editData, studentName: e.target.value})} 
+                required 
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <label className="small text-muted mb-1">Khóa học <span className="text-danger">*</span></label>
+              <select 
+                className="admin-form-control w-100" 
+                value={editData.programId} 
+                onChange={e => setEditData({...editData, programId: e.target.value})}
+                required
+              >
+                {programs.map(p => (
+                  <option key={p.id} value={p.id}>{p.title}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          <div className="mb-3">
+            <AdminImageUpload 
+              label={<span>Hình ảnh <span className="text-danger">*</span></span>}
+              value={editData.imageUrl}
+              onChange={(url) => setEditData({...editData, imageUrl: url})}
+              name="imageUrl"
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="small text-muted mb-1">Mô tả / Đánh giá <span className="text-danger">*</span></label>
+            <textarea 
+              className="admin-form-control w-100" 
+              rows="4" 
+              value={editData.description} 
+              onChange={e => setEditData({...editData, description: e.target.value})}
+              required
+            ></textarea>
+          </div>
+
+          <div className="mb-4">
+            <label className="small text-muted mb-1">Trạng thái</label>
+            <select 
+              className="admin-form-control w-100" 
+              value={editData.status} 
+              onChange={e => setEditData({...editData, status: e.target.value})}
+            >
+              <option value="APPROVED">Đã duyệt (Hiển thị)</option>
+              <option value="PENDING">Chờ duyệt</option>
+              <option value="REJECTED">Từ chối (Ẩn)</option>
+            </select>
+          </div>
+
+          <div className="d-flex justify-content-end" style={{ gap: '10px' }}>
+            <AdminButton variant="secondary" outline onClick={() => setIsModalOpen(false)} label="Hủy" type="button" />
+            <AdminButton variant="primary" type="submit" loading={isSaving} label="Lưu Sản Phẩm" icon="fa-save" />
+          </div>
+        </form>
+      </AdminModal>
 
       {/* Confirm Delete Modal */}
       <AdminConfirmModal

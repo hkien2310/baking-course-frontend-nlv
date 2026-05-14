@@ -397,8 +397,11 @@ export const submitStudentWork = async (payload) => {
   return data;
 };
 
-export const getApprovedStudentWorks = async (page = 1, limit = 9) => {
-  const { data } = await api.get(`/student-work/approved?page=${page}&limit=${limit}`);
+export const getApprovedStudentWorks = async (page = 1, limit = 9, programId = null) => {
+  const url = programId 
+    ? `/student-work/approved?page=${page}&limit=${limit}&programId=${programId}`
+    : `/student-work/approved?page=${page}&limit=${limit}`;
+  const { data } = await api.get(url);
   return data;
 };
 
@@ -419,6 +422,16 @@ export const rejectStudentWork = async (id) => {
 
 export const deleteStudentWork = async (id) => {
   const { data } = await api.delete(`/student-work/${id}`);
+  return data;
+};
+
+export const createStudentWork = async (payload) => {
+  const { data } = await api.post('/student-work/admin', payload);
+  return data;
+};
+
+export const updateStudentWork = async (id, payload) => {
+  const { data } = await api.put(`/student-work/${id}`, payload);
   return data;
 };
 

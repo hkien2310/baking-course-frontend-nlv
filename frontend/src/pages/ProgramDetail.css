@@ -425,3 +425,106 @@
 .enrollment-widget .secure-payment i {
   color: #95a5a6;
 }
+
+/* ─── Pro Max Tabs ─── */
+.pro-max-tabs-container {
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+}
+.pro-max-tabs {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+}
+.pro-max-tab {
+  background: transparent;
+  border: none;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 30px;
+}
+.pro-max-tab:hover {
+  background: #f5f5f5;
+  color: #333;
+}
+.pro-max-tab.active {
+  background: var(--colorMain, #c19a5b);
+  color: #fff;
+}
+.pro-max-tab-content .fade-in {
+  animation: fadeInTab 0.4s ease forwards;
+}
+@keyframes fadeInTab {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Bento Grid cho Sản phẩm học viên ─── */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.bento-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.bento-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+}
+.bento-card-image-wrapper {
+  position: relative;
+  padding-top: 75%; /* 4:3 Aspect Ratio */
+  overflow: hidden;
+}
+.bento-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.bento-card:hover .bento-card-image {
+  transform: scale(1.05);
+}
+.bento-card-content {
+  padding: 20px;
+  flex-grow: 1;
+}
+.bento-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 8px;
+}
+.bento-card-desc {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.empty-state-card {
+  background: #fafafa;
+  border: 2px dashed #eaeaea;
+  border-radius: 16px;
+  padding: 40px 20px;
+}
