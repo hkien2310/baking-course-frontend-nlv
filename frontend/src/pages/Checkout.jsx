@@ -387,8 +387,13 @@ const Checkout = ({ user }) => {
                           const handleToggle = (e) => {
                             if (e) e.preventDefault(); // Ngăn label click event trigger 2 lần
                             if (loyaltyConfig.discountMode === 'SINGLE') {
-                              setAppliedDiscounts([type]); // SINGLE mode không cho click để tắt
-                              if (type !== 'PROMO') setPromoValidated(null);
+                              if (isSelected) {
+                                setAppliedDiscounts([]); // Cho phép click để tắt
+                                if (type === 'PROMO') setPromoValidated(null);
+                              } else {
+                                setAppliedDiscounts([type]);
+                                if (type !== 'PROMO') setPromoValidated(null);
+                              }
                             } else {
                               if (isSelected) {
                                 setAppliedDiscounts(prev => prev.filter(t2 => t2 !== type));

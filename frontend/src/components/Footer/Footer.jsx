@@ -155,6 +155,27 @@ const Footer = () => {
         </div>
       </footer>
 
+      {/* Policy Links Bar */}
+      <section className="ds s-py-20" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="container">
+          <div className="row align-items-center">
+            <div className="col-12 text-center">
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px 20px' }}>
+                <Link to={`${ROUTES.POLICIES}#privacy`} style={{ color: '#999', fontSize: '13px', textDecoration: 'none' }}>Chính sách bảo mật</Link>
+                <span style={{ color: '#555' }}>|</span>
+                <Link to={`${ROUTES.POLICIES}#terms`} style={{ color: '#999', fontSize: '13px', textDecoration: 'none' }}>Điều khoản sử dụng</Link>
+                <span style={{ color: '#555' }}>|</span>
+                <Link to={`${ROUTES.POLICIES}#payment`} style={{ color: '#999', fontSize: '13px', textDecoration: 'none' }}>Chính sách thanh toán</Link>
+                <span style={{ color: '#555' }}>|</span>
+                <Link to={`${ROUTES.POLICIES}#refund`} style={{ color: '#999', fontSize: '13px', textDecoration: 'none' }}>Chính sách đổi trả</Link>
+                <span style={{ color: '#555' }}>|</span>
+                <Link to={`${ROUTES.POLICIES}#delivery`} style={{ color: '#999', fontSize: '13px', textDecoration: 'none' }}>Chính sách giao nhận</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="page_copyright ds s-py-25 s-py-lg-5 s-parallax s-overlay footer-overlay">
         <div className="container">
           <div className="row align-items-center">

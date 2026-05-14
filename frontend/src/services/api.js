@@ -477,4 +477,25 @@ export const validatePromoCode = async (code, orderAmount) => {
   return data;
 };
 
+// ---------------- QNA ----------------
+export const submitQuestion = async (payload) => {
+  const { data } = await api.post('/qna', payload);
+  return data;
+};
+
+export const getMyQuestions = async (programId) => {
+  const { data } = await api.get(`/qna/my`, { params: { programId } });
+  return data;
+};
+
+export const getAdminQuestions = async (params = {}) => {
+  const { data } = await api.get('/qna/admin', { params });
+  return data;
+};
+
+export const answerQuestion = async (id, answer) => {
+  const { data } = await api.put(`/qna/admin/${id}`, { answer });
+  return data;
+};
+
 export default api;

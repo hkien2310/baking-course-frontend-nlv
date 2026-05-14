@@ -11,6 +11,7 @@ import AdminLoyalty from '../components/Admin/AdminLoyalty';
 import AdminOrders from '../components/Admin/AdminOrders';
 import AdminStudentWorks from '../components/Admin/AdminStudentWorks';
 import AdminSettings from './AdminSettings';
+import AdminQnA from '../components/Admin/AdminQnA';
 import AdminOverviewLoading from '../components/Admin/AdminOverviewLoading';
 import { getDashboardStats, logoutUser } from '../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -99,6 +100,8 @@ const AdminDashboard = ({ user }) => {
         return <AdminLoyalty />;
       case 'settings':
         return <AdminSettings />;
+      case 'qna':
+        return <AdminQnA />;
       case 'overview':
       default:
         if (statsLoading) {
@@ -243,6 +246,11 @@ const AdminDashboard = ({ user }) => {
           <li className={activeTab === 'settings' ? 'active' : ''}>
             <a href="#settings" onClick={(e) => { e.preventDefault(); handleTabChange('settings'); }}>
               <i className="fa fa-cogs"></i> Cấu hình Website
+            </a>
+          </li>
+          <li className={activeTab === 'qna' ? 'active' : ''}>
+            <a href="#qna" onClick={(e) => { e.preventDefault(); handleTabChange('qna'); }}>
+              <i className="fa fa-comments"></i> Hỏi Đáp (Q&A)
             </a>
           </li>
           <li className={activeTab === 'loyalty' ? 'active' : ''}>

@@ -11,6 +11,7 @@ import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 import Input from '../components/Shared/Input';
 import LessonCollapse from '../components/Shared/LessonCollapse';
+import CourseQA from '../components/Course/CourseQA';
 import { imageUrl } from '../utils/imageUrl';
 
 const VI_DAYS = {
@@ -33,6 +34,7 @@ const ProgramDetail = () => {
   const [premiumTab, setPremiumTab] = useState('videos');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitData, setSubmitData] = useState({ studentName: '', description: '' });
+  const [currentUser, setCurrentUser] = useState(null);
   const [currentUserName, setCurrentUserName] = useState('');
   const [submitImage, setSubmitImage] = useState(null);
   const [submitImagePreview, setSubmitImagePreview] = useState('');
@@ -107,6 +109,7 @@ const ProgramDetail = () => {
     // Fetch current user name for auto-fill in submit modal
     getMe()
       .then(data => {
+        if (data) setCurrentUser(data);
         if (data?.fullName) setCurrentUserName(data.fullName);
       })
       .catch(() => {}); // Silent fail — user might not be logged in
@@ -277,6 +280,14 @@ const ProgramDetail = () => {
                     >
                       Sản phẩm học viên
                     </button>
+                    {hasPurchased && (
+                      <button 
+                        className={`pro-max-tab ${activeTab === 'qna' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('qna')}
+                      >
+                        Hỏi Đáp
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -572,6 +583,12 @@ const ProgramDetail = () => {
                           </button>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {activeTab === 'qna' && hasPurchased && (
+                    <div className="qna-section fade-in">
+                      <CourseQA programId={program.id} isAdmin={currentUser?.role === 'ADMIN'} />
                     </div>
                   )}
                 </div>

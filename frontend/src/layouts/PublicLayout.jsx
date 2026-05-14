@@ -3,6 +3,7 @@ import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import { useTemplateRuntime } from '../hooks/useTemplateRuntime';
 import { useSiteConfig } from '../context/SiteConfigContext';
+import FloatingContact from '../components/Shared/FloatingContact';
 
 const PublicLayout = () => {
   const location = useLocation();
@@ -25,6 +26,7 @@ const PublicLayout = () => {
         <Header />
         <Outlet />
         <Footer />
+        <FloatingContact />
       </div>
     </div>
   );

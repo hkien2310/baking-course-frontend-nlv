@@ -4,6 +4,7 @@ import { updateSiteConfig } from '../services/api';
 import { toast } from 'react-toastify';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
 import AdminButton from '../components/Admin/Shared/AdminButton';
+import AdminImageUpload from '../components/Admin/AdminImageUpload';
 
 const AdminSettings = () => {
   const { siteConfig, updateConfig, loading: configLoading } = useSiteConfig();
@@ -221,7 +222,24 @@ const AdminSettings = () => {
             <div className={`tab-pane ${activeTab === 'about' ? 'active' : ''}`}>
               
               <div className="settings-card mb-4">
-                <h3 className="card-heading">1. Lịch sử hình thành</h3>
+                <h3 className="card-heading">1. Video Giới Thiệu</h3>
+                <p className="help-text mb-3">Hiển thị ở nửa đầu trang Giới Thiệu.</p>
+                <div className="form-group-modern">
+                  <label>Link Youtube Video (Embed Link)</label>
+                  <input className="input-modern" value={formData.about?.videoUrl || ''} onChange={e => handleChange(e, 'about', 'videoUrl')} placeholder="https://www.youtube.com/embed/..." />
+                </div>
+                <div className="form-group-modern">
+                  <AdminImageUpload 
+                    label="Ảnh Cover Video" 
+                    name="videoCover" 
+                    value={formData.about?.videoCover || ''} 
+                    onChange={(url) => setFormData(prev => ({ ...prev, about: { ...prev.about, videoCover: url } }))} 
+                  />
+                </div>
+              </div>
+
+              <div className="settings-card mb-4">
+                <h3 className="card-heading">2. Lịch sử hình thành</h3>
                 <p className="help-text mb-3">Các đoạn văn hiển thị ở nửa đầu trang Giới Thiệu.</p>
                 {formData.about?.historyParagraphs?.map((p, idx) => (
                   <div key={idx} className="array-item-card">
@@ -240,7 +258,7 @@ const AdminSettings = () => {
               </div>
 
               <div className="settings-card mb-4">
-                <h3 className="card-heading">2. Đặc điểm nổi bật</h3>
+                <h3 className="card-heading">3. Đặc điểm nổi bật</h3>
                 <p className="help-text mb-3">Danh sách (bullet points) nằm ngay dưới phần lịch sử.</p>
                 {formData.about?.historyFeatures?.map((f, idx) => (
                   <div key={idx} className="array-item-card">
@@ -259,7 +277,7 @@ const AdminSettings = () => {
               </div>
 
               <div className="settings-card">
-                <h3 className="card-heading">3. Thành tựu / Điểm nhấn</h3>
+                <h3 className="card-heading">4. Thành tựu / Điểm nhấn</h3>
                 <p className="help-text mb-3">Các khối Icon hiển thị phía dưới trang Giới Thiệu.</p>
                 <div className="row">
                   {formData.about?.achievements?.map((ach, idx) => (

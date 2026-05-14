@@ -25,6 +25,7 @@ import Checkout from './pages/Checkout';
 import PaymentResult from './pages/PaymentResult';
 import StudentWork from './pages/StudentWork';
 import NotFound from './pages/NotFound';
+import Policies from './pages/Policies';
 import { ROUTES } from './constants/routes';
 import ScrollToTop from './components/Shared/ScrollToTop';
 import { SiteConfigProvider } from './context/SiteConfigContext';
@@ -44,6 +45,7 @@ function App() {
           <Route path={ROUTES.RECEIPT} element={<Receipt />} />
           <Route path={ROUTES.STUDENT_WORK} element={<StudentWork />} />
           <Route path={ROUTES.CONTACT} element={<Contact />} />
+          <Route path={ROUTES.POLICIES} element={<Policies />} />
           <Route path={ROUTES.AUTH} element={<Auth />} />
           <Route path={ROUTES.CHIEFS} element={<Chiefs />} />
           
