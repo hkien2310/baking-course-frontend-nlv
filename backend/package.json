@@ -7,7 +7,8 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest",
-    "seed:student-works": "node seedStudentWorksOnly.js"
+    "seed:student-works": "node seedStudentWorksOnly.js",
+    "postinstall": "prisma generate && prisma db push"
   },
   "keywords": [],
   "author": "",
