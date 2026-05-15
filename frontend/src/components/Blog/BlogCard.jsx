@@ -2,15 +2,25 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import { useTranslation } from '../../i18n/LanguageContext';
-import { imageUrl } from '../../utils/imageUrl';
+import { imageUrl, PLACEHOLDER_IMAGE } from '../../utils/imageUrl';
 
 const BlogCard = ({ post }) => {
   const { t } = useTranslation();
+
+  const handleImageError = (e) => {
+    e.target.src = PLACEHOLDER_IMAGE;
+  };
+
   return (
-    <article className="text-center text-md-left vertical-item content-padding post type-post status-publish format-standard has-post-thumbnail bordered">
+    <article className="text-center text-md-left vertical-item content-padding post type-post status-publish format-standard has-post-thumbnail bordered h-100 d-flex flex-column">
       <div className="item-media post-thumbnail">
         <Link to={ROUTES.POST_DETAIL(post.slug || 'sample-post')}>
-          <img src={imageUrl(post.thumbnail, `${import.meta.env.BASE_URL}images/gallery/09.jpg`)} alt="" />
+          <img 
+            src={imageUrl(post.thumbnail)} 
+            alt={post.title} 
+            onError={handleImageError}
+            style={{ height: '250px', objectFit: 'cover', width: '100%' }}
+          />
         </Link>
         <div className="text-md-left entry-meta small-text bg-dark-transpatent">
           <span className="byline">
@@ -31,14 +41,14 @@ const BlogCard = ({ post }) => {
             <span className="author vcard">
               <Link className="url fn n" to={ROUTES.RECEIPT}>
                 <i className="fa fa-user color-main2"></i>
-                {post.author?.name || post.authorName || 'Admin'}
+                {post.author?.fullName || post.authorName || 'Admin'}
               </Link>
             </span>
           </span>
         </div>
       </div>
       
-      <div className="item-content">
+      <div className="item-content flex-grow-1 d-flex flex-column">
         <header className="entry-header">
           <h4 className="blog-title">
             <Link to={ROUTES.POST_DETAIL(post.slug || 'sample-post')} rel="bookmark">
@@ -47,13 +57,13 @@ const BlogCard = ({ post }) => {
           </h4>
         </header>
 
-        <div className="entry-content">
-          <p>{post.desc}</p>
+        <div className="entry-content flex-grow-1">
+          <p className="text-truncate-3">{post.description || post.desc}</p>
         </div>
-      </div>
-      
-      <div className="text-center blog-btn">
-        <Link to={ROUTES.POST_DETAIL(post.slug || 'sample-post')} className="btn btn-outline-maincolor2">{t('common.readMore') || 'Đọc thêm'}</Link>
+        
+        <div className="blog-btn mt-3">
+          <Link to={ROUTES.POST_DETAIL(post.slug || 'sample-post')} className="btn btn-outline-maincolor2">{t('common.readMore') || 'Đọc thêm'}</Link>
+        </div>
       </div>
     </article>
   );

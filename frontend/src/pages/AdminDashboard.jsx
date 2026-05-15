@@ -11,6 +11,7 @@ import AdminLoyalty from '../components/Admin/AdminLoyalty';
 import AdminOrders from '../components/Admin/AdminOrders';
 import AdminStudentWorks from '../components/Admin/AdminStudentWorks';
 import AdminSettings from './AdminSettings';
+import AdminPassword from '../components/Admin/AdminPassword';
 import AdminQnA from '../components/Admin/AdminQnA';
 import AdminOverviewLoading from '../components/Admin/AdminOverviewLoading';
 import { getDashboardStats, logoutUser } from '../services/api';
@@ -100,6 +101,8 @@ const AdminDashboard = ({ user }) => {
         return <AdminLoyalty />;
       case 'settings':
         return <AdminSettings />;
+      case 'password':
+        return <AdminPassword />;
       case 'qna':
         return <AdminQnA />;
       case 'overview':
@@ -256,6 +259,11 @@ const AdminDashboard = ({ user }) => {
           <li className={activeTab === 'loyalty' ? 'active' : ''}>
             <a href="#loyalty" onClick={(e) => { e.preventDefault(); handleTabChange('loyalty'); }}>
               <i className="fa fa-gift"></i> Giảm giá & Tích điểm
+            </a>
+          </li>
+          <li className={activeTab === 'password' ? 'active' : ''}>
+            <a href="#password" onClick={(e) => { e.preventDefault(); handleTabChange('password'); }}>
+              <i className="fa fa-lock"></i> Đổi mật khẩu
             </a>
           </li>
         </ul>

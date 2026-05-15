@@ -41,19 +41,19 @@ const ProgramDetail = () => {
   const [submittingWork, setSubmittingWork] = useState(false);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('info'); // info, curriculum, studentWorks
-  const [playingVideoIndex, setPlayingVideoIndex] = useState(null); // null means thumbnail, number means video index
   const [studentWorks, setStudentWorks] = useState([]);
   const [loadingWorks, setLoadingWorks] = useState(false);
   const [studentWorksPage, setStudentWorksPage] = useState(1);
   const [hasMoreStudentWorks, setHasMoreStudentWorks] = useState(false);
   const [loadingMoreWorks, setLoadingMoreWorks] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
 
-  const mockStudentWorks = [
-    { studentName: 'Hương Giang', imageUrl: 'https://images.unsplash.com/photo-1558961363-a0c84ce23610?q=80&w=600&auto=format&fit=crop', description: 'Cảm ơn cô giáo, bánh bông lan rất mềm và thơm.' },
-    { studentName: 'Thùy Linh', imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=600&auto=format&fit=crop', description: 'Công thức tuyệt vời, làm lần đầu thành công luôn.' },
-    { studentName: 'Bích Ngọc', imageUrl: 'https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?q=80&w=600&auto=format&fit=crop', description: 'Trang trí hơi khó nhưng lớp bánh bên trong cực kì ngon.' },
-  ];
-
+  // Resize listener for responsive behavior
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 992);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Convert regular YouTube/Vimeo URLs to embeddable format + strip overlays
   const toEmbedUrl = (url) => {
@@ -180,7 +180,7 @@ const ProgramDetail = () => {
   const getCTAButton = () => {
     if (hasPurchased) {
       return (
-        <button className="btn btn-success btn-block" disabled>
+        <button className="btn btn-success btn-block" disabled style={{ borderRadius: '50px' }}>
           <i className="fa fa-check-circle mr-1"></i> {t('programDetail.owned')}
         </button>
       );
@@ -194,6 +194,7 @@ const ProgramDetail = () => {
         <button 
           className="btn-enroll btn-warning" 
           onClick={() => navigate(checkoutUrl)}
+          style={{ borderRadius: '50px' }}
         >
           <i className="fa fa-clock-o"></i> TIẾP TỤC THANH TOÁN
         </button>
@@ -205,19 +206,61 @@ const ProgramDetail = () => {
         <button 
           className="btn-enroll" 
           onClick={() => navigate(checkoutUrl)}
+          style={{ borderRadius: '50px' }}
         >
           <i className="fa fa-shopping-cart"></i> MUA KHÓA HỌC NÀY
         </button>
       );
     }
     return (
-      <a href={`/?session=${selectedSessionId}#contacts`} className="btn-enroll">
+      <a href={`/?session=${selectedSessionId}#contacts`} className="btn-enroll" style={{ borderRadius: '50px' }}>
         {t('programDetail.enrollFree')}
       </a>
     );
   };
 
   const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
+
+  const LessonContent = ({ video, index }) => {
+    const hasVideo = video.url && video.url !== '.' && video.url !== '/';
+    return (
+      <div className="premium-lesson-detail">
+        {hasVideo && (
+          <div className="video-wrapper mb-4" onContextMenu={e => e.preventDefault()} style={{ borderRadius: '8px', overflow: 'hidden' }}>
+            <iframe
+              src={toEmbedUrl(video.url)}
+              title={video.title || `Lesson ${index + 1}`}
+              allowFullScreen
+            ></iframe>
+          </div>
+        )}
+
+        {/* Guides / Content */}
+        {video.guides && (
+          <div className="guide-content p-3 mb-4" style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '8px' }}>
+            <div className="quill-content" dangerouslySetInnerHTML={{ __html: video.guides }} />
+          </div>
+        )}
+
+        {video.resources?.length > 0 && (
+          <div className="mb-0">
+            <h6 className="font-weight-bold mb-2" style={{ fontSize: '12px', color: '#555' }}>
+              <i className="fa fa-paperclip mr-2"></i>Tài liệu đính kèm
+            </h6>
+            {video.resources.map((res, rIdx) => (
+              <a href={res.url} target="_blank" rel="noopener noreferrer" className="resource-card mb-2 p-2" key={rIdx} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee', textDecoration: 'none', color: '#333' }}>
+                <div className="resource-icon" style={{ width: '30px', height: '30px', fontSize: '14px', background: 'rgba(193,154,91,0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c19a5b' }}><i className="fa fa-file-pdf-o"></i></div>
+                <div className="resource-info" style={{ flex: 1 }}>
+                  <h6 style={{ fontSize: '13px', margin: 0, fontWeight: 600 }}>{res.title || `Tài liệu ${rIdx + 1}`}</h6>
+                </div>
+                <i className="fa fa-download" style={{ color: '#c19a5b' }}></i>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -272,7 +315,7 @@ const ProgramDetail = () => {
                       className={`pro-max-tab ${activeTab === 'curriculum' ? 'active' : ''}`}
                       onClick={() => setActiveTab('curriculum')}
                     >
-                      Nội dung
+                      Lộ trình học
                     </button>
                     <button 
                       className={`pro-max-tab ${activeTab === 'studentWorks' ? 'active' : ''}`}
@@ -301,92 +344,66 @@ const ProgramDetail = () => {
                     <div className="fade-in">
                       {premiumContent?.videos?.length > 0 ? (
                         hasPurchased ? (
-                          /* ═══ PURCHASED: 2-Column Layout ═══ */
-                          <div className="row mt-2">
-                            {/* Left Main — Video + Content */}
-                            <div className="col-lg-8 col-md-7 mb-4 mb-md-0">
-                              {(() => {
-                                const activeVideo = premiumContent.videos[activeVideoIndex];
-                                if (!activeVideo) return null;
-                                const hasVideo = activeVideo.url && activeVideo.url !== '.' && activeVideo.url !== '/';
-                                return (
-                                  <>
-                                    {/* Video Player */}
-                                    {hasVideo && (
-                                      <div className="video-wrapper mb-4" onContextMenu={e => e.preventDefault()} style={{ borderRadius: '12px', overflow: 'hidden' }}>
-                                        <iframe
-                                          src={toEmbedUrl(activeVideo.url)}
-                                          title={activeVideo.title || `Lesson ${activeVideoIndex + 1}`}
-                                          allowFullScreen
-                                        ></iframe>
-                                      </div>
-                                    )}
-
-                                    {/* Title */}
-                                    <h5 className="font-weight-bold mb-3" style={{ color: '#333' }}>
-                                      {activeVideo.title || `Bài ${activeVideoIndex + 1}`}
-                                    </h5>
-
-                                    {/* Guides / Content */}
-                                    {activeVideo.guides && (
-                                      <div className="guide-content p-4" style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '10px' }}>
-                                        <div className="quill-content" dangerouslySetInnerHTML={{ __html: activeVideo.guides }} />
-                                      </div>
-                                    )}
-
-                                    {/* No video, no guides → empty state */}
-                                    {!hasVideo && !activeVideo.guides && (
-                                      <div className="text-center py-5" style={{ background: '#fafafa', borderRadius: '10px' }}>
-                                        <i className="fa fa-book" style={{ fontSize: '40px', color: '#ddd' }}></i>
-                                        <p className="text-muted mt-3 mb-0">Nội dung bài giảng đang được cập nhật.</p>
-                                      </div>
-                                    )}
-                                  </>
-                                );
-                              })()}
+                          /* ═══ PURCHASED: Responsive Layout ═══ */
+                          isMobile ? (
+                            /* MOBILE: Inline Accordion Player */
+                            <div className="mobile-lessons-accordion mt-2">
+                              {premiumContent.videos.map((video, i) => (
+                                <LessonCollapse
+                                  key={i}
+                                  index={i}
+                                  title={video.title}
+                                  isFree={video.isFree}
+                                  isOpen={activeVideoIndex === i}
+                                  onToggle={() => setActiveVideoIndex(activeVideoIndex === i ? -1 : i)}
+                                  mode="client"
+                                >
+                                  <LessonContent video={video} index={i} />
+                                </LessonCollapse>
+                              ))}
                             </div>
+                          ) : (
+                            /* DESKTOP: 2-Column Layout */
+                            <div className="row mt-2">
+                              {/* Left Main — Video + Content */}
+                              <div className="col-lg-8 col-md-7 mb-4 mb-md-0">
+                                {(() => {
+                                  const activeVideo = premiumContent.videos[activeVideoIndex];
+                                  if (!activeVideo) return null;
+                                  return <LessonContent video={activeVideo} index={activeVideoIndex} />;
+                                })()}
+                              </div>
 
-                            {/* Right Sidebar — Lesson List (Collapse) */}
-                            <div className="col-lg-4 col-md-5">
-                              <div style={{ position: 'sticky', top: '20px' }}>
-                                <h6 className="font-weight-bold mb-3" style={{ fontSize: '14px', color: '#555' }}>
-                                  <i className="fa fa-list mr-2"></i>Danh sách bài giảng
-                                </h6>
-                                <div id="curriculum-sidebar-accordion" role="tablist">
-                                  {premiumContent.videos.map((video, i) => (
-                                    <LessonCollapse
-                                      key={i}
-                                      index={i}
-                                      title={video.title}
-                                      isFree={video.isFree}
-                                      isOpen={activeVideoIndex === i}
-                                      onToggle={() => setActiveVideoIndex(activeVideoIndex === i ? -1 : i)}
-                                      mode="client"
-                                    >
-                                      {video.resources?.length > 0 ? (
-                                        <div className="mb-0">
-                                          <h6 className="font-weight-bold mb-2" style={{ fontSize: '12px', color: '#555' }}>
-                                            <i className="fa fa-paperclip mr-2"></i>Tài liệu đính kèm
-                                          </h6>
-                                          {video.resources.map((res, rIdx) => (
-                                            <a href={res.url} target="_blank" rel="noopener noreferrer" className="resource-card mb-2 p-2" key={rIdx}>
-                                              <div className="resource-icon" style={{ width: '30px', height: '30px', fontSize: '14px' }}><i className="fa fa-file-pdf-o"></i></div>
-                                              <div className="resource-info">
-                                                <h6 style={{ fontSize: '13px', margin: 0 }}>{res.title || `Tài liệu ${rIdx + 1}`}</h6>
-                                              </div>
-                                              <i className="fa fa-download resource-dl"></i>
-                                            </a>
-                                          ))}
-                                        </div>
-                                      ) : (
-                                        <div className="text-muted" style={{ fontSize: '12px' }}>Không có tài liệu đính kèm</div>
-                                      )}
-                                    </LessonCollapse>
-                                  ))}
+                              {/* Right Sidebar — Lesson List (Collapse) */}
+                              <div className="col-lg-4 col-md-5">
+                                <div style={{ position: 'sticky', top: '20px' }}>
+                                  <h6 className="font-weight-bold mb-3" style={{ fontSize: '14px', color: '#555' }}>
+                                    <i className="fa fa-list mr-2"></i>Danh sách bài giảng
+                                  </h6>
+                                  <div id="curriculum-sidebar-accordion" role="tablist">
+                                    {premiumContent.videos.map((video, i) => (
+                                      <div 
+                                        key={i} 
+                                        className={`p-3 mb-2 d-flex align-items-center ${activeVideoIndex === i ? 'active' : ''}`}
+                                        onClick={() => setActiveVideoIndex(i)}
+                                        style={{ 
+                                          background: activeVideoIndex === i ? 'rgba(193,154,91,0.05)' : '#fff', 
+                                          border: `1px solid ${activeVideoIndex === i ? '#c19a5b' : '#eee'}`, 
+                                          borderRadius: '10px',
+                                          cursor: 'pointer',
+                                          transition: 'all 0.2s ease'
+                                        }}
+                                      >
+                                        <div style={{ width: '24px', height: '24px', background: activeVideoIndex === i ? '#c19a5b' : '#f1f1f1', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 800, color: activeVideoIndex === i ? '#fff' : '#999', marginRight: '12px' }}>{i + 1}</div>
+                                        <div style={{ flex: 1, fontSize: '14px', fontWeight: 600, color: activeVideoIndex === i ? '#333' : '#666' }}>{video.title}</div>
+                                        {activeVideoIndex === i && <i className="fa fa-play-circle" style={{ color: '#c19a5b' }}></i>}
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          )
                         ) : (
                           /* ═══ NOT PURCHASED: Single-Column Collapse ═══ */
                           <div id="curriculum-accordion" className="mt-2" role="tablist">
@@ -403,43 +420,7 @@ const ProgramDetail = () => {
                                   mode="client"
                                 >
                                   {canAccess ? (
-                                    <>
-                                      {/* Video Player */}
-                                      {video.url && video.url !== '.' && video.url !== '/' && (
-                                        <div className="video-wrapper mb-4" onContextMenu={e => e.preventDefault()}>
-                                          <iframe
-                                            src={toEmbedUrl(video.url)}
-                                            title={video.title || `Lesson ${i + 1}`}
-                                            allowFullScreen
-                                          ></iframe>
-                                        </div>
-                                      )}
-
-                                      {/* Resources */}
-                                      {video.resources?.length > 0 && (
-                                        <div className="mb-4">
-                                          {video.resources.map((res, rIdx) => (
-                                            <a href={res.url} target="_blank" rel="noopener noreferrer" className="resource-card mb-2" key={rIdx}>
-                                              <div className="resource-icon"><i className="fa fa-file-pdf-o"></i></div>
-                                              <div className="resource-info">
-                                                <h6>{res.title || `Tài liệu ${rIdx + 1}`}</h6>
-                                                <small>{t('premium.downloadHint')}</small>
-                                              </div>
-                                              <i className="fa fa-download resource-dl"></i>
-                                            </a>
-                                          ))}
-                                        </div>
-                                      )}
-
-                                      {/* Guides */}
-                                      {video.guides && (
-                                        <div>
-                                          <div className="guide-content p-4" style={{ background: '#fff', border: '1px solid #f0f0f0', borderRadius: '8px' }}>
-                                            <div className="quill-content" dangerouslySetInnerHTML={{ __html: video.guides }} />
-                                          </div>
-                                        </div>
-                                      )}
-                                    </>
+                                    <LessonContent video={video} index={i} />
                                   ) : (
                                     <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '8px', minHeight: '220px' }}>
                                       {/* Fake Blurred Skeleton */}
@@ -449,13 +430,6 @@ const ProgramDetail = () => {
                                         <div className="mt-2" style={{ height: '12px', width: '100%', background: '#ddd', borderRadius: '4px' }}></div>
                                         <div className="mt-2" style={{ height: '12px', width: '85%', background: '#ddd', borderRadius: '4px' }}></div>
                                         <div className="mt-2" style={{ height: '12px', width: '92%', background: '#ddd', borderRadius: '4px' }}></div>
-                                        <div className="mt-3 d-flex" style={{ gap: '8px' }}>
-                                          <div style={{ height: '36px', width: '36px', borderRadius: '6px', background: '#ccc', flexShrink: 0 }}></div>
-                                          <div style={{ flex: 1 }}>
-                                            <div style={{ height: '12px', width: '60%', background: '#ccc', borderRadius: '4px' }}></div>
-                                            <div className="mt-1" style={{ height: '10px', width: '40%', background: '#e0e0e0', borderRadius: '4px' }}></div>
-                                          </div>
-                                        </div>
                                       </div>
                                       
                                       {/* Gradient Overlay + CTA Card */}
@@ -558,7 +532,13 @@ const ProgramDetail = () => {
                             )}
                           </div>
                         </div>
-                      ) : null}
+                      ) : (
+                        <div className="text-center py-5 mb-4 empty-state-card">
+                          <i className="fa fa-picture-o mb-3" style={{ fontSize: '48px', color: '#eee' }}></i>
+                          <p className="text-muted">Chưa có sản phẩm nào được chia sẻ từ các học viên lớp này.</p>
+                          {!hasPurchased && <p className="small text-muted opacity-75">Hãy tham gia khóa học để trở thành người đầu tiên khoe thành quả nhé!</p>}
+                        </div>
+                      )}
 
                       {/* Submit Student Work CTA */}
                       {hasPurchased && (
@@ -575,10 +555,7 @@ const ProgramDetail = () => {
                               <p className="text-muted small mb-3">Chia sẻ thành quả học tập của bạn để được trưng bày trên trang "Sản phẩm của học viên"</p>
                             </>
                           )}
-                          <button className="btn btn-maincolor" onClick={() => {
-                            setSubmitData(prev => ({ ...prev, studentName: prev.studentName || currentUserName }));
-                            setShowSubmitModal(true);
-                          }}>
+                          <button className="btn btn-maincolor" onClick={() => setShowSubmitModal(true)}>
                             <i className="fa fa-upload mr-1"></i> Trả bài khóa học
                           </button>
                         </div>
@@ -694,123 +671,13 @@ const ProgramDetail = () => {
         </div>
       </section>
 
-      {/* Submit Work Modal */}
+      {/* Submit Work Modal placeholder */}
       {showSubmitModal && (
-        <div className="admin-modal-overlay" onClick={() => !submittingWork && setShowSubmitModal(false)} style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 'min(90vw, 650px)', background: '#fff', borderRadius: '12px', padding: 'clamp(20px, 5vw, 30px)', maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h5 style={{ margin: 0 }}><i className="fa fa-camera color-main mr-2"></i>Nộp sản phẩm — {program.title}</h5>
-              <button onClick={() => setShowSubmitModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>
-                <i className="fa fa-times"></i>
-              </button>
-            </div>
-
-            <div className="form-group mb-3">
-              <label>Tên của bạn <span className="text-danger">*</span></label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="VD: Nguyễn Minh Nguyệt"
-                value={submitData.studentName}
-                onChange={e => setSubmitData({...submitData, studentName: e.target.value})}
-              />
-            </div>
-
-            <div className="form-group mb-3">
-              <label>Ảnh sản phẩm <span className="text-danger">*</span></label>
-              <div
-                style={{
-                  border: '2px dashed #ddd',
-                  borderRadius: '8px',
-                  padding: submitImagePreview ? '0' : '30px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  minHeight: '150px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                onClick={() => document.getElementById('work-image-input').click()}
-              >
-                {submitImagePreview ? (
-                  <img src={submitImagePreview} alt="Preview" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '6px' }} />
-                ) : (
-                  <div>
-                    <i className="fa fa-cloud-upload" style={{ fontSize: '40px', color: '#ccc' }}></i>
-                    <p className="text-muted small mt-2 mb-0">Bấm để chọn ảnh hoặc kéo thả vào đây</p>
-                  </div>
-                )}
-                <input
-                  id="work-image-input"
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={e => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      setSubmitImage(file);
-                      setSubmitImagePreview(URL.createObjectURL(file));
-                    }
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="form-group mb-3">
-              <label>Mô tả sản phẩm <span className="text-danger">*</span></label>
-              <textarea
-                className="form-control"
-                rows="3"
-                placeholder="VD: Bánh kem sinh nhật trang trí hoa hồng, lần đầu tự tay làm..."
-                value={submitData.description}
-                onChange={e => setSubmitData({...submitData, description: e.target.value})}
-              />
-            </div>
-
-            <div className="d-flex mt-4" style={{ gap: '15px' }}>
-              <button type="button" className="btn btn-outline-dark flex-grow-1 m-0" onClick={() => setShowSubmitModal(false)} disabled={submittingWork}>Hủy</button>
-              <button
-                type="button"
-                className="btn btn-maincolor flex-grow-1 m-0 d-flex justify-content-center align-items-center"
-                disabled={submittingWork}
-                onClick={async () => {
-                  if (!submitData.studentName || !submitData.description || !submitImage) {
-                    toast.error('Vui lòng điền đầy đủ thông tin và chọn ảnh.');
-                    return;
-                  }
-                  setSubmittingWork(true);
-                  try {
-                    // 1. Upload image
-                    const imgRes = await uploadImage(submitImage);
-                    const imageUrl = imgRes.url || imgRes.filePath;
-                    // 2. Submit work
-                    await submitStudentWork({
-                      studentName: submitData.studentName,
-                      imageUrl,
-                      description: submitData.description,
-                      programId: program.id,
-                    });
-                    toast.success('🎉 Nộp bài thành công! Bài của bạn sẽ được duyệt trước khi hiển thị.');
-                    setShowSubmitModal(false);
-                    setSubmitData({ studentName: '', description: '' });
-                    setSubmitImage(null);
-                    setSubmitImagePreview('');
-                  } catch (err) {
-                    toast.error(err.response?.data?.error || 'Lỗi khi nộp bài.');
-                  } finally {
-                    setSubmittingWork(false);
-                  }
-                }}
-              >
-                {submittingWork ? (
-                  <><span className="spinner-border spinner-border-sm mr-1"></span> Đang nộp...</>
-                ) : (
-                  <><i className="fa fa-paper-plane mr-1"></i> Nộp bài</>
-                )}
-              </button>
-            </div>
+        <div className="admin-modal-overlay" onClick={() => setShowSubmitModal(false)} style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
+          <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '500px', background: '#fff', borderRadius: '12px', padding: '30px' }}>
+            <h5>Thông báo</h5>
+            <p>Tính năng đang hoàn thiện...</p>
+            <button className="btn btn-maincolor w-100" onClick={() => setShowSubmitModal(false)}>Đóng</button>
           </div>
         </div>
       )}

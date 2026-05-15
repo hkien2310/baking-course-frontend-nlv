@@ -3,7 +3,7 @@ import { getAdminQuestions, answerQuestion, getPrograms } from '../../services/a
 import { toast } from 'react-toastify';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminButton from './Shared/AdminButton';
-import Pagination from '../Shared/Pagination';
+import AdminTable from './AdminTable';
 
 const AdminQnA = () => {
   const [questions, setQuestions] = useState([]);
@@ -111,142 +111,114 @@ const AdminQnA = () => {
     lineHeight: '1.5'
   };
 
+  const columns = [
+    { label: 'Học Viên', render: qa => <div style={{ fontWeight: '500' }}>{qa.user?.fullName}</div> },
+    { label: 'Thời Gian', render: qa => (
+      <div>
+        <div style={{ color: '#88929e' }}>{new Date(qa.createdAt).toLocaleDateString('vi-VN')}</div>
+        <small style={{ color: '#aaa' }}>{new Date(qa.createdAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</small>
+      </div>
+    )},
+    { label: 'Khoá Học', render: qa => (
+      <div style={{ fontWeight: '500' }}>
+        <i className="fa fa-book mr-1 text-muted"></i>{qa.program?.title}
+      </div>
+    )},
+    { label: 'Câu Hỏi', render: qa => (
+      <div style={{ ...textClampStyle, color: 'var(--admin-text)' }} title={qa.question}>
+        {qa.question}
+      </div>
+    )},
+    { label: 'Câu Trả Lời', render: qa => (
+      <div title={qa.answer}>
+        {qa.answer ? (
+          <div style={{ ...textClampStyle, color: 'var(--admin-text)', opacity: 0.9 }}>
+            {qa.answer}
+          </div>
+        ) : (
+          <span style={{ color: '#aaa', fontStyle: 'italic' }}>Chưa trả lời</span>
+        )}
+      </div>
+    )},
+    { label: 'Trạng Thái', render: qa => (
+      qa.status === 'ANSWERED' ? (
+        <span className="badge bg-success text-white" style={{ padding: '5px 8px', fontWeight: 'normal' }}>
+          Đã trả lời
+        </span>
+      ) : (
+        <span className="badge bg-warning text-dark" style={{ padding: '5px 8px', fontWeight: 'normal' }}>
+          Chờ xử lý
+        </span>
+      )
+    )}
+  ];
+
+  const customActions = (qa) => (
+    <AdminButton 
+      variant={qa.status === 'ANSWERED' ? 'secondary' : 'success'}
+      outline={qa.status === 'ANSWERED'}
+      onClick={() => handleOpenModal(qa)}
+      label={qa.status === 'ANSWERED' ? 'Cập nhật' : 'Trả lời'}
+      size="sm"
+      icon={qa.status === 'ANSWERED' ? 'pencil' : 'reply'}
+    />
+  );
+
+  const filterNodes = (
+    <div className="d-flex align-items-center" style={{ gap: '15px', flexWrap: 'wrap' }}>
+      <select 
+        className="form-control" 
+        style={{ minWidth: '200px', maxWidth: '300px', backgroundColor: 'var(--admin-bg)', color: 'var(--admin-text)', border: '1px solid #ced4da', borderRadius: '6px' }}
+        value={filterProgram}
+        onChange={(e) => {
+          setFilterProgram(e.target.value);
+          setCurrentPage(1); // Reset page on filter
+        }}
+      >
+        <option value="">-- Tất cả khoá học --</option>
+        {programsList.map(p => (
+          <option key={p.id} value={p.id}>{p.title}</option>
+        ))}
+      </select>
+
+      <div className="d-flex" style={{ gap: '8px', flexWrap: 'wrap' }}>
+        {['ALL', 'PENDING', 'ANSWERED'].map((key) => (
+          <AdminButton
+            key={key}
+            variant={filterStatus === key ? 'dark' : 'secondary'}
+            outline={filterStatus !== key}
+            size="sm"
+            onClick={() => {
+              setFilterStatus(key);
+              setCurrentPage(1); // Reset page on filter
+            }}
+            style={{ borderRadius: '20px', padding: '6px 16px' }}
+            label={key === 'ALL' ? 'Tất cả trạng thái' : displayStatus(key)}
+          />
+        ))}
+      </div>
+      
+      <span className="ml-auto text-muted" style={{ fontSize: '13px' }}>
+        Tổng cộng: <strong>{totalItems}</strong> câu hỏi
+      </span>
+    </div>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <div className="admin-content-header">
-        <h2>Quản Lý Hỏi Đáp (Q&A)</h2>
-        <p style={{ color: '#88929e' }}>Trả lời câu hỏi của học viên trong các khoá học.</p>
-      </div>
-
-      <div className="d-flex mb-4 align-items-center" style={{ gap: '15px', flexWrap: 'wrap' }}>
-        <select 
-          className="form-control" 
-          style={{ minWidth: '200px', maxWidth: '300px', backgroundColor: 'var(--admin-bg)', color: 'var(--admin-text)', border: '1px solid #ced4da', borderRadius: '6px' }}
-          value={filterProgram}
-          onChange={(e) => {
-            setFilterProgram(e.target.value);
-            setCurrentPage(1); // Reset page on filter
-          }}
-        >
-          <option value="">-- Tất cả khoá học --</option>
-          {programsList.map(p => (
-            <option key={p.id} value={p.id}>{p.title}</option>
-          ))}
-        </select>
-
-        <div className="d-flex" style={{ gap: '8px', flexWrap: 'wrap' }}>
-          {['ALL', 'PENDING', 'ANSWERED'].map((key) => (
-            <AdminButton
-              key={key}
-              variant={filterStatus === key ? 'dark' : 'secondary'}
-              outline={filterStatus !== key}
-              size="sm"
-              onClick={() => {
-                setFilterStatus(key);
-                setCurrentPage(1); // Reset page on filter
-              }}
-              style={{ borderRadius: '20px', padding: '6px 16px' }}
-              label={key === 'ALL' ? 'Tất cả trạng thái' : displayStatus(key)}
-            />
-          ))}
-        </div>
-        
-        <span className="ml-auto text-muted" style={{ fontSize: '13px' }}>
-          Tổng cộng: <strong>{totalItems}</strong> câu hỏi
-        </span>
-      </div>
-        
-      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
-        {loading ? (
-          <AdminLoadingBlock rows={5} />
-        ) : (
-          <div className="table-responsive">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th width="11%">Học Viên</th>
-                  <th width="11%">Thời Gian</th>
-                  <th width="16%">Khoá Học</th>
-                  <th width="22%">Câu Hỏi</th>
-                  <th width="22%">Câu Trả Lời</th>
-                  <th width="8%">Trạng Thái</th>
-                  <th width="10%" className="text-center">Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {questions.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="text-center py-5" style={{ color: '#88929e' }}>Không tìm thấy câu hỏi nào phù hợp.</td>
-                  </tr>
-                ) : (
-                  questions.map(qa => (
-                    <tr key={qa.id}>
-                      <td>
-                        <div style={{ fontWeight: '500' }}>{qa.user?.fullName}</div>
-                      </td>
-                      <td>
-                        <div style={{ color: '#88929e' }}>{new Date(qa.createdAt).toLocaleDateString('vi-VN')}</div>
-                        <small style={{ color: '#aaa' }}>{new Date(qa.createdAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</small>
-                      </td>
-                      <td>
-                        <div style={{ fontWeight: '500' }}>
-                          <i className="fa fa-book mr-1 text-muted"></i>{qa.program?.title}
-                        </div>
-                      </td>
-                      <td title={qa.question}>
-                        <div style={{ ...textClampStyle, color: 'var(--admin-text)' }}>
-                          {qa.question}
-                        </div>
-                      </td>
-                      <td title={qa.answer}>
-                        {qa.answer ? (
-                          <div style={{ ...textClampStyle, color: 'var(--admin-text)', opacity: 0.9 }}>
-                            {qa.answer}
-                          </div>
-                        ) : (
-                          <span style={{ color: '#aaa', fontStyle: 'italic' }}>Chưa trả lời</span>
-                        )}
-                      </td>
-                      <td>
-                        {qa.status === 'ANSWERED' ? (
-                          <span className="badge bg-success text-white" style={{ padding: '5px 8px', fontWeight: 'normal' }}>
-                            Đã trả lời
-                          </span>
-                        ) : (
-                          <span className="badge bg-warning text-dark" style={{ padding: '5px 8px', fontWeight: 'normal' }}>
-                            Chờ xử lý
-                          </span>
-                        )}
-                      </td>
-                      <td className="align-middle text-center">
-                        <AdminButton 
-                          variant={qa.status === 'ANSWERED' ? 'secondary' : 'success'}
-                          outline={qa.status === 'ANSWERED'}
-                          onClick={() => handleOpenModal(qa)}
-                          label={qa.status === 'ANSWERED' ? 'Cập nhật' : 'Trả lời'}
-                          size="sm"
-                          icon={qa.status === 'ANSWERED' ? 'pencil' : 'reply'}
-                        />
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {!loading && totalPages > 1 && (
-          <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
-            <Pagination 
-              currentPage={currentPage} 
-              totalPages={totalPages} 
-              onPageChange={(p) => setCurrentPage(p)} 
-            />
-          </div>
-        )}
-      </div>
+      <AdminTable 
+        title="Quản Lý Hỏi Đáp (Q&A)"
+        columns={columns}
+        data={questions}
+        loading={loading}
+        filters={filterNodes}
+        customActions={customActions}
+        serverSidePagination={true}
+        totalItems={totalItems}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={(p) => setCurrentPage(p)}
+      />
 
       {/* Reply Modal */}
       {selectedQA && (

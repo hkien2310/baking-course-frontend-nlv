@@ -28,4 +28,9 @@ router.post('/refresh', authController.refreshToken);
 // @access  Public
 router.post('/logout', authController.logout);
 
+// @route   PUT api/auth/change-password
+// @desc    Thay đổi mật khẩu user
+// @access  Private
+router.put('/change-password', authMiddleware, authController.changePassword);
+
 module.exports = router;

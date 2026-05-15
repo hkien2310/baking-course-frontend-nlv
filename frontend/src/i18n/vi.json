@@ -109,6 +109,13 @@
     "cookingClass": "Lớp nấu ăn",
     "loadingClasses": "Đang tải lớp học...",
     "submit": "Gửi",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmNewPassword": "Xác nhận mật khẩu mới",
+    "changePasswordBtn": "Cập nhật mật khẩu",
+    "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự.",
+    "passwordMismatch": "Mật khẩu xác nhận không trùng khớp.",
+    "passwordChangedSuccess": "Đổi mật khẩu thành công!",
     "selectOption": "-- Chọn --"
   },
   "chiefs": {
@@ -318,6 +325,15 @@
       "paymentRejected": "Thanh toán bị từ chối. Bạn có thể tải lại ảnh chứng minh."
     }
   },
+  "adminDash": {
+    "tabs": {
+      "password": "Đổi mật khẩu"
+    },
+    "password": {
+      "title": "Đổi mật khẩu tài khoản",
+      "subtitle": "Bạn nên sử dụng mật khẩu mạnh để bảo vệ tài khoản quản trị."
+    }
+  },
   "userDash": {
     "title": "Tài khoản",
     "breadcrumb": "Tài khoản",
@@ -333,7 +349,8 @@
     },
     "tabs": {
       "courses": "Khóa học của tôi",
-      "orders": "Đơn hàng"
+      "orders": "Đơn hàng",
+      "password": "Đổi mật khẩu"
     },
     "courses": {
       "empty": "Chưa có khóa học nào",
@@ -370,6 +387,10 @@
     "backHome": "Về trang chủ"
   },
   "common": {
+    "all": "Tất cả",
+    "noPosts": "Không tìm thấy bài viết nào",
+    "tryAgain": "Vui lòng thử lại với danh mục khác hoặc quay lại sau.",
+    "backToAll": "Quay lại tất cả",
     "optional": "Tùy chọn",
     "sending": "Đang gửi...",
     "sendNow": "Gửi Ngay",

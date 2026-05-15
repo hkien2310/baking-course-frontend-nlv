@@ -231,6 +231,8 @@
     border: none;
     box-shadow: none;
     padding: 30px 25px 80px;
+    min-height: 100vh;
+    background: #fff !important;
   }
 
   /* Prevent theme from injecting massive margin-top into aside children */

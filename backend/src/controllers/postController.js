@@ -18,7 +18,15 @@ exports.getAllPosts = async (req, res) => {
         where: whereClause,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        include: {
+          author: {
+            select: {
+              fullName: true,
+              id: true
+            }
+          }
+        }
       });
       return res.json({
         data: posts,
@@ -30,7 +38,15 @@ exports.getAllPosts = async (req, res) => {
 
     const posts = await prisma.post.findMany({
       where: whereClause,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      include: {
+        author: {
+          select: {
+            fullName: true,
+            id: true
+          }
+        }
+      }
     });
     res.json(posts);
   } catch (error) {

@@ -311,6 +311,11 @@ export const getMe = async () => {
   return data;
 };
 
+export const changePassword = async (payload) => {
+  const { data } = await api.put('/auth/change-password', payload);
+  return data;
+};
+
 // ---------------- ORDERS ----------------
 export const createOrder = async (payload) => {
   const { data } = await api.post('/orders', payload);

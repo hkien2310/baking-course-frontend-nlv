@@ -431,11 +431,18 @@
   border-bottom: 1px solid #eaeaea;
   margin-bottom: 30px;
   padding-bottom: 10px;
+  overflow-x: auto; /* Allow horizontal scroll */
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+.pro-max-tabs-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
 }
 .pro-max-tabs {
   display: flex;
   gap: 12px;
   justify-content: flex-start;
+  white-space: nowrap; /* Prevent wrapping */
+  width: max-content; /* Ensure container expands to content */
 }
 .pro-max-tab {
   background: transparent;
@@ -447,6 +454,23 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border-radius: 30px;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+@media (max-width: 991px) {
+  .program-single {
+    padding-top: 30px !important;
+  }
+  .vertical-item.content-padding {
+    padding: 20px !important;
+  }
+  .pro-max-tabs-container {
+    margin-bottom: 20px;
+  }
+  .pro-max-tab {
+    padding: 8px 18px;
+    font-size: 14px;
+  }
 }
 .pro-max-tab:hover {
   background: #f5f5f5;

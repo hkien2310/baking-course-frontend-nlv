@@ -8,11 +8,13 @@ import { formatPrice, getOrderStatusBadge } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 import { imageUrl } from '../utils/imageUrl';
+import ChangePasswordModal from '../components/Shared/ChangePasswordModal';
 
 const UserDashboard = () => {
   const [user, setUser] = useState(null);
   const [loyaltyConfig, setLoyaltyConfig] = useState(null);
   const [activeTab, setActiveTab] = useState('courses');
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -31,18 +33,6 @@ const UserDashboard = () => {
     navigate('/auth');
   };
 
-  if (!user) return (
-    <div className="text-center" style={{ padding: '150px 0' }}>
-      <div className="spinner-border" role="status"></div>
-    </div>
-  );
-
-  // Compute stats
-  const confirmedOrders = user.orders?.filter(o => o.status === 'CONFIRMED') || [];
-  const totalSpent = user.totalSpent || 0; // Use DB field as source of truth for loyalty
-  const initials = user.fullName?.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || '?';
-  const memberSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long' }) : '';
-
   const tabs = [
     { key: 'courses', icon: 'fa-graduation-cap', label: t('userDash.tabs.courses') },
     { key: 'orders', icon: 'fa-shopping-bag', label: t('userDash.tabs.orders') },
@@ -53,268 +43,285 @@ const UserDashboard = () => {
 
   useInitOnLoaded(!user);
 
+  if (!user) return (
+    <div className="text-center" style={{ padding: '150px 0' }}>
+      <div className="spinner-border" role="status" style={{ color: '#6ab78e' }}></div>
+    </div>
+  );
+
+  const confirmedOrders = user.orders?.filter(o => o.status === 'CONFIRMED') || [];
+  const totalSpent = user.totalSpent || 0; 
+  const initials = user.fullName?.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || '?';
+  const memberSince = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long' }) : '';
+
   return (
     <>
       <PageTitle 
         title={t('userDash.title')}
         breadcrumbs={[{ label: t('header.home') || 'Trang chủ', link: '/' }, { label: t('userDash.breadcrumb') }]}
       />
-      <section className="ls s-py-60 s-py-lg-100">
+      <section className="ls s-py-60 s-py-lg-100" style={{ backgroundColor: '#fdfaf7' }}>
         <div className="container">
 
-          {/* ─── Profile Header Card ─── */}
-          <div className="ud-profile-card">
-            <div className="ud-profile-bg"></div>
-            <div className="ud-profile-body">
-              <div className="ud-avatar">{initials}</div>
-              <div className="ud-info">
-                <h3 className="ud-name">
+          {/* ─── UNIFIED HEADER BOX (Profile + Stats) ─── */}
+          <div className="ud-main-box">
+            <div className="ud-profile-section">
+              <div className="ud-avatar-box">{initials}</div>
+              <div className="ud-user-meta-info">
+                <h3 className="ud-name" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                   {user.fullName}
                   {user.memberTier && user.memberTier !== 'NONE' && (
-                    <span className="ud-tier-badge" style={{ 
-                      marginLeft: 12, 
-                      fontSize: 12, 
-                      padding: '4px 12px', 
-                      borderRadius: 20, 
-                      backgroundColor: loyaltyConfig?.tiers?.find(t => t.name === user.memberTier)?.color || '#c19a5b',
-                      color: '#fff',
-                      verticalAlign: 'middle',
-                      boxShadow: `0 2px 8px ${loyaltyConfig?.tiers?.find(t => t.name === user.memberTier)?.color || '#c19a5b'}4d`,
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
-                    }}>
-                      <i className="fa fa-star mr-1"></i>{user.memberTier}
+                    <span className="ud-tier-tag-v2">
+                      <i className="fa fa-star mr-2"></i>{user.memberTier}
                     </span>
                   )}
                 </h3>
-                <p className="ud-email"><i className="fa fa-envelope-o mr-2"></i>{user.email}</p>
-                <div className="ud-meta">
-                  {memberSince && (
-                    <span className="ud-member-since">
-                      <i className="fa fa-calendar-o mr-1"></i>{t('userDash.memberSince', { date: memberSince })}
-                    </span>
-                  )}
+                <p className="ud-email-text"><i className="fa fa-envelope-o mr-2"></i>{user.email}</p>
+                <div className="ud-since-tag">
+                  <i className="fa fa-calendar-o mr-2"></i>{t('userDash.memberSince', { date: memberSince })}
                 </div>
               </div>
-              <div className="ud-actions">
-                <button onClick={handleLogout} className="btn btn-outline-maincolor btn-sm">
-                  <i className="fa fa-sign-out mr-1"></i>{t('userDash.logout')}
+              <div className="ud-header-actions">
+                <button onClick={() => setIsPasswordModalOpen(true)} className="btn btn-outline-dark btn-sm px-4">
+                  <i className="fa fa-lock"></i> Đổi mật khẩu
+                </button>
+                <button onClick={handleLogout} className="btn btn-outline-maincolor btn-sm px-4">
+                  <i className="fa fa-sign-out"></i> Đăng xuất
                 </button>
               </div>
             </div>
 
-            {/* Stats Row */}
-            <div className="ud-stats">
-              <div className="ud-stat">
-                <div className="ud-stat-num">{confirmedOrders.length}</div>
-                <div className="ud-stat-label">{t('userDash.stats.coursesPurchased')}</div>
+            <div className="ud-stats-bar">
+              <div className="ud-stat-item">
+                <div className="ud-stat-value">{confirmedOrders.length}</div>
+                <div className="ud-stat-title">{t('userDash.stats.coursesPurchased')}</div>
               </div>
-              <div className="ud-stat">
-                <div className="ud-stat-num">{user.orders?.length || 0}</div>
-                <div className="ud-stat-label">{t('userDash.stats.totalOrders')}</div>
+              <div className="ud-stat-item">
+                <div className="ud-stat-value">{user.orders?.length || 0}</div>
+                <div className="ud-stat-title">{t('userDash.stats.totalOrders')}</div>
               </div>
-              <div className="ud-stat">
-                <div className="ud-stat-num">{formatPrice(totalSpent, false)}</div>
-                <div className="ud-stat-label">Tổng chi tiêu</div>
+              <div className="ud-stat-item">
+                <div className="ud-stat-value">{formatPrice(totalSpent, false)}</div>
+                <div className="ud-stat-title">Tổng chi tiêu</div>
               </div>
-              <div className="ud-stat">
-                <div className="ud-stat-num">{user.enrollments?.length || 0}</div>
-                <div className="ud-stat-label">Khóa học của tôi</div>
+              <div className="ud-stat-item">
+                <div className="ud-stat-value">{user.enrollments?.length || 0}</div>
+                <div className="ud-stat-title">Lớp đăng ký</div>
               </div>
-              <div className="ud-stat">
-                <div className="ud-stat-num">{(user.points || 0).toLocaleString()}</div>
-                <div className="ud-stat-label">Điểm tích lũy</div>
+              <div className="ud-stat-item">
+                <div className="ud-stat-value">{(user.points || 0).toLocaleString()}</div>
+                <div className="ud-stat-title">Điểm tích lũy</div>
               </div>
             </div>
           </div>
 
-          {/* ─── Tab Navigation ─── */}
-          <div className="ud-tabs">
+          {/* ─── TABS NAVIGATION ─── */}
+          <nav className="ud-nav-tabs">
             {tabs.map(t_tab => (
               <button
                 key={t_tab.key}
-                className={`ud-tab ${activeTab === t_tab.key ? 'active' : ''}`}
+                className={`ud-nav-btn ${activeTab === t_tab.key ? 'active' : ''}`}
                 onClick={() => setActiveTab(t_tab.key)}
               >
                 <i className={`fa ${t_tab.icon} mr-2`}></i>{t_tab.label}
               </button>
             ))}
-          </div>
+          </nav>
 
-          {/* ─── Tab: My Courses ─── */}
-          {activeTab === 'courses' && (
-            <div className="ud-tab-content">
-              {confirmedOrders.length === 0 ? (
-                <div className="ud-empty">
-                  <div className="ud-empty-icon">📚</div>
-                  <h4>{t('userDash.courses.empty')}</h4>
-                  <p className="text-muted">{t('userDash.courses.emptyDesc')}</p>
-                  <Link to={ROUTES.PROGRAM} className="btn btn-maincolor mt-3">
-                    <i className="fa fa-search mr-1"></i> {t('userDash.courses.explore')}
-                  </Link>
-                </div>
-              ) : (
-                <div className="row">
-                  {confirmedOrders.map(order => (
-                    <div className="col-md-6 col-lg-4 mb-4" key={order.id}>
-                      <div className="ud-course-card">
-                        <div className="ud-course-thumb">
-                          {order.program?.thumbnail ? (
-                            <img 
-                              src={imgSrc(order.program.thumbnail)}
-                              alt={order.program?.title}
-                            />
-                          ) : (
-                            <div className="ud-course-thumb-placeholder">
-                              <i className="fa fa-birthday-cake"></i>
-                            </div>
-                          )}
-                          <div className="ud-course-badge">
-                            <i className="fa fa-check-circle mr-1"></i>{t('userDash.courses.purchased')}
-                          </div>
+          {/* ─── CONTENT BOX ─── */}
+          <div className="ud-content-box shadow-lg">
+            {activeTab === 'courses' && (
+              <>
+                {confirmedOrders.length === 0 ? (
+                  <div className="ud-empty border-0">
+                    <div className="ud-empty-icon">📚</div>
+                    <h4>{t('userDash.noCourses')}</h4>
+                    <p>{t('userDash.browseCatalog')}</p>
+                    <Link to={ROUTES.PROGRAM} className="btn btn-maincolor mt-4 btn-pill">{t('userDash.viewCourses')}</Link>
+                  </div>
+                ) : (
+                  <div className="ud-course-list-v3">
+                    {confirmedOrders.map(order => (
+                      <div key={order.id} className="ud-course-item-horizontal">
+                        <div className="ud-course-thumb-horizontal">
+                          <img src={imgSrc(order.program?.thumbnail)} alt={order.program?.title} />
                         </div>
-                        <div className="ud-course-body">
-                          <h5 className="ud-course-title">{order.program?.title || 'Course'}</h5>
-                          <div className="ud-course-meta">
-                            <span><i className="fa fa-money mr-1"></i>{formatPrice(order.amount)}</span>
-                            <span><i className="fa fa-calendar mr-1"></i>{new Date(order.createdAt).toLocaleDateString()}</span>
-                          </div>
-                          {order.paymentMethod && (
-                            <span className={`ud-method-badge ${order.paymentMethod === 'VNPAY' ? 'vnpay' : 'manual'}`}>
-                              {order.paymentMethod === 'VNPAY' ? t('userDash.courses.vnpay') : t('userDash.courses.bankTransfer')}
-                            </span>
-                          )}
-                          <Link to={ROUTES.PROGRAM_DETAIL(order.program?.slug)} className="btn btn-maincolor btn-sm btn-block mt-3">
-                            <i className="fa fa-play-circle mr-1"></i> {t('userDash.courses.studyNow')}
+                        <div className="ud-course-info-horizontal">
+                          <h4>{order.program?.title}</h4>
+                          <p className="course-short-desc">
+                            {order.program?.description || order.program?.shortDescription || "Khám phá bí quyết làm bánh chuyên nghiệp cùng đội ngũ giảng viên hàng đầu tại YUM Saigon."}
+                          </p>
+                        </div>
+                        <div className="ud-course-action-horizontal">
+                          <Link to={ROUTES.PROGRAM_DETAIL(order.program?.slug)} className="btn btn-learn-now">
+                            <i className="fa fa-play-circle mr-2"></i> Vào học
                           </Link>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
 
-          {/* ─── Tab: Orders ─── */}
-          {activeTab === 'orders' && (
-            <div className="ud-tab-content">
-              {(!user.orders || user.orders.length === 0) ? (
-                <div className="ud-empty">
-                  <div className="ud-empty-icon">🛒</div>
-                  <h4>{t('userDash.orders.empty')}</h4>
-                  <p className="text-muted">{t('userDash.orders.emptyDesc')}</p>
-                  <Link to={ROUTES.PROGRAM} className="btn btn-maincolor mt-3">
-                    <i className="fa fa-search mr-1"></i> {t('userDash.orders.viewCourses')}
-                  </Link>
-                </div>
-              ) : (
-                <div className="ud-orders-list">
-                  {user.orders.map(order => {
-                    const badge = getOrderStatusBadge(order.status);
-                    return (
-                      <div className="ud-order-row" key={order.id}>
-                        <div className="ud-order-thumb">
-                          {order.program?.thumbnail ? (
-                            <img 
-                              src={imgSrc(order.program.thumbnail)}
-                              alt={order.program?.title}
-                            />
-                          ) : (
-                            <div className="ud-order-thumb-ph"><i className="fa fa-birthday-cake"></i></div>
-                          )}
-                        </div>
-                        <div className="ud-order-info">
-                          <h6 className="ud-order-title">
-                            <Link to={ROUTES.PROGRAM_DETAIL(order.program?.slug)} className="color-main">
-                              {order.program?.title || 'Unknown'}
-                            </Link>
-                          </h6>
-                          <div className="ud-order-code">
-                            <code>{order.orderCode}</code>
-                            <span className="ud-order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+            {activeTab === 'orders' && (
+              <>
+                {(!user.orders || user.orders.length === 0) ? (
+                  <div className="ud-empty border-0">
+                    <div className="ud-empty-icon">🛒</div>
+                    <h4>Chưa có đơn hàng nào</h4>
+                    <Link to={ROUTES.PROGRAM} className="btn btn-maincolor mt-4 btn-pill">Mua khóa học đầu tiên</Link>
+                  </div>
+                ) : (
+                  <div className="ud-order-table-v3">
+                    {/* TABLE HEADER */}
+                    <div className="ud-order-header-v3">
+                      <div className="ud-th-label">Khóa học</div>
+                      <div className="ud-th-label th-date">Ngày đặt</div>
+                      <div className="ud-th-label text-right" style={{ paddingRight: '20px' }}>Số tiền</div>
+                      <div className="ud-th-label text-center">Trạng thái</div>
+                      <div className="ud-th-label text-right">Thao tác</div>
+                    </div>
+
+                    {/* TABLE ROWS */}
+                    {user.orders.map(order => {
+                      const statusBadge = getOrderStatusBadge(order.status);
+                      const statusClass = order.status.toLowerCase();
+                      const orderDate = new Date(order.createdAt).toLocaleDateString('vi-VN');
+                      return (
+                        <div key={order.id} className="ud-order-row-v3">
+                          <div className="ud-order-product-col">
+                            <img className="ud-order-thumb-v3" src={imgSrc(order.program?.thumbnail)} alt="" />
+                            <div className="ud-order-product-info">
+                              <h5>{order.program?.title}</h5>
+                              <span>#{order.orderCode}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="ud-order-date-col">
+                            <span className="ud-mobile-label mr-2 d-none-desktop">Ngày: </span>
+                            {orderDate}
+                          </div>
+                          
+                          <div className="ud-order-price-col">
+                             <span className="ud-mobile-label mr-2 d-none-desktop">Tiền: </span>
+                            <span className="ud-order-price-val">{formatPrice(order.amount, false)}</span>
+                          </div>
+                          
+                          <div className="ud-order-status-col">
+                            <span className="ud-mobile-label mr-2 d-none-desktop">T.Thái: </span>
+                            <div className={`premium-status-badge-v2 ${statusClass}`}>
+                              {statusBadge.label}
+                            </div>
+                          </div>
+                          
+                          <div className="ud-order-action-col">
+                            {order.status === 'CONFIRMED' ? (
+                              <Link to={ROUTES.PROGRAM_DETAIL(order.program?.slug)} className="btn btn-outline-maincolor btn-compact-action">
+                                <i className="fa fa-play-circle mr-2"></i> Vào học
+                              </Link>
+                            ) : (order.status === 'PENDING' || order.status === 'REJECTED') ? (
+                              <Link to={ROUTES.CHECKOUT(order.program?.slug)} className="btn btn-warning btn-compact-action">
+                                <i className="fa fa-credit-card mr-2"></i> Thanh toán
+                              </Link>
+                            ) : null}
                           </div>
                         </div>
-                        <div className="ud-order-amount">{formatPrice(order.amount)}</div>
-                        <div className="ud-order-status">
-                          <span className={`badge ${badge.className}`}>{badge.label}</span>
-                          {order.paymentMethod && (
-                            <small className="ud-order-method">
-                              {order.paymentMethod === 'VNPAY' ? 'VNPay' : 'Bank'}
-                            </small>
-                          )}
-                        </div>
-                        <div className="ud-order-action">
-                          {order.status === 'CONFIRMED' ? (
-                            <Link to={ROUTES.PROGRAM_DETAIL(order.program?.slug)} className="btn btn-sm btn-outline-maincolor">
-                              <i className="fa fa-play-circle"></i>
-                            </Link>
-                          ) : (order.status === 'PENDING' || order.status === 'REJECTED') ? (
-                            <Link to={ROUTES.CHECKOUT(order.program?.slug)} className="btn btn-sm btn-warning">
-                              <i className="fa fa-arrow-right"></i>
-                            </Link>
-                          ) : null}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
 
-          {/* ── Tab: Loyalty ── */}
-          {activeTab === 'loyalty' && (() => {
-            const tiers = loyaltyConfig?.tiers || [];
-            const currentTier = tiers.find(t => t.name === user.memberTier);
-            const sortedTiers = [...tiers].sort((a, b) => a.minSpent - b.minSpent);
-            const nextTier = sortedTiers.find(t => t.minSpent > (user.totalSpent || 0));
-            const spentVsNext = nextTier ? Math.min((user.totalSpent || 0) / nextTier.minSpent * 100, 100) : 100;
-            const redeemRate = loyaltyConfig?.points?.redeemRate || 1;
-            return (
-              <div className="ud-tab-content">
-                <div className="ud-loyalty-card" style={{ background: '#fff', borderRadius: 12, padding: 24, border: '1px solid #f0f1f5', marginBottom: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                      <div style={{ fontSize: 13, color: '#888', marginBottom: 4 }}>Hạng thành viên hiện tại</div>
-                      <h4 style={{ margin: 0, color: 'var(--colorMain)', fontWeight: 700 }}>{user.memberTier && user.memberTier !== 'NONE' ? user.memberTier : 'Thành viên'}</h4>
-                      {currentTier && <div style={{ fontSize: 13, marginTop: 4, color: '#525f7f' }}>Ưu đãi: Giảm {currentTier.discountPercent}% mỗi lần mua</div>}
+            {activeTab === 'loyalty' && (() => {
+              const tiers = loyaltyConfig?.tiers || [];
+              const currentTier = tiers.find(t => t.name === user.memberTier);
+              const sortedTiers = [...tiers].sort((a, b) => a.minSpent - b.minSpent);
+              const nextTier = sortedTiers.find(t => t.minSpent > (user.totalSpent || 0));
+              const spentVsNext = nextTier ? Math.min((user.totalSpent || 0) / nextTier.minSpent * 100, 100) : 100;
+              const redeemRate = loyaltyConfig?.points?.redeemRate || 1;
+              return (
+                <div className="ud-loyalty-container">
+                  <div className="row">
+                    <div className="col-lg-7">
+                      <div className="ud-loyalty-card" style={{ background: '#fff', borderRadius: 24, padding: 35, border: '2px solid #f1f5f9', marginBottom: 20, boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <div style={{ fontSize: 13, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 10 }}>Hạng thành viên</div>
+                            <h3 style={{ margin: 0, color: '#6ab78e', fontWeight: 800, fontFamily: 'Playfair Display, serif', fontSize: '2.5rem' }}>{user.memberTier && user.memberTier !== 'NONE' ? user.memberTier : 'Thành viên'}</h3>
+                            {currentTier && <div style={{ fontSize: 15, marginTop: 12, color: '#475569', fontWeight: 600 }}>Đặc quyền: Giảm <strong style={{ color: '#6ab78e' }}>{currentTier.discountPercent}%</strong> cho mọi đơn hàng</div>}
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: 13, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 10 }}>Chi tiêu</div>
+                            <div style={{ fontWeight: 800, fontSize: 26, color: '#1e293b' }}>{formatPrice(user.totalSpent || 0, false)}</div>
+                          </div>
+                        </div>
+                        {nextTier && (
+                          <div style={{ marginTop: 35 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, color: '#64748b', marginBottom: 12, fontWeight: 600 }}>
+                              <span>Tiến tới hạng <strong>{nextTier.name}</strong></span>
+                              <span style={{ color: '#6ab78e' }}>Còn {formatPrice(nextTier.minSpent - (user.totalSpent || 0), false)}</span>
+                            </div>
+                            <div className="progress" style={{ height: 12, borderRadius: 10, backgroundColor: '#f1f5f9', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
+                              <div className="progress-bar" style={{ width: `${spentVsNext}%`, background: 'linear-gradient(90deg, #6ab78e, #4f9a71)', borderRadius: 10, transition: 'width 1s ease-in-out' }} />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 13, color: '#888' }}>Tổng chi tiêu</div>
-                      <div style={{ fontWeight: 700, fontSize: 18 }}>{formatPrice(user.totalSpent || 0, false)}</div>
+                    <div className="col-lg-5">
+                      <div style={{ background: '#fff', borderRadius: 24, padding: 35, border: '2px solid #f1f5f9', height: '100%', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <div style={{ fontSize: 13, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: 10 }}>Điểm thưởng</div>
+                        <div style={{ fontSize: 54, fontWeight: 800, color: '#6ab78e', fontFamily: 'Playfair Display, serif', lineHeight: 1 }}>{(user.points || 0).toLocaleString()} <span style={{ fontSize: 20, color: '#94a3b8' }}>điểm</span></div>
+                        <div style={{ fontSize: 16, color: '#475569', marginTop: 15, fontWeight: 600 }}>
+                          Ước tính: <strong style={{ color: '#1e293b' }}>{formatPrice((user.points || 0) * redeemRate, false)}</strong>
+                        </div>
+                        {loyaltyConfig?.points && loyaltyConfig.points.earnPer > 0 && (
+                          <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 25, padding: '15px', background: '#f8fafc', borderRadius: 15, border: '1px solid #f1f5f9', fontWeight: 500 }}>
+                            <i className="fa fa-info-circle mr-2" style={{ color: '#6ab78e' }}></i>Tích <strong>{loyaltyConfig.points.earnRate.toLocaleString()} điểm</strong> khi chi tiêu {formatPrice(loyaltyConfig.points.earnPer, false)}.
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  {nextTier && (
-                    <div style={{ marginTop: 16 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#888', marginBottom: 6 }}>
-                        <span>Tiến trình lên hạng <strong>{nextTier.name}</strong></span>
-                        <span>Cần thêm {formatPrice(nextTier.minSpent - (user.totalSpent || 0), false)}</span>
-                      </div>
-                      <div className="progress" style={{ height: 8, borderRadius: 8 }}>
-                        <div className="progress-bar" style={{ width: `${spentVsNext}%`, background: 'var(--colorMain)', borderRadius: 8 }} />
-                      </div>
-                    </div>
-                  )}
                 </div>
-
-                <div style={{ background: '#fff', borderRadius: 12, padding: 24, border: '1px solid #f0f1f5' }}>
-                  <div style={{ fontSize: 13, color: '#888', marginBottom: 4 }}>Điểm tích lũy</div>
-                  <div style={{ fontSize: 32, fontWeight: 700, color: 'var(--colorMain)' }}>{(user.points || 0).toLocaleString()} điểm</div>
-                  <div style={{ fontSize: 14, color: '#525f7f', marginTop: 4 }}>Tương đương {formatPrice((user.points || 0) * redeemRate, false)} khi thanh toán</div>
-                  {loyaltyConfig?.points && loyaltyConfig.points.earnPer > 0 && (
-                    <div style={{ fontSize: 12, color: '#aaa', marginTop: 12, padding: '8px 12px', background: '#f8f9fa', borderRadius: 8 }}>
-                      Cứ mỗi {formatPrice(loyaltyConfig.points.earnPer, false)} chi tiêu → Nhận thêm {loyaltyConfig.points.earnRate.toLocaleString()} điểm
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
+              );
+            })()}
+          </div>
 
         </div>
       </section>
+
+      <ChangePasswordModal 
+        isOpen={isPasswordModalOpen} 
+        onClose={() => setIsPasswordModalOpen(false)} 
+      />
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (min-width: 993px) {
+          .d-none-desktop { display: none !important; }
+        }
+        .ud-tier-tag-v2 {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: linear-gradient(135deg, #f59e0b, #d97706);
+          color: #fff;
+          padding: 4px 16px;
+          border-radius: 50px;
+          font-size: 13px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+          margin-left: 15px;
+          height: 30px;
+          vertical-align: middle;
+          border: 2px solid #fff;
+          font-family: sans-serif;
+        }
+      `}} />
     </>
   );
 };

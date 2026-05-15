@@ -20,7 +20,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   return (
     <nav className="navigation pagination justify-content-center" role="navigation">
-      <h2 className="screen-reader-text">Posts navigation</h2>
       <div className="nav-links">
         <a 
           className={`prev page-numbers ${currentPage <= 1 ? 'disabled' : ''}`} 
@@ -32,16 +31,15 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           style={currentPage <= 1 ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' } : {}}
         >
           <i className="fa fa-angle-left"></i>
-          <span className="screen-reader-text">Previous page</span>
         </a>
         {getPageNumbers().map(page => (
           page === currentPage ? (
             <span key={page} className="page-numbers current">
-              <span className="meta-nav screen-reader-text">Page </span>{page}
+              {page}
             </span>
           ) : (
             <a key={page} className="page-numbers" href="#" onClick={(e) => { e.preventDefault(); onPageChange(page); }}>
-              <span className="meta-nav screen-reader-text">Page </span>{page}
+              {page}
             </a>
           )
         ))}
@@ -55,7 +53,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           }}
           style={currentPage >= totalPages ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' } : {}}
         >
-          <span className="screen-reader-text">Next page</span>
           <i className="fa fa-angle-right"></i>
         </a>
       </div>

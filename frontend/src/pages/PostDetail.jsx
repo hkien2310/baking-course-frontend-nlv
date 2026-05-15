@@ -6,7 +6,7 @@ import BlogSidebar from '../components/Blog/BlogSidebar';
 import { getPostBySlug, getPosts } from '../services/api';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
-import { imageUrl } from '../utils/imageUrl';
+import { imageUrl, PLACEHOLDER_IMAGE } from '../utils/imageUrl';
 import PageLoading from '../components/Shared/PageLoading';
 
 const PostDetail = () => {
@@ -15,6 +15,10 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [allPosts, setAllPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleImageError = (e) => {
+    e.target.src = PLACEHOLDER_IMAGE;
+  };
 
   useEffect(() => {
     Promise.all([getPostBySlug(slug), getPosts({ limit: 100 })])
@@ -64,7 +68,7 @@ const PostDetail = () => {
   relatedPosts = relatedPosts.slice(0, 4);
 
   // Helper for image src
-  const imgSrc = (src) => imageUrl(src, `${import.meta.env.BASE_URL}images/gallery/09.jpg`);
+  const imgSrc = (src) => imageUrl(src);
 
   return (
     <>
@@ -86,7 +90,7 @@ const PostDetail = () => {
               <article className="vertical-item content-padding post type-post status-publish format-standard has-post-thumbnail bordered">
                 {/* Featured Image with metadata overlay */}
                 <div className="item-media post-thumbnail">
-                  <img src={imgSrc(post.thumbnail)} alt={post.title} />
+                  <img src={imgSrc(post.thumbnail)} alt={post.title} onError={handleImageError} />
                   <div className="text-md-left entry-meta small-text bg-dark-transpatent">
                     <span className="byline">
                       <span className="posted-on">
@@ -133,7 +137,7 @@ const PostDetail = () => {
                   {prevPost && (
                     <div className="nav-previous cover-image s-overlay ds">
                       <div className="post-nav-image">
-                        <img src={imgSrc(prevPost.thumbnail)} alt="" />
+                        <img src={imgSrc(prevPost.thumbnail)} alt="" onError={handleImageError} />
                       </div>
                       <div className="post-nav-text-wrap">
                         <span aria-hidden="true" className="nav-subtitle color-main2 small-text">{t('postDetail.prev') || 'Bài trước'}</span>
@@ -147,7 +151,7 @@ const PostDetail = () => {
                   {nextPost && (
                     <div className="nav-next cover-image s-overlay ds">
                       <div className="post-nav-image">
-                        <img src={imgSrc(nextPost.thumbnail)} alt="" />
+                        <img src={imgSrc(nextPost.thumbnail)} alt="" onError={handleImageError} />
                       </div>
                       <div className="post-nav-text-wrap">
                         <span aria-hidden="true" className="nav-subtitle color-main2 small-text">{t('postDetail.next') || 'Bài sau'}</span>
@@ -200,7 +204,7 @@ const PostDetail = () => {
                     {relatedPosts.map(rp => (
                       <li key={rp.id}>
                         <Link to={ROUTES.POST_DETAIL(rp.slug)}>
-                          <img src={imgSrc(rp.thumbnail)} alt="" />
+                          <img src={imgSrc(rp.thumbnail)} alt="" onError={handleImageError} />
                         </Link>
                         <div className="item-content">
                           <h6>

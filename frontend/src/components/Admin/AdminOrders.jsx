@@ -6,6 +6,7 @@ import { formatPrice, getOrderStatusBadge } from '../../utils/formatters';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminButton from './Shared/AdminButton';
 import AdminActionBtn from './Shared/AdminActionBtn';
+import AdminTable from './AdminTable';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -98,6 +99,59 @@ const AdminOrders = () => {
 
   if (loading) return <AdminLoadingBlock rows={6} />;
 
+  const columns = [
+    { label: 'Mã Đơn', render: order => <code style={{ fontSize: '13px' }}>{order.orderCode}</code> },
+    { label: 'Người Dùng', render: order => (
+      <div>
+        <div style={{ fontWeight: '600' }}>{order.user?.fullName}</div>
+        <small style={{ color: '#88929e' }}>{order.user?.email}</small>
+      </div>
+    )},
+    { label: 'Khóa Học', render: order => order.program?.title },
+    { label: 'Số Tiền', render: order => <span style={{ fontWeight: '600' }}>{formatPrice(order.amount)}</span> },
+    { label: 'Trạng Thái', render: order => (
+      <span className={`badge ${getOrderStatusBadge(order.status).className}`} style={{ fontSize: '11px' }}>
+        {displayStatus(order.status)}
+      </span>
+    )},
+    { label: 'Phương Thức', render: order => (
+      order.paymentMethod === 'VNPAY' ? (
+        <span className="badge bg-success text-white" style={{ fontSize: '10px' }}>VNPay</span>
+      ) : order.paidViaWebhook ? (
+        <span className="badge bg-info text-white" style={{ fontSize: '10px' }}>Webhook</span>
+      ) : order.proofImage ? (
+        <span className="badge bg-secondary text-white" style={{ fontSize: '10px' }}>Manual</span>
+      ) : (
+        <span style={{ color: '#aaa', fontSize: '12px' }}>—</span>
+      )
+    )},
+    { label: 'Ngày', render: order => <small>{new Date(order.createdAt).toLocaleDateString()}</small> }
+  ];
+
+  const customActions = (order) => (
+    <AdminActionBtn 
+      variant="view" 
+      onClick={(e) => { e.stopPropagation(); setSelectedOrder(order); setAdminNote(''); }} 
+      title="Xem chi tiết" 
+    />
+  );
+
+  const filterTabs = (
+    <div className="d-flex" style={{ gap: '8px', flexWrap: 'wrap' }}>
+      {Object.entries(statusCounts).map(([key, count]) => (
+        <AdminButton
+          key={key}
+          variant={filter === key ? 'dark' : 'secondary'}
+          outline={filter !== key}
+          size="sm"
+          onClick={() => { setFilter(key); setCurrentPage(1); }}
+          style={{ borderRadius: '20px', padding: '6px 16px' }}
+          label={`${key === 'ALL' ? 'Tất cả' : displayStatus(key)} (${count})`}
+        />
+      ))}
+    </div>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <div className="admin-content-header">
@@ -105,94 +159,15 @@ const AdminOrders = () => {
         <p style={{ color: '#88929e' }}>Kiểm tra và quản lý thanh toán Premium Content</p>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="d-flex mb-4" style={{ gap: '8px', flexWrap: 'wrap' }}>
-        {Object.entries(statusCounts).map(([key, count]) => (
-          <AdminButton
-            key={key}
-            variant={filter === key ? 'dark' : 'secondary'}
-            outline={filter !== key}
-            size="sm"
-            onClick={() => { setFilter(key); setCurrentPage(1); }}
-            style={{ borderRadius: '20px', padding: '6px 16px' }}
-            label={`${key === 'ALL' ? 'Tất cả' : displayStatus(key)} (${count})`}
-          />
-        ))}
-      </div>
-
-      {/* Orders Table */}
-      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
-        <div className="table-responsive">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Mã Đơn</th>
-                <th>Người Dùng</th>
-                <th>Khóa Học</th>
-                <th>Số Tiền</th>
-                <th>Trạng Thái</th>
-                <th>Phương Thức</th>
-                <th>Ngày</th>
-                <th>Thao Tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedOrders.length === 0 ? (
-                <tr><td colSpan="8" className="text-center py-4" style={{ color: '#88929e' }}>Không tìm thấy đơn hàng nào</td></tr>
-              ) : (
-                paginatedOrders.map(order => {
-                  const badge = getOrderStatusBadge(order.status);
-                  return (
-                    <tr key={order.id}>
-                      <td><code style={{ fontSize: '13px' }}>{order.orderCode}</code></td>
-                      <td>
-                        <div style={{ fontWeight: '600' }}>{order.user?.fullName}</div>
-                        <small style={{ color: '#88929e' }}>{order.user?.email}</small>
-                      </td>
-                      <td>{order.program?.title}</td>
-                      <td style={{ fontWeight: '600' }}>{formatPrice(order.amount)}</td>
-                      <td>
-                        <span className={`badge ${badge.className}`} style={{ fontSize: '11px' }}>
-                          {displayStatus(order.status)}
-                        </span>
-                      </td>
-                      <td>
-                        {order.paymentMethod === 'VNPAY' ? (
-                          <span className="badge bg-success text-white" style={{ fontSize: '10px' }}>VNPay</span>
-                        ) : order.paidViaWebhook ? (
-                          <span className="badge bg-info text-white" style={{ fontSize: '10px' }}>Webhook</span>
-                        ) : order.proofImage ? (
-                          <span className="badge bg-secondary text-white" style={{ fontSize: '10px' }}>Manual</span>
-                        ) : (
-                          <span style={{ color: '#aaa', fontSize: '12px' }}>—</span>
-                        )}
-                      </td>
-                      <td><small>{new Date(order.createdAt).toLocaleDateString()}</small></td>
-                      <td className="text-right">
-                        <AdminActionBtn 
-                          variant="view" 
-                          onClick={() => { setSelectedOrder(order); setAdminNote(''); }} 
-                          title="Xem chi tiết" 
-                        />
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        {totalPages > 1 && (
-          <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
-            <Pagination 
-              currentPage={safePage} 
-              totalPages={totalPages} 
-              onPageChange={(p) => setCurrentPage(p)} 
-            />
-          </div>
-        )}
-      </div>
+      <AdminTable 
+        title="Danh sách Đơn Hàng"
+        columns={columns}
+        data={filteredOrders}
+        loading={loading}
+        filters={filterTabs}
+        customActions={customActions}
+        onRowClick={(order) => { setSelectedOrder(order); setAdminNote(''); }}
+      />
 
       {/* Order Detail Modal */}
       {selectedOrder && (

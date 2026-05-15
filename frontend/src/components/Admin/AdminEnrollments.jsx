@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import AdminConfirmModal from './AdminConfirmModal';
 import AdminButton from './Shared/AdminButton';
+import AdminTable from './AdminTable';
 import { getEnrollments, updateEnrollmentStatus, deleteEnrollment } from '../../services/api';
 import AdminPageShell from './AdminPageShell';
 import usePendingAction from './usePendingAction';
@@ -55,64 +56,48 @@ const AdminEnrollments = () => {
 
   if (loading) return <AdminPageShell loading loadingRows={5} />;
 
+  const columns = [
+    { label: 'Ngày', render: enr => new Date(enr.createdAt).toLocaleDateString() },
+    { label: 'Tên Học viên', render: enr => enr.fullName },
+    { label: 'Email', render: enr => enr.email },
+    { label: 'SĐT', render: enr => enr.phone || '—' },
+    { label: 'Khóa học', render: enr => (
+      <>
+        {enr.classSession?.program?.title || 'Không rõ khóa học'}
+        <br/><small className="text-muted">{enr.classSession?.startDate ? new Date(enr.classSession.startDate).toLocaleDateString() : ''}</small>
+      </>
+    )},
+    { label: 'Trạng thái', render: enr => (
+      <span 
+        style={{ 
+          padding: '4px 8px', 
+          borderRadius: '4px', 
+          fontSize: '12px',
+          backgroundColor: enr.status === 'CONFIRMED' ? '#d4edda' : '#fff3cd',
+          color: enr.status === 'CONFIRMED' ? '#155724' : '#856404',
+          cursor: 'pointer'
+        }}
+        onClick={() => handleStatusChange(enr.id, enr.status)}
+      >
+        {isPending(`status-${enr.id}`) ? 'ĐANG CẬP NHẬT' : enr.status === 'CONFIRMED' ? 'XÁC NHẬN' : 'CHỜ DUYỆT'}
+      </span>
+    )}
+  ];
+
+  const customActions = (enr) => (
+    <AdminButton variant="danger" icon="trash" outline size="sm" onClick={() => setDeleteTargetId(enr.id)} loading={isPending(`delete-${enr.id}`)} disabled={isPending(`status-${enr.id}`)} />
+  );
+
   return (
     <>
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h3 className="mb-0">Danh sách Ghi danh</h3>
-      </div>
-      
-      <div className="admin-paper">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Ngày</th>
-              <th>Tên Học viên</th>
-              <th>Email</th>
-              <th>SĐT</th>
-              <th>Khóa học</th>
-              <th>Trạng thái</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {enrollments.length === 0 ? (
-              <tr><td colSpan="7" className="text-center">Chưa có lượt ghi danh nào</td></tr>
-            ) : (
-              enrollments.map(enr => (
-                <tr key={enr.id}>
-                  <td>{new Date(enr.createdAt).toLocaleDateString()}</td>
-                  <td>{enr.fullName}</td>
-                  <td>{enr.email}</td>
-                  <td>{enr.phone || '—'}</td>
-                  <td>
-                    {enr.classSession?.program?.title || 'Không rõ khóa học'}
-                    <br/><small className="text-muted">{enr.classSession?.startDate ? new Date(enr.classSession.startDate).toLocaleDateString() : ''}</small>
-                  </td>
-                  <td>
-                    <span 
-                      style={{ 
-                        padding: '4px 8px', 
-                        borderRadius: '4px', 
-                        fontSize: '12px',
-                        backgroundColor: enr.status === 'CONFIRMED' ? '#d4edda' : '#fff3cd',
-                        color: enr.status === 'CONFIRMED' ? '#155724' : '#856404',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => handleStatusChange(enr.id, enr.status)}
-                    >
-                      {isPending(`status-${enr.id}`) ? 'ĐANG CẬP NHẬT' : enr.status === 'CONFIRMED' ? 'XÁC NHẬN' : 'CHỜ DUYỆT'}
-                    </span>
-                  </td>
-                  <td>
-                    <AdminButton variant="danger" icon="trash" outline size="sm" onClick={() => setDeleteTargetId(enr.id)} loading={isPending(`delete-${enr.id}`)} disabled={isPending(`status-${enr.id}`)} />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <AdminTable 
+        title="Danh sách Ghi danh"
+        columns={columns}
+        data={enrollments}
+        loading={loading}
+        customActions={customActions}
+      />
     </div>
 
     <AdminConfirmModal

@@ -5,8 +5,8 @@ import {
   createStudentWork, updateStudentWork, getPrograms 
 } from '../../services/api';
 import AdminLoadingBlock from './AdminLoadingBlock';
-import Pagination from '../Shared/Pagination';
 import { imageUrl } from '../../utils/imageUrl';
+import AdminTable from './AdminTable';
 import AdminActionBtn from './Shared/AdminActionBtn';
 import AdminButton from './Shared/AdminButton';
 import AdminConfirmModal from './AdminConfirmModal';
@@ -149,118 +149,20 @@ const AdminStudentWorks = () => {
         ))}
       </div>
 
-      {works.length === 0 ? (
-        <div className="admin-paper text-center py-5">
-          <i className="fa fa-image" style={{ fontSize: '48px', color: '#ddd' }}></i>
-          <p className="mt-2" style={{ color: '#88929e' }}>Chưa có bài nộp nào</p>
-        </div>
-      ) : (
-        <div className="admin-paper">
-          <div className="table-responsive">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th style={{ width: '100px' }}>Hình ảnh</th>
-                  <th>Học viên</th>
-                  <th>Khóa học</th>
-                  <th style={{ width: '25%' }}>Mô tả</th>
-                  <th>Ngày nộp</th>
-                  <th>Trạng thái</th>
-                  <th className="text-right">Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {works.map(work => {
-                  const badge = statusBadge(work.status);
-                  
-                  return (
-                    <tr key={work.id}>
-                      <td>
-                        <div 
-                          style={{ 
-                            width: '80px', 
-                            height: '60px', 
-                            borderRadius: '6px', 
-                            overflow: 'hidden',
-                            backgroundColor: '#f8f9fa',
-                            cursor: 'pointer'
-                          }}
-                          onClick={() => setPreviewWork(work)}
-                          title="Nhấn để xem chi tiết"
-                        >
-                          <img 
-                            src={imageUrl(work.imageUrl)} 
-                            alt={work.studentName} 
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                          />
-                        </div>
-                      </td>
-                      <td style={{ fontWeight: '600' }}>{work.studentName}</td>
-                      <td style={{ color: '#555' }}>{work.program?.title}</td>
-                      <td 
-                        style={{ cursor: 'pointer' }} 
-                        onClick={() => setPreviewWork(work)}
-                        title="Nhấn để xem toàn bộ nội dung"
-                      >
-                        <p style={{ 
-                          margin: 0, 
-                          fontSize: '13px', 
-                          color: '#666',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden'
-                        }}>
-                          {work.description}
-                        </p>
-                      </td>
-                      <td>
-                        <small style={{ color: '#88929e' }}>
-                          {new Date(work.createdAt).toLocaleDateString('vi-VN')}
-                        </small>
-                      </td>
-                      <td>
-                        <span className={`badge ${badge.className}`} style={{ fontSize: '11px' }}>
-                          {badge.label}
-                        </span>
-                      </td>
-                      <td className="text-right">
-                        <div className="d-flex justify-content-end" style={{ gap: '6px' }}>
-                          <AdminActionBtn variant="edit" onClick={() => openModal(work)} title="Sửa" />
-                          {work.status === 'PENDING' && (
-                            <>
-                              <AdminActionBtn variant="approve" onClick={() => handleApprove(work.id)} title="Duyệt" />
-                              <AdminActionBtn variant="reject" onClick={() => handleReject(work.id)} title="Từ chối" />
-                            </>
-                          )}
-                          {work.status === 'REJECTED' && (
-                            <AdminActionBtn variant="approve" onClick={() => handleApprove(work.id)} title="Duyệt lại" />
-                          )}
-                          {work.status === 'APPROVED' && (
-                            <AdminActionBtn variant="hide" onClick={() => handleReject(work.id)} title="Ẩn" />
-                          )}
-                          <AdminActionBtn variant="delete" onClick={() => setDeleteTargetId(work.id)} title="Xóa" />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
-              <Pagination 
-                currentPage={page} 
-                totalPages={totalPages} 
-                onPageChange={(p) => setPage(p)} 
-              />
-            </div>
-          )}
-        </div>
-      )}
+      <AdminTable 
+        title="Quản Lý Bài Nộp Học Viên"
+        columns={columns}
+        data={works}
+        loading={loading}
+        filters={filterTabs}
+        customActions={customActions}
+        serverSidePagination={true}
+        totalItems={counts[filter] || 0}
+        totalPages={totalPages}
+        currentPage={page}
+        onPageChange={(p) => setPage(p)}
+        onCreate={() => openModal()}
+      />
 
       {/* Detail & Image Preview Modal */}
       {previewWork && (

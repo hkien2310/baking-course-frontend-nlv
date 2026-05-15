@@ -109,6 +109,13 @@
     "cookingClass": "Cooking Class",
     "loadingClasses": "Loading classes...",
     "submit": "Submit",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "changePasswordBtn": "Update Password",
+    "passwordTooShort": "Password must be at least 6 characters long.",
+    "passwordMismatch": "Confirm password does not match.",
+    "passwordChangedSuccess": "Password changed successfully!",
     "selectOption": "-- Select an option --"
   },
   "chiefs": {
@@ -317,6 +324,15 @@
       "unlock": "Unlock — {price}"
     }
   },
+  "adminDash": {
+    "tabs": {
+      "password": "Change Password"
+    },
+    "password": {
+      "title": "Change Account Password",
+      "subtitle": "You should use a strong password to protect your administrator account."
+    }
+  },
   "userDash": {
     "title": "My Account",
     "breadcrumb": "My Account",
@@ -332,7 +348,8 @@
     },
     "tabs": {
       "courses": "My Courses",
-      "orders": "Orders"
+      "orders": "Orders",
+      "password": "Change Password"
     },
     "courses": {
       "empty": "No courses yet",
@@ -369,6 +386,10 @@
     "backHome": "back to Home"
   },
   "common": {
+    "all": "All",
+    "noPosts": "No posts found",
+    "tryAgain": "Please try again with a different category or come back later.",
+    "backToAll": "Back to all",
     "optional": "Optional",
     "sending": "Sending...",
     "sendNow": "Send Now",

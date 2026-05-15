@@ -12,47 +12,8 @@ const BlogSidebar = ({ data }) => {
       .catch(() => console.error("Could not load categories in sidebar"));
   }, []);
 
-  // Assuming total posts might be given statically for now, or just remove the /112
   return (
     <aside className="col-lg-5 col-xl-4">
-      <div className="widget widget_apsc_widget">
-        <div className="apsc-icons-wrapper clearfix apsc-theme-4">
-          <div className="apsc-each-profile">
-            <a className="apsc-dribble-icon clearfix" href="#">
-              <div className="apsc-inner-block">
-                <span className="social-icon">
-                  <i className="fa fa-dribbble apsc-dribble"></i>
-                  <span className="media-name">dribble</span>
-                </span>
-                <span className="apsc-count">10,547 fans</span>
-              </div>
-            </a>
-          </div>
-          <div className="apsc-each-profile">
-            <a className="apsc-twitter-icon clearfix" href="#">
-              <div className="apsc-inner-block">
-                <span className="social-icon">
-                  <i className="fa fa-twitter apsc-twitter"></i>
-                  <span className="media-name">twitter</span>
-                </span>
-                <span className="apsc-count">572 fans</span>
-              </div>
-            </a>
-          </div>
-          <div className="apsc-each-profile">
-            <a className="apsc-google-plus-icon clearfix" href="#">
-              <div className="apsc-inner-block">
-                <span className="social-icon">
-                  <i className="apsc-google-plus fa fa-google-plus"></i>
-                  <span className="media-name">google-plus</span>
-                </span>
-                <span className="apsc-count">756 fans</span>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-
       <div className="widget widget_categories">
         <h3 className="widget-title">Categories</h3>
         <ul>
