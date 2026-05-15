@@ -16,24 +16,26 @@ const HomeAbout = () => {
 		? siteConfig.about.achievements
 		: FALLBACK_ACHIEVEMENTS;
 
-	const videoUrl = siteConfig.about?.videoUrl || 'https://www.youtube.com/embed/mcixldqDIEQ';
-	const videoCover = siteConfig.about?.videoCover || `${import.meta.env.BASE_URL}images/video-image.jpg`;
+	const videoUrl = siteConfig.about?.videoUrl || '';
+	const videoCover = siteConfig.about?.videoCover || '';
 
 	return (
 		<section className="ls ms s-pt-lg-100 s-pb-lg-75 c-my-0 video-part right-part-bg text-center text-md-left" id="about">
 			<div className="cover-image s-cover-left"></div>
 			<div className="row align-items-center">
 				<div className="col-12 col-lg-6 order-lg-1">
-					<a href={videoCover} className="photoswipe-link" data-iframe={videoUrl}>
-						<img src={videoCover} alt="YUM Saigon About Video" style={{ width: '100%', objectFit: 'cover' }} />
-						<div className="video-text">
-							<h5>
-								<span>{t('home.about.watch')}</span>
-								<span className=" iframe-link"></span>
-								<span>{t('home.about.video')}</span>
-							</h5>
-						</div>
-					</a>
+					{(videoCover || videoUrl) && (
+						<a href={videoCover} className="photoswipe-link" data-iframe={videoUrl}>
+							<img src={videoCover} alt="YUM Saigon About Video" style={{ width: '100%', objectFit: 'cover' }} />
+							<div className="video-text">
+								<h5>
+									<span>{t('home.about.watch')}</span>
+									<span className=" iframe-link"></span>
+									<span>{t('home.about.video')}</span>
+								</h5>
+							</div>
+						</a>
+					)}
 				</div>
 				<div className="col-12 col-lg-6 order-lg-2  animate" data-animation="slideInRight">
 					<div className="d-none d-lg-block divider-90"></div>
