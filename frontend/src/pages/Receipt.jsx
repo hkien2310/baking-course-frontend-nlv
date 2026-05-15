@@ -202,14 +202,6 @@ const Receipt = () => {
             .dark-link:hover {
               color: #6ab78e;
             }
-            .btn-maincolor2 {
-              color: #fff !important;
-              min-width: 250px !important;
-              border-radius: 50px !important;
-            }
-            article, a, button, img {
-              cursor: pointer;
-            }
           `}} />
 
 					<div className="d-none d-lg-block divider-40"></div>
@@ -294,7 +286,7 @@ const Receipt = () => {
                     <div className="mb-4" style={{ fontSize: '6rem', filter: 'grayscale(1)', opacity: '0.3' }}>🥨</div>
                     <h3 className="mb-3" style={{ fontWeight: '700', color: '#20252b', fontFamily: 'Playfair Display, serif' }}>{t('common.noPosts') || 'Chưa có công thức này'}</h3>
                     <p className="mb-4" style={{ color: '#808080', fontSize: '1.1rem' }}>{t('common.tryAgain') || 'Hãy thử tìm một hương vị khác nhé!'}</p>
-                    <Link to={ROUTES.RECEIPT} className="btn btn-maincolor2 px-5 py-3" style={{ background: '#6ab78e', borderColor: '#6ab78e', cursor: 'pointer' }}>
+                    <Link to={ROUTES.RECEIPT} className="btn btn-receipt-back px-5 py-3" style={{ background: '#6ab78e', borderColor: '#6ab78e', cursor: 'pointer' }}>
                       {t('common.backToAll') || 'Xem tất cả công thức'}
                     </Link>
                   </div>
@@ -323,9 +315,10 @@ const Receipt = () => {
           -webkit-box-orient: vertical;  
           overflow: hidden;
         }
-        .btn-maincolor2 {
+        .btn-receipt-back {
           color: #fff !important;
           min-width: 250px !important;
+          border-radius: 50px !important;
           text-transform: none !important;
           font-weight: 600 !important;
         }
