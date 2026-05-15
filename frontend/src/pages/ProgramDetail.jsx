@@ -4,9 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
 import PageLoading from '../components/Shared/PageLoading';
-import { getProgramBySlug, submitStudentWork, uploadImage, getMe, getApprovedStudentWorks } from '../services/api';
-import { toast } from 'react-toastify';
-import { formatPrice, formatStudentCount, calcDiscountPercent } from '../utils/formatters';
+import { getProgramBySlug, getMe, getApprovedStudentWorks } from '../services/api';
+import { formatPrice, calcDiscountPercent } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 import Input from '../components/Shared/Input';
@@ -31,14 +30,7 @@ const ProgramDetail = () => {
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedSessionId, setSelectedSessionId] = useState('');
-  const [premiumTab, setPremiumTab] = useState('videos');
-  const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [submitData, setSubmitData] = useState({ studentName: '', description: '' });
   const [currentUser, setCurrentUser] = useState(null);
-  const [currentUserName, setCurrentUserName] = useState('');
-  const [submitImage, setSubmitImage] = useState(null);
-  const [submitImagePreview, setSubmitImagePreview] = useState('');
-  const [submittingWork, setSubmittingWork] = useState(false);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('info'); // info, curriculum, studentWorks
   const [studentWorks, setStudentWorks] = useState([]);
@@ -106,11 +98,9 @@ const ProgramDetail = () => {
         setLoading(false);
       });
 
-    // Fetch current user name for auto-fill in submit modal
     getMe()
       .then(data => {
         if (data) setCurrentUser(data);
-        if (data?.fullName) setCurrentUserName(data.fullName);
       })
       .catch(() => {}); // Silent fail — user might not be logged in
   }, [slug]);
@@ -127,7 +117,7 @@ const ProgramDetail = () => {
         .catch(err => console.error("Failed to fetch student works", err))
         .finally(() => setLoadingWorks(false));
     }
-  }, [program?.id]);
+  }, [program]);
 
   const loadMoreStudentWorks = async () => {
     if (!program || !program.id || loadingMoreWorks) return;
@@ -201,7 +191,6 @@ const ProgramDetail = () => {
       );
     }
     if (program.price && program.price > 0) {
-      const buyPrice = program.salePrice && program.price > program.salePrice ? program.salePrice : program.price;
       return (
         <button 
           className="btn-enroll" 

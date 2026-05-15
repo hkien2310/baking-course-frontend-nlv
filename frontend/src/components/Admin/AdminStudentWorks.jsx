@@ -122,6 +122,91 @@ const AdminStudentWorks = () => {
       default: return { className: 'bg-warning text-dark', label: 'Chờ duyệt' };
     }
   };
+  const columns = [
+    { label: 'Hình ảnh', render: work => (
+      <div 
+        style={{ 
+          width: '80px', 
+          height: '60px', 
+          borderRadius: '6px', 
+          overflow: 'hidden',
+          backgroundColor: '#f8f9fa',
+          cursor: 'pointer'
+        }}
+        onClick={() => setPreviewWork(work)}
+        title="Nhấn để xem chi tiết"
+      >
+        <img 
+          src={imageUrl(work.imageUrl)} 
+          alt={work.studentName} 
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+        />
+      </div>
+    )},
+    { label: 'Học viên', render: work => <span style={{ fontWeight: '600' }}>{work.studentName}</span> },
+    { label: 'Khóa học', render: work => <span style={{ color: '#555' }}>{work.program?.title}</span> },
+    { label: 'Mô tả', render: work => (
+      <div 
+        style={{ cursor: 'pointer', maxWidth: '250px' }} 
+        onClick={() => setPreviewWork(work)}
+        title="Nhấn để xem toàn bộ nội dung"
+      >
+        <p style={{ 
+          margin: 0, 
+          fontSize: '13px', 
+          color: '#666',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
+        }}>
+          {work.description}
+        </p>
+      </div>
+    )},
+    { label: 'Ngày nộp', render: work => <small style={{ color: '#88929e' }}>{new Date(work.createdAt).toLocaleDateString('vi-VN')}</small> },
+    { label: 'Trạng thái', render: work => (
+      <span className={`badge ${statusBadge(work.status).className}`} style={{ fontSize: '11px' }}>
+        {statusBadge(work.status).label}
+      </span>
+    )}
+  ];
+
+  const customActions = (work) => (
+    <>
+      <AdminActionBtn variant="edit" onClick={() => openModal(work)} title="Sửa" />
+      {work.status === 'PENDING' && (
+        <>
+          <AdminActionBtn variant="approve" onClick={() => handleApprove(work.id)} title="Duyệt" />
+          <AdminActionBtn variant="reject" onClick={() => handleReject(work.id)} title="Từ chối" />
+        </>
+      )}
+      {work.status === 'REJECTED' && (
+        <AdminActionBtn variant="approve" onClick={() => handleApprove(work.id)} title="Duyệt lại" />
+      )}
+      {work.status === 'APPROVED' && (
+        <AdminActionBtn variant="hide" onClick={() => handleReject(work.id)} title="Ẩn" />
+      )}
+      <AdminActionBtn variant="delete" onClick={() => setDeleteTargetId(work.id)} title="Xóa" />
+    </>
+  );
+
+  const filterTabs = (
+    <div className="d-flex" style={{ gap: '8px', flexWrap: 'wrap' }}>
+      {Object.entries(counts).map(([key, count]) => (
+        <AdminButton
+          key={key}
+          variant={filter === key ? 'dark' : 'secondary'}
+          outline={filter !== key}
+          size="sm"
+          onClick={() => { setFilter(key); setPage(1); }}
+          style={{ borderRadius: '20px', padding: '6px 16px' }}
+          label={`${key === 'ALL' ? 'Tất cả' : statusBadge(key).label} (${count})`}
+        />
+      ))}
+    </div>
+  );
+
 
   if (loading) return <AdminLoadingBlock rows={4} />;
 
