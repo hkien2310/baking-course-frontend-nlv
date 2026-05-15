@@ -215,7 +215,7 @@ const Receipt = () => {
 					<div className="d-none d-lg-block divider-40"></div>
 
           {/* Featured Posts Skeleton or Content */}
-          {!categoryFilter && (
+          {!categoryFilter && (posts.length > 0 || loading) && (featuredPosts.length > 0 || featuredLoading) && (
             <div className="row c-mb-60 c-mb-lg-30 mb-5">
               <div className="col-lg-12 blog-featured-posts">
                 <h3 className="text-center featured-title mb-5" style={{ fontWeight: '800', fontSize: '2.5rem', fontFamily: 'Playfair Display, serif', color: '#20252b' }}>
