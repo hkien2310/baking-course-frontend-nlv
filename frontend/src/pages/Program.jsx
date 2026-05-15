@@ -17,6 +17,7 @@ const Program = () => {
   const { t } = useTranslation();
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isFilterOpen, setFilterOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -123,12 +124,23 @@ const Program = () => {
         breadcrumbs={[{ label: t('header.home'), link: '/' }, { label: t('header.programs') || 'Khóa Học' }]} 
       />
 
-			<section className="ls s-pt-90 s-pb-40 s-py-lg-100 c-gutter-30 c-mb-50 c-mb-md-30 program program-page overflow-visible">
+			<section className={`ls s-pt-90 s-pb-40 s-py-lg-100 c-gutter-30 c-mb-50 c-mb-md-30 program program-page overflow-visible ${isFilterOpen ? 'filter-open-zindex' : ''}`}>
 				<div className="container">
 					<div className="row">
             
             {/* SIDEBAR FILTER */}
-            <aside className="col-lg-3 order-lg-1">
+            <aside className={`col-lg-3 order-lg-1 ${isFilterOpen ? 'open' : ''}`}>
+              {/* Mobile Drawer Backdrop */}
+              {isFilterOpen && (
+                <div 
+                  className="filter-backdrop d-lg-none" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFilterOpen(false);
+                  }}
+                ></div>
+              )}
+
               <div className="sidebar-filter">
                 {/* Search Widget */}
                 <div className="widget">
@@ -186,7 +198,10 @@ const Program = () => {
                   </div>
                 </div>
                 
-                <button className="btn-apply-filter mt-3" onClick={applyFilters}>
+                <button className="btn-apply-filter mt-3" onClick={() => {
+                  applyFilters();
+                  setFilterOpen(false);
+                }}>
                   Áp dụng bộ lọc
                 </button>
               </div>
@@ -194,6 +209,19 @@ const Program = () => {
 
             {/* MAIN CONTENT */}
             <main className="col-lg-9 order-lg-2">
+              <div className="d-flex justify-content-end mb-4 d-lg-none">
+                <button 
+                  className="mobile-filter-trigger" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setFilterOpen(true);
+                  }}
+                  type="button"
+                >
+                  <i className="fa fa-filter"></i> Lọc Khóa Học
+                </button>
+              </div>
               {loading ? (
                 <PageLoading compact />
               ) : (

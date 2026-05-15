@@ -53,12 +53,14 @@
 .program-page .category-list::-webkit-scrollbar {
   width: 4px;
 }
+
 .program-page .category-list::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
   border-radius: 4px;
 }
+
 .program-page .category-list::-webkit-scrollbar-thumb {
-  background: #ddd; 
+  background: #ddd;
   border-radius: 4px;
 }
 
@@ -127,6 +129,7 @@
   background: #f0f0f0;
   outline: none;
 }
+
 .program-page input[type="range"]::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
@@ -184,3 +187,111 @@
   color: #fff;
 }
 
+/* ─── MOBILE DRAWER STYLES ─── */
+@media (max-width: 991px) {
+  .program-page {
+    overflow: visible !important;
+  }
+
+  .program-page.filter-open-zindex {
+    position: relative !important;
+    z-index: 9999999 !important;
+  }
+
+  /* Force header to stay above the filter drawer */
+  .page_header, .header_absolute {
+    z-index: 99999999 !important;
+  }
+
+  .program-page aside {
+    position: fixed !important;
+    top: 0 !important;
+    left: -100%;
+    visibility: hidden;
+    bottom: 0 !important;
+    width: 320px !important;
+    max-width: 85vw !important;
+    background: #fff !important;
+    z-index: 1000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: left 0.3s ease-out, visibility 0.3s;
+    overflow-y: auto;
+    box-shadow: 15px 0 50px rgba(0, 0, 0, 0.15);
+    display: block !important;
+  }
+
+  .program-page aside.open {
+    left: 0 !important;
+    visibility: visible;
+  }
+
+  .program-page .sidebar-filter {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    padding: 30px 25px 80px;
+  }
+
+  /* Prevent theme from injecting massive margin-top into aside children */
+  .program-page aside>*+* {
+    /* margin-top: 0 !important; */
+  }
+
+  .filter-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: -1;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Inline Toggle Button (Mobile) */
+  .mobile-filter-trigger {
+    background: #e74c3c;
+    color: #fff !important;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer !important;
+    user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    transition: transform 0.1s;
+  }
+
+  .mobile-filter-trigger:active {
+    transform: scale(0.95);
+  }
+}
+
+@media (min-width: 992px) {
+
+  .mobile-filter-trigger,
+  .filter-backdrop {
+    display: none !important;
+  }
+}

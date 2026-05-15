@@ -76,6 +76,13 @@ const Header = () => {
                   <li className={location.pathname === "/contact" ? "active" : ""}>
                     <Link to={ROUTES.CONTACT}>{t('header.contacts')}</Link>
                   </li>
+                  <li className="d-lg-none">
+                    {hasToken ? (
+                      <Link to={localStorage.getItem('role') === 'ADMIN' ? ROUTES.ADMIN : ROUTES.MY_ACCOUNT}>{t('userDash.title') || 'Tài khoản'}</Link>
+                    ) : (
+                      <Link to={ROUTES.AUTH}>{t('header.cta')}</Link>
+                    )}
+                  </li>
                 </ul>
               </nav>
             </div>
