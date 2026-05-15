@@ -305,13 +305,19 @@ function initPhotoSwipe() {
 				pswpGallery.listen('afterChange', function() {
 					$(pswpGallery.container).find('iframe').each(function() {
 						//"method":"pause" - form Vimeo, other - for YouTube
-						$(this)[0].contentWindow.postMessage('{"method":"pause","event":"command","func":"pauseVideo","args":""}', '*')
+						$(this)[0].contentWindow.postMessage('{"method":"pause","event":"command","func":"pauseVideo","args":""}', '*');
+						// Force stop for Google Drive
+						var currentSrc = $(this).attr('src');
+						if (currentSrc && currentSrc.indexOf('drive.google.com') !== -1) {
+							$(this).attr('src', currentSrc);
+						}
 					});
 				});
 				pswpGallery.listen('close', function() {
 					$(pswpGallery.container).find('iframe').each(function() {
-						//"method":"pause" - form Vimeo, other - for YouTube
-						$(this)[0].contentWindow.postMessage('{"method":"pause","event":"command","func":"pauseVideo","args":""}', '*')
+						$(this)[0].contentWindow.postMessage('{"method":"pause","event":"command","func":"pauseVideo","args":""}', '*');
+						// Clear src to stop any playing video
+						$(this).attr('src', '');
 					});
 				});
 
