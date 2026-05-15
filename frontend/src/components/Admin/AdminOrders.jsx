@@ -6,6 +6,7 @@ import { formatPrice, getOrderStatusBadge } from '../../utils/formatters';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminButton from './Shared/AdminButton';
 import AdminActionBtn from './Shared/AdminActionBtn';
+import AdminHeader from './Shared/AdminHeader';
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -100,10 +101,10 @@ const AdminOrders = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <div className="admin-content-header">
-        <h2>Quản Lý Đơn Hàng</h2>
-        <p style={{ color: '#88929e' }}>Kiểm tra và quản lý thanh toán Premium Content</p>
-      </div>
+      <AdminHeader 
+        title="Quản Lý Đơn Hàng" 
+        description="Kiểm tra và quản lý thanh toán Premium Content" 
+      />
 
       {/* Filter Tabs */}
       <div className="d-flex mb-4" style={{ gap: '8px', flexWrap: 'wrap' }}>

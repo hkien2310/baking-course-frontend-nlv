@@ -6,6 +6,7 @@ import { AdminInput, AdminTextarea } from './Shared/AdminFormControls';
 import { getTestimonials, createTestimonial, updateTestimonial, deleteTestimonial } from '../../services/api';
 import { toast } from 'react-toastify';
 import usePendingAction from './usePendingAction';
+import AdminHeader from './Shared/AdminHeader';
 
 const AdminTestimonials = () => {
   const [data, setData] = useState([]);
@@ -103,9 +104,13 @@ const AdminTestimonials = () => {
 
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <AdminHeader 
+        title="Quản lý Đánh Giá" 
+        description="Quản lý các đánh giá từ học viên" 
+        action={<AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={() => openModal()} />} 
+      />
       <AdminTable 
-        title={<span><i className="fa fa-quote-left mr-2"></i> Quản lý Đánh Giá (Testimonials)</span>}
         columns={columns} 
         data={data} 
         loading={loading} 
@@ -115,7 +120,6 @@ const AdminTestimonials = () => {
         deleteConfirmTitle="Xóa đánh giá"
         deleteConfirmMessage="Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác."
         emptyMessage="Chưa có đánh giá nào. Thêm một số đánh giá để hiển thị trên trang chủ!"
-        onCreate={() => openModal()}
       />
 
       <AdminModal 

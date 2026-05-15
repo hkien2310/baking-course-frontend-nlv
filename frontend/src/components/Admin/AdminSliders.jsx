@@ -5,6 +5,7 @@ import AdminLoadingBlock from './AdminLoadingBlock';
 import Pagination from '../Shared/Pagination';
 import usePendingAction from './usePendingAction';
 import { formatPrice } from '../../utils/formatters';
+import AdminHeader from './Shared/AdminHeader';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -72,6 +73,10 @@ const AdminSliders = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <AdminHeader 
+        title="Quản lý Slider" 
+        description="Chọn các khóa học nổi bật hiển thị trên Slider trang chủ" 
+      />
       {/* FEATURED SECTION */}
       <div className="slider-featured-section" style={{ flexShrink: 0 }}>
         <div className="slider-section-header">

@@ -7,6 +7,7 @@ import AdminButton from './Shared/AdminButton';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminActionBtn from './Shared/AdminActionBtn';
 import usePendingAction from './usePendingAction';
+import AdminHeader from './Shared/AdminHeader';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -129,8 +130,13 @@ const AdminCategories = () => {
     }
   };
   return (
-    <div className="admin-categories-page">
-      <div className="admin-tabs">
+    <div className="admin-categories-page" style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <AdminHeader 
+        title="Quản lý Danh Mục" 
+        description="Quản lý danh mục khóa học và bài viết" 
+        action={<AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={() => setIsModalOpen(true)} />} 
+      />
+      <div className="admin-tabs" style={{ marginBottom: '16px' }}>
         <button 
           type="button"
           className={`admin-tab-btn ${activeTab === 'PROGRAM' ? 'active' : ''}`}
@@ -147,12 +153,7 @@ const AdminCategories = () => {
         </button>
       </div>
 
-      <div className="admin-paper fade-in">
-        <div className="admin-paper-header">
-          <h4>{activeTab === 'PROGRAM' ? "Danh mục Khóa học" : "Danh mục Bài viết"}</h4>
-          <AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={() => setIsModalOpen(true)} />
-        </div>
-
+      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         {loading ? (
           <AdminLoadingBlock compact />
         ) : (

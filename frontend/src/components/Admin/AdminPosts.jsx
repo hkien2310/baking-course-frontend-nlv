@@ -7,6 +7,8 @@ import { getPosts, deletePost } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import usePendingAction from './usePendingAction';
+import AdminHeader from './Shared/AdminHeader';
+import AdminButton from './Shared/AdminButton';
 
 const AdminPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -56,12 +58,15 @@ const AdminPosts = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <AdminTable 
+      <AdminHeader 
         title="Quản lý Bài viết & Công thức" 
+        description="Quản lý các bài viết, tin tức, và công thức làm bánh" 
+        action={<AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={handleOpenCreate} />} 
+      />
+      <AdminTable 
         columns={columns} 
         data={posts} 
         loading={loading}
-        onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}
         deletingId={posts.find((item) => isPending(`delete-${item.id}`))?.id || null}

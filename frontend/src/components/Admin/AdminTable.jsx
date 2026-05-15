@@ -17,12 +17,14 @@ const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPer
 
   return (
     <div className="admin-paper fade-in">
-      <div className="admin-paper-header">
-        <h4>{title}</h4>
-        {onCreate && (
-          <AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={onCreate} />
-        )}
-      </div>
+      {(title || onCreate) && (
+        <div className="admin-paper-header">
+          {title && <h4>{title}</h4>}
+          {onCreate && (
+            <AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={onCreate} />
+          )}
+        </div>
+      )}
 
       {loading ? (
         <AdminLoadingBlock compact />

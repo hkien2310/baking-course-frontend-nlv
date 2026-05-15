@@ -6,6 +6,8 @@ import { getPrograms, deleteProgram } from '../../services/api';
 import { ROUTES } from '../../constants/routes';
 import { formatPrice } from '../../utils/formatters';
 import usePendingAction from './usePendingAction';
+import AdminHeader from './Shared/AdminHeader';
+import AdminButton from './Shared/AdminButton';
 
 const AdminPrograms = () => {
   const [programs, setPrograms] = useState([]);
@@ -75,12 +77,15 @@ const AdminPrograms = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <AdminTable 
+      <AdminHeader 
         title="Quản lý Khóa học" 
+        description="Danh sách các khóa học trên hệ thống" 
+        action={<AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={handleOpenCreate} />} 
+      />
+      <AdminTable 
         columns={columns} 
         data={programs} 
         loading={loading}
-        onCreate={handleOpenCreate}
         onEdit={handleOpenEdit}
         onDelete={handleDelete}
         deletingId={programs.find((item) => isPending(`delete-${item.id}`))?.id || null}

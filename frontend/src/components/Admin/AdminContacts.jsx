@@ -8,6 +8,7 @@ import AdminLoadingBlock from './AdminLoadingBlock';
 import Pagination from '../Shared/Pagination';
 import { getContacts, deleteContact } from '../../services/api';
 import usePendingAction from './usePendingAction';
+import AdminHeader from './Shared/AdminHeader';
 
 const AdminContacts = () => {
   const [contacts, setContacts] = useState([]);
@@ -52,9 +53,10 @@ const AdminContacts = () => {
   if (loading) return (
     <>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexShrink: 0 }}>
-        <h3 className="mb-0">Tin nhắn Liên hệ</h3>
-      </div>
+      <AdminHeader 
+        title="Tin nhắn Liên hệ" 
+        description="Quản lý và phản hồi các liên hệ từ khách hàng" 
+      />
       <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <AdminLoadingBlock compact rows={5} />
       </div>
@@ -70,9 +72,10 @@ const AdminContacts = () => {
   return (
     <>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexShrink: 0 }}>
-        <h3 className="mb-0">Tin nhắn Liên hệ</h3>
-      </div>
+      <AdminHeader 
+        title="Tin nhắn Liên hệ" 
+        description="Quản lý và phản hồi các liên hệ từ khách hàng" 
+      />
       <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
         <div className="table-responsive">
           <table className="admin-table">

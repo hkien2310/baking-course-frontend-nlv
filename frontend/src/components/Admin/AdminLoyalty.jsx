@@ -11,6 +11,7 @@ import {
   getPromoCodes, createPromoCode, updatePromoCode, deletePromoCode
 } from '../../services/api';
 import { formatPrice } from '../../utils/formatters';
+import AdminHeader from './Shared/AdminHeader';
 
 const DISCOUNT_TYPE_LABELS = {
   PROMO: { icon: 'fa-tag', label: 'Mã giảm giá' },
@@ -164,7 +165,11 @@ const AdminLoyalty = () => {
   if (loading) return <AdminLoadingBlock rows={4} />;
 
   return (
-    <div className="admin-loyalty-page">
+    <div className="admin-loyalty-page" style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <AdminHeader 
+        title="Thành viên & Khuyến mãi" 
+        description="Cấu hình hạng thành viên, điểm thưởng và mã giảm giá" 
+      />
       {/* Tabs — reuse admin-tabs from admin.css */}
       <div className="admin-tabs">
         {[['tiers','fa-trophy','Hạng TV'],['mode','fa-sliders','Chế độ'],['points','fa-star','Điểm'],['promos','fa-tag','Mã giảm giá']].map(([key, icon, label]) => (

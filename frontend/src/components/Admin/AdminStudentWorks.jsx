@@ -12,6 +12,7 @@ import AdminButton from './Shared/AdminButton';
 import AdminConfirmModal from './AdminConfirmModal';
 import AdminModal from './AdminModal';
 import AdminImageUpload from './AdminImageUpload';
+import AdminHeader from './Shared/AdminHeader';
 
 const AdminStudentWorks = () => {
   const [works, setWorks] = useState([]);
@@ -127,13 +128,11 @@ const AdminStudentWorks = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <div className="admin-content-header d-flex justify-content-between align-items-center">
-        <div>
-          <h2>Sản Phẩm Học Viên</h2>
-          <p style={{ color: '#88929e' }}>Duyệt và quản lý bài nộp từ học viên</p>
-        </div>
-        <AdminButton variant="primary" onClick={() => openModal()} label="Thêm sản phẩm" icon="fa-plus" />
-      </div>
+      <AdminHeader 
+        title="Sản Phẩm Học Viên" 
+        description="Duyệt và quản lý bài nộp từ học viên" 
+        action={<AdminButton variant="primary" onClick={() => openModal()} label="Thêm sản phẩm" icon="plus" />} 
+      />
 
       {/* Filter Tabs */}
       <div className="d-flex mb-4" style={{ gap: '8px', flexWrap: 'wrap' }}>

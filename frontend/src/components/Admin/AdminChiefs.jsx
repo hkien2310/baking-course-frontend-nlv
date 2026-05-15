@@ -7,6 +7,7 @@ import { AdminInput, AdminTextarea } from './Shared/AdminFormControls';
 import { getChiefs, createChief, updateChief, deleteChief } from '../../services/api';
 import { toast } from 'react-toastify';
 import usePendingAction from './usePendingAction';
+import AdminHeader from './Shared/AdminHeader';
 
 const EMPTY_FORM = {
   name: '', role: '', image: '',
@@ -95,9 +96,13 @@ const AdminChiefs = () => {
 
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
+      <AdminHeader 
+        title="Quản lý Giảng Viên" 
+        description="Quản lý đội ngũ giảng viên và chuyên gia" 
+        action={<AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={() => openModal()} />} 
+      />
       <AdminTable 
-        title={<span><i className="fa fa-users mr-2"></i> Quản lý Giảng Viên</span>}
         columns={columns} 
         data={data} 
         loading={loading} 
@@ -107,7 +112,6 @@ const AdminChiefs = () => {
         deleteConfirmTitle="Xóa giảng viên"
         deleteConfirmMessage="Bạn có chắc chắn muốn xóa giảng viên này không? Hành động này không thể hoàn tác."
         emptyMessage="Chưa có giảng viên nào." 
-        onCreate={() => openModal()}
       />
 
       <AdminModal isOpen={modal.isOpen} onClose={closeModal} title={modal.item ? 'Sửa Giảng Viên' : 'Thêm Giảng Viên'}>

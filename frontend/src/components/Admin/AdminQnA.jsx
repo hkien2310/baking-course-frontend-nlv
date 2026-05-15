@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminButton from './Shared/AdminButton';
 import Pagination from '../Shared/Pagination';
+import AdminHeader from './Shared/AdminHeader';
 
 const AdminQnA = () => {
   const [questions, setQuestions] = useState([]);
@@ -113,10 +114,10 @@ const AdminQnA = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <div className="admin-content-header">
-        <h2>Quản Lý Hỏi Đáp (Q&A)</h2>
-        <p style={{ color: '#88929e' }}>Trả lời câu hỏi của học viên trong các khoá học.</p>
-      </div>
+      <AdminHeader 
+        title="Hỏi Đáp (Q&A)" 
+        description="Trả lời câu hỏi của học viên trong các khóa học" 
+      />
 
       <div className="d-flex mb-4 align-items-center" style={{ gap: '15px', flexWrap: 'wrap' }}>
         <select 

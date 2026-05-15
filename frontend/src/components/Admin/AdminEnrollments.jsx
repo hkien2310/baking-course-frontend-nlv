@@ -5,6 +5,7 @@ import AdminButton from './Shared/AdminButton';
 import { getEnrollments, updateEnrollmentStatus, deleteEnrollment } from '../../services/api';
 import AdminPageShell from './AdminPageShell';
 import usePendingAction from './usePendingAction';
+import AdminHeader from './Shared/AdminHeader';
 
 const AdminEnrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -58,9 +59,10 @@ const AdminEnrollments = () => {
   return (
     <>
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h3 className="mb-0">Danh sách Ghi danh</h3>
-      </div>
+      <AdminHeader 
+        title="Danh sách Ghi danh" 
+        description="Quản lý thông tin học viên đăng ký khóa học" 
+      />
       
       <div className="admin-paper">
         <table className="admin-table">
