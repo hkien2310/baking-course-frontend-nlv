@@ -5,7 +5,7 @@ import AdminModal from './AdminModal';
 import AdminButton from './Shared/AdminButton';
 import AdminActionBtn from './Shared/AdminActionBtn';
 import AdminLoadingBlock from './AdminLoadingBlock';
-import AdminTable from './AdminTable';
+import Pagination from '../Shared/Pagination';
 import { getContacts, deleteContact } from '../../services/api';
 import usePendingAction from './usePendingAction';
 
@@ -62,66 +62,76 @@ const AdminContacts = () => {
     </>
   );
 
-  const columns = [
-    { 
-      label: 'Ngày', 
-      render: contact => (
-        <span style={{ whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
-          {new Date(contact.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-        </span>
-      ) 
-    },
-    { 
-      label: 'Khách hàng', 
-      render: contact => (
-        <div>
-          <div style={{ fontWeight: 600, color: 'var(--admin-primary)' }}>{contact.fullName}</div>
-          <div style={{ fontSize: '13px', color: 'var(--admin-text-muted)' }}>{contact.email}</div>
-        </div>
-      ) 
-    },
-    { 
-      label: 'Chủ đề', 
-      render: contact => <span style={{ fontWeight: 500 }}>{contact.subject || 'Không có chủ đề'}</span> 
-    },
-    { 
-      label: 'Nội dung', 
-      render: contact => (
-        <div style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
-          {contact.message}
-        </div>
-      ) 
-    }
-  ];
-
-  const customActions = (contact) => (
-    <>
-      <AdminActionBtn 
-        variant="view" 
-        onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }} 
-        title="Xem chi tiết" 
-      />
-      <AdminActionBtn 
-        variant="delete" 
-        onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }} 
-        title="Xóa" 
-        loading={isPending(`delete-${contact.id}`)} 
-        disabled={isPending(`delete-${contact.id}`)}
-      />
-    </>
-  );
+  const totalPages = Math.ceil(contacts.length / itemsPerPage) || 1;
+  const safePage = Math.min(currentPage, totalPages);
+  const startIndex = (safePage - 1) * itemsPerPage;
+  const paginatedContacts = contacts.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
-      <AdminTable 
-        title="Tin nhắn Liên hệ"
-        columns={columns}
-        data={contacts}
-        loading={loading}
-        customActions={customActions}
-        onRowClick={(contact) => setSelectedContact(contact)}
-      />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexShrink: 0 }}>
+        <h3 className="mb-0">Tin nhắn Liên hệ</h3>
+      </div>
+      <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+        <div className="table-responsive">
+          <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Ngày</th>
+              <th>Khách hàng</th>
+              <th>Chủ đề</th>
+              <th>Nội dung</th>
+              <th className="text-right">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedContacts.length === 0 ? (
+              <tr><td colSpan="5" className="text-center">Chưa có tin nhắn nào</td></tr>
+            ) : (
+              paginatedContacts.map(contact => (
+                <tr key={contact.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedContact(contact)}>
+                  <td style={{ whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
+                    {new Date(contact.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 600, color: 'var(--admin-primary)' }}>{contact.fullName}</div>
+                    <div style={{ fontSize: '13px', color: 'var(--admin-text-muted)' }}>{contact.email}</div>
+                  </td>
+                  <td style={{ fontWeight: 500 }}>{contact.subject || 'Không có chủ đề'}</td>
+                  <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--admin-text-muted)' }}>
+                    {contact.message}
+                  </td>
+                  <td className="text-right d-flex justify-content-end">
+                    <AdminActionBtn 
+                      variant="view" 
+                      onClick={(e) => { e.stopPropagation(); setSelectedContact(contact); }} 
+                      title="Xem chi tiết" 
+                    />
+                    <AdminActionBtn 
+                      variant="delete" 
+                      onClick={(e) => { e.stopPropagation(); setDeleteTargetId(contact.id); }} 
+                      title="Xóa" 
+                      loading={isPending(`delete-${contact.id}`)} 
+                      disabled={isPending(`delete-${contact.id}`)}
+                    />
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+        </div>
+        {totalPages > 1 && (
+          <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
+            <Pagination 
+              currentPage={safePage} 
+              totalPages={totalPages} 
+              onPageChange={(p) => setCurrentPage(p)} 
+            />
+          </div>
+        )}
+      </div>
     </div>
 
     {/* Message Detail Modal */}

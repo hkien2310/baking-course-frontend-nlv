@@ -5,64 +5,24 @@ import AdminButton from './Shared/AdminButton';
 import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminActionBtn from './Shared/AdminActionBtn';
 
-const AdminTable = ({ 
-  columns, 
-  data, 
-  onEdit, 
-  onDelete, 
-  title, 
-  onCreate, 
-  itemsPerPage = 10, 
-  loading = false, 
-  deletingId = null, 
-  deleteConfirmTitle = 'Xác nhận Xóa', 
-  deleteConfirmMessage = 'Bạn có chắc chắn muốn xóa mục này? Hành động này không thể hoàn tác.',
-  filters = null,
-  serverSidePagination = false,
-  totalItems = 0,
-  totalPages: serverTotalPages = 1,
-  currentPage: serverCurrentPage = 1,
-  onPageChange: serverOnPageChange = null,
-  customActions = null,
-  onRowClick = null
-}) => {
-  const [localCurrentPage, setLocalCurrentPage] = useState(1);
+const AdminTable = ({ columns, data, onEdit, onDelete, title, onCreate, itemsPerPage = 10, loading = false, deletingId = null, deleteConfirmTitle = 'Xác nhận Xóa', deleteConfirmMessage = 'Bạn có chắc chắn muốn xóa mục này? Hành động này không thể hoàn tác.' }) => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const isServer = serverSidePagination;
-
-  // Pagination Logic
-  const totalPages = isServer ? serverTotalPages : Math.ceil(data.length / itemsPerPage);
-  const currentPage = isServer ? serverCurrentPage : localCurrentPage;
+  const totalPages = Math.ceil(data.length / itemsPerPage);
   const safePage = Math.min(currentPage, Math.max(1, totalPages));
   
   const startIndex = (safePage - 1) * itemsPerPage;
-  const paginatedData = isServer 
-    ? data 
-    : (Array.isArray(data) ? data.slice(startIndex, startIndex + itemsPerPage) : []);
-
-  const handlePageChange = (page) => {
-    if (isServer && serverOnPageChange) {
-      serverOnPageChange(page);
-    } else {
-      setLocalCurrentPage(page);
-    }
-  };
+  const paginatedData = Array.isArray(data) ? data.slice(startIndex, startIndex + itemsPerPage) : [];
 
   return (
-    <div className="admin-paper fade-in" style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, overflow: 'hidden' }}>
+    <div className="admin-paper fade-in">
       <div className="admin-paper-header">
         <h4>{title}</h4>
         {onCreate && (
           <AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={onCreate} />
         )}
       </div>
-
-      {filters && (
-        <div className="admin-table-filters px-4 pt-3 pb-2 border-bottom">
-          {filters}
-        </div>
-      )}
 
       {loading ? (
         <AdminLoadingBlock compact />
@@ -87,11 +47,7 @@ const AdminTable = ({
                   </tr>
                 ) : (
                   paginatedData.map((row) => (
-                    <tr 
-                      key={row.id} 
-                      onClick={onRowClick ? () => onRowClick(row) : undefined}
-                      style={onRowClick ? { cursor: 'pointer' } : undefined}
-                    >
+                    <tr key={row.id}>
                       {columns.map(col => (
                         <td key={col.key || col.label}>
                           {col.render ? col.render(row) : row[col.key]}
@@ -99,26 +55,22 @@ const AdminTable = ({
                       ))}
                       <td className="text-center">
                         <div className="d-flex justify-content-center" style={{ gap: '4px' }}>
-                          {customActions ? customActions(row) : (
-                            <>
-                              {onEdit && (
-                                <AdminActionBtn 
-                                  variant="edit" 
-                                  onClick={() => onEdit(row)} 
-                                  title="Sửa" 
-                                  disabled={deletingId === row.id} 
-                                />
-                              )}
-                              {onDelete && (
-                                <AdminActionBtn 
-                                  variant="delete" 
-                                  onClick={() => setDeleteTarget(row)} 
-                                  title="Xóa" 
-                                  disabled={deletingId === row.id}
-                                  loading={deletingId === row.id} 
-                                />
-                              )}
-                            </>
+                          {onEdit && (
+                            <AdminActionBtn 
+                              variant="edit" 
+                              onClick={() => onEdit(row)} 
+                              title="Sửa" 
+                              disabled={deletingId === row.id} 
+                            />
+                          )}
+                          {onDelete && (
+                            <AdminActionBtn 
+                              variant="delete" 
+                              onClick={() => setDeleteTarget(row)} 
+                              title="Xóa" 
+                              disabled={deletingId === row.id}
+                              loading={deletingId === row.id} 
+                            />
                           )}
                         </div>
                       </td>
@@ -129,15 +81,13 @@ const AdminTable = ({
             </table>
           </div>
 
-          {(totalPages > 1 || (isServer && totalItems > 0)) && (
-            <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
-              <Pagination 
-                currentPage={safePage} 
-                totalPages={totalPages} 
-                onPageChange={handlePageChange} 
-              />
-            </div>
-          )}
+          <div className="admin-pagination-wrapper pt-4 pb-2" style={{ borderTop: '1px solid var(--admin-border-subtle)' }}>
+            <Pagination 
+              currentPage={safePage} 
+              totalPages={totalPages} 
+              onPageChange={(page) => setCurrentPage(page)} 
+            />
+          </div>
         </>
       )}
 
