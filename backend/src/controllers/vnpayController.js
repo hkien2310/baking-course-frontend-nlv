@@ -47,17 +47,8 @@ exports.createPaymentUrl = async (req, res) => {
       || req.connection?.remoteAddress
       || req.socket?.remoteAddress
       || '127.0.0.1';
-    // VNPay strictly requires IPv4 format. Node.js might return IPv6 (e.g., ::1 or ::ffff:192.168.1.1)
-    let rawIp = ipAddress.split(',')[0].trim();
-    let clientIp = '127.0.0.1'; // Default fallback
-    
-    // Extract IPv4 if it's embedded in IPv6 (like ::ffff:192.168.1.1)
-    if (rawIp.includes('::ffff:')) {
-      clientIp = rawIp.split('::ffff:')[1];
-    } else if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(rawIp)) {
-      clientIp = rawIp; // Valid IPv4
-    }
-    // If it's pure IPv6 like ::1, we safely stick with the 127.0.0.1 fallback
+    // Take first IP if multiple (x-forwarded-for can be comma-separated)
+    const clientIp = ipAddress.split(',')[0].trim();
 
     // Create payment URL
     const { paymentUrl, txnRef, expireDate } = vnpayService.createPaymentUrl(
