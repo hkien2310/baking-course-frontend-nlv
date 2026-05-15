@@ -258,14 +258,16 @@ function initPhotoSwipe() {
 					}
 					//video or image
 					if ($this.data('iframe')) {
-						//for wordpress - iframe tag is escaped
-						//item.html = $this.data('iframe').replace(/&amp/g, '&').replace(/$lt;/g, '<').replace(/&gt;/g, '>').replace(/$quot;/g, '"');
-						//for html - building iframe manually
-						//autoplay only if 1 iframe in gallery
+						var iframeSrc = $this.data('iframe');
+						var isYoutube = iframeSrc.indexOf('youtube.com') !== -1 || iframeSrc.indexOf('youtu.be') !== -1;
 						var autoplay = ( $links.length > 1 ) ? '' : '&autoplay=1';
-						item.html = '<div class="embed-responsive embed-responsive-16by9">';
-						// item.html += '<iframe class="embed-responsive-item" src="'+ $(this).data('iframe') + '?rel=0&autoplay=1'+ '"></iframe>';
-						item.html += '<iframe class="embed-responsive-item" src="' + $(this).data('iframe') + '?rel=0' + autoplay + '&enablejsapi=1&api=1"></iframe>';
+						var finalSrc = iframeSrc;
+						if (isYoutube) {
+							finalSrc += (iframeSrc.indexOf('?') === -1 ? '?' : '&') + 'rel=0' + autoplay + '&enablejsapi=1&api=1';
+						}
+						
+						item.html = '<div class="embed-responsive embed-responsive-16by9" style="background: url(/img/photoswipe/preloader.gif) center center no-repeat; background-color: #000;">';
+						item.html += '<iframe class="embed-responsive-item" src="' + finalSrc + '" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen"></iframe>';
 						item.html += '</div>';
 					} else {
 						item.src = $this.attr('href');
