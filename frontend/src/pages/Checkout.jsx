@@ -69,6 +69,11 @@ const Checkout = ({ user }) => {
     invoiceEmail: user?.email || ''
   });
 
+  // Scroll to top when step changes (e.g. going to STATUS)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
   useEffect(() => {
     const init = async () => {
       try {

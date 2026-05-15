@@ -54,7 +54,7 @@ function createPaymentUrl(order, ipAddress, bankCode) {
     vnp_TxnRef: txnRef,
     vnp_OrderInfo: `Course payment - ${order.orderCode}`,
     vnp_OrderType: VNPAY_CONFIG.orderType,
-    vnp_Amount: order.amount * 100, // VNPay requires amount × 100
+    vnp_Amount: Math.round(order.amount * 100), // VNPay requires amount × 100 as integer
     vnp_ReturnUrl: VNPAY_CONFIG.returnUrl,
     vnp_IpAddr: ipAddress || '127.0.0.1',
     vnp_CreateDate: formatVnpDate(now),
