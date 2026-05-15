@@ -48,10 +48,7 @@ exports.createPaymentUrl = async (req, res) => {
       || req.socket?.remoteAddress
       || '127.0.0.1';
     // Take first IP if multiple (x-forwarded-for can be comma-separated)
-    let clientIp = ipAddress.split(',')[0].trim();
-    if (clientIp.includes(':')) {
-      clientIp = '127.0.0.1'; // Fallback for IPv6 which VNPay rejects
-    }
+    const clientIp = ipAddress.split(',')[0].trim();
 
     // Create payment URL
     const { paymentUrl, txnRef, expireDate } = vnpayService.createPaymentUrl(
