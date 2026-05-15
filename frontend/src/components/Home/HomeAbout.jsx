@@ -16,7 +16,10 @@ const HomeAbout = () => {
 		? siteConfig.about.achievements
 		: FALLBACK_ACHIEVEMENTS;
 
-	const videoUrl = siteConfig.about?.videoUrl || '';
+	let videoUrl = siteConfig.about?.videoUrl || '';
+	if (videoUrl.includes('drive.google.com/file/d/') && videoUrl.includes('/view')) {
+		videoUrl = videoUrl.replace(/\/view.*/, '/preview');
+	}
 	const videoCover = siteConfig.about?.videoCover || '';
 
 	return (
