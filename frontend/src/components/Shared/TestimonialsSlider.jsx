@@ -10,14 +10,13 @@ return (
 	<section className="ls ms s-pt-lg-130 s-pb-lg-130 c-gutter-100 c-my-0 left-part-bg testimonials-section text-center text-md-left" id="san-pham-hoc-vien">
 		<div ref={carouselRef} className="owl-carousel owl-nav-bottom" data-responsive-lg="1" data-responsive-md="1" data-responsive-sm="1" data-responsive-xs="1" data-nav="true" data-loop="true" data-margin="0">
 {works.map((work, index) => (
-			<div key={work.id} className="owl-section-item" style={{ display: 'flex', minHeight: '100%' }}>
+			<div key={work.id} className="owl-section-item" style={{ minHeight: '100%' }}>
 				<div 
 className="cover-image s-cover-right" 
 style={{ 
 backgroundImage: `url(${imageUrl(work.imageUrl, `${import.meta.env.BASE_URL}images/gallery/09.jpg`)})`,
 backgroundPosition: 'center',
-backgroundSize: 'cover',
-height: '100%'
+backgroundSize: 'cover'
 }}
 >
 					<img 
@@ -27,12 +26,12 @@ style={{ display: 'none' }}
 />
 				</div>
 				<div className="container" style={{ display: 'flex', alignItems: 'center' }}>
-					<div className="row w-100">
-						<div className="col-lg-6 order-lg-2">
+					<div className="row w-100 mx-0">
+						<div className="col-12 col-lg-6 order-lg-2">
 						</div>
-						<div className={`col-lg-6 order-lg-1 ${index === 0 ? 'animate' : ''}`} data-animation={index === 0 ? "slideInLeft" : ""}>
+						<div className={`col-12 col-lg-6 order-lg-1 px-0 px-lg-3 ${index === 0 ? 'animate' : ''}`} data-animation={index === 0 ? "slideInLeft" : ""}>
 							<div className="d-none d-lg-block divider-120"></div>
-							<div className="item-content" style={{ marginLeft: 0 }}>
+							<div className="item-content mx-auto" style={{ marginLeft: 0 }}>
 								<header>
 									<div className="icon-image">
 										<img src={`${import.meta.env.BASE_URL}images/icon-4.png`} alt="" />
@@ -47,10 +46,13 @@ style={{ display: 'none' }}
 								<p>
 									{work.description}
 								</p>
-								<h4 className="text-left">{work.studentName}</h4>
-								<h6 className="small-text text-left color-main">{work.program?.title}</h6>
+								<div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+									<h4 style={{ textAlign: 'center', margin: '20px 0 5px 0' }}>{work.studentName}</h4>
+									<h6 className="small-text color-main" style={{ textAlign: 'center', margin: 0 }}>{work.program?.title}</h6>
+								</div>
 							</div>
 							<div className="d-none d-lg-block divider-120"></div>
+							<div className="d-block d-lg-none divider-60"></div>
 						</div>
 					</div>
 				</div>
@@ -60,7 +62,31 @@ style={{ display: 'none' }}
 <style dangerouslySetInnerHTML={{ __html: `
 #san-pham-hoc-vien .owl-stage { display: flex; }
 #san-pham-hoc-vien .owl-item { display: flex; flex: 1 0 auto; }
-#san-pham-hoc-vien .owl-section-item { width: 100%; }
+#san-pham-hoc-vien .owl-section-item { 
+    width: 100%; 
+    display: flex; 
+    flex-direction: column; 
+}
+@media (min-width: 992px) {
+    #san-pham-hoc-vien .owl-section-item { 
+        flex-direction: row; 
+    }
+}
+@media (max-width: 991px) {
+    #san-pham-hoc-vien .cover-image { 
+        min-height: 250px; 
+        position: relative;
+    }
+    #san-pham-hoc-vien .item-content {
+        padding: 40px 15px 20px 15px !important;
+        margin: 0 auto !important;
+        text-align: center !important;
+        width: 100%;
+    }
+    #san-pham-hoc-vien .item-content * {
+        text-align: center !important;
+    }
+}
 `}} />
 ...
 			<div className="gt3_svg_line bottom-line">

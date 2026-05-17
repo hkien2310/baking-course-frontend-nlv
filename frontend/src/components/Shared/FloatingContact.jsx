@@ -14,7 +14,7 @@ const FloatingContact = () => {
       position: 'fixed',
       bottom: '100px',
       right: '25px',
-      zIndex: 9999,
+      zIndex: 1045,
       display: 'flex',
       flexDirection: 'column',
       gap: '15px'

@@ -21,6 +21,9 @@ const Auth = () => {
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  
+  // Tab state for mobile view
+  const [activeTab, setActiveTab] = useState('login');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -112,9 +115,46 @@ const Auth = () => {
       />
       <section className="ls s-py-60 s-py-lg-130">
         <div className="container">
+          
+          {/* Mobile Tabs (Hidden on Desktop) */}
+          <div className="d-lg-none mb-4">
+            <ul className="nav nav-tabs justify-content-center" style={{ borderBottom: '2px solid #eee', display: 'flex', flexWrap: 'nowrap' }}>
+              <li className="nav-item" style={{ flex: 1, textAlign: 'center' }}>
+                <a 
+                  className={`nav-link ${activeTab === 'login' ? 'active' : ''}`} 
+                  style={{ 
+                    border: 'none', background: 'transparent', 
+                    color: activeTab === 'login' ? '#c19a5b' : '#888', 
+                    fontWeight: 'bold', fontSize: '16px',
+                    borderBottom: activeTab === 'login' ? '2px solid #c19a5b' : 'none', 
+                    cursor: 'pointer', padding: '12px 15px'
+                  }}
+                  onClick={() => setActiveTab('login')}
+                >
+                  {t('auth.loginTitle') || 'Đăng nhập'}
+                </a>
+              </li>
+              <li className="nav-item" style={{ flex: 1, textAlign: 'center' }}>
+                <a 
+                  className={`nav-link ${activeTab === 'register' ? 'active' : ''}`} 
+                  style={{ 
+                    border: 'none', background: 'transparent', 
+                    color: activeTab === 'register' ? '#c19a5b' : '#888', 
+                    fontWeight: 'bold', fontSize: '16px',
+                    borderBottom: activeTab === 'register' ? '2px solid #c19a5b' : 'none', 
+                    cursor: 'pointer', padding: '12px 15px'
+                  }}
+                  onClick={() => setActiveTab('register')}
+                >
+                  {t('auth.registerTitle') || 'Đăng ký'}
+                </a>
+              </li>
+            </ul>
+          </div>
+
           <div className="row c-gutter-60">
             {/* Login Form */}
-            <div className="col-lg-6 mb-5 mb-lg-0 animate" data-animation="fadeInUp">
+            <div className={`col-lg-6 mb-5 mb-lg-0 fade-in-up-react ${activeTab === 'login' ? 'd-block' : 'd-none d-lg-block'}`}>
               <h4 className="mb-4">{t('auth.loginTitle') || 'Đăng nhập tài khoản'}</h4>
               {loginError && <div className="alert alert-danger" role="alert">{loginError}</div>}
               <form className="custom-react-form" onSubmit={handleLogin}>
@@ -149,7 +189,7 @@ const Auth = () => {
             </div>
 
             {/* Register Form */}
-            <div className="col-lg-6 animate" data-animation="fadeInUp">
+            <div className={`col-lg-6 fade-in-up-react ${activeTab === 'register' ? 'd-block' : 'd-none d-lg-block'}`}>
               <h4 className="mb-4">{t('auth.registerTitle') || 'Tạo tài khoản mới'}</h4>
               {regError && <div className="alert alert-danger" role="alert">{regError}</div>}
               <form className="custom-react-form" onSubmit={handleRegister}>

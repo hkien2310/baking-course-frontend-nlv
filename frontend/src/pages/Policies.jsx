@@ -44,6 +44,29 @@ const Policies = () => {
       <section className="ls s-pt-50 s-pb-80 s-pt-lg-75 s-pb-lg-100" style={{ overflow: 'visible' }}>
         <div className="container" style={{ overflow: 'visible' }}>
           <div className="row" style={{ overflow: 'visible' }}>
+            {/* Mobile Sticky Navigation */}
+            <div className="d-lg-none col-12 mb-4" style={{ position: 'sticky', top: '75px', zIndex: 100, background: '#fff', margin: '-30px 0 30px 0', padding: '15px 0', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch', borderBottom: '1px solid #eee', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+                {SECTIONS.map(s => (
+                  <a
+                    key={`mobile-${s.id}`}
+                    href={`#${s.id}`}
+                    onClick={e => {
+                      e.preventDefault();
+                      document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      padding: '8px 16px', marginRight: '10px',
+                      background: '#f8f8f8', borderRadius: '20px',
+                      color: '#333', fontSize: '13px', textDecoration: 'none',
+                      border: '1px solid #eaeaea', fontWeight: '500'
+                    }}
+                  >
+                    {s.title}
+                  </a>
+                ))}
+            </div>
+
             {/* Sidebar Navigation */}
             <div className="col-lg-3 d-none d-lg-block" style={{ alignSelf: 'flex-start', position: 'sticky', top: '120px', zIndex: 10 }}>
               <div style={{

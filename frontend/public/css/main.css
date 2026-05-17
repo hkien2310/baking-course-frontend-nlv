@@ -13608,6 +13608,8 @@ a img.aligncenter {
 		z-index: 10;
 	}
 
+	/* Disabled to prevent conflict with React custom drawer sidebar */
+	/*
 	.mobile-active .top-nav {
 		background-color: #111;
 		background-color: rgba(0, 0, 0, 0.9);
@@ -13615,6 +13617,7 @@ a img.aligncenter {
 		visibility: visible;
 		z-index: 1002;
 	}
+	*/
 
 	.nav-justified > li > a {
 		text-align: left;

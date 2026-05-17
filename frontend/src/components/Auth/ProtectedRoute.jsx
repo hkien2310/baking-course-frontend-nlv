@@ -37,11 +37,27 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   // Pass authenticated user to child component to avoid duplicate getMe() calls
-  if (React.isValidElement(children)) {
-    return React.cloneElement(children, { user });
+  const content = React.isValidElement(children) ? React.cloneElement(children, { user }) : children;
+
+  if (requireAdmin) {
+    return (
+      <>
+        <div className="d-flex d-lg-none flex-column align-items-center justify-content-center text-center p-4" style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', width: '100vw' }}>
+          <i className="fa fa-desktop fa-4x mb-3" style={{ color: '#c19a5b' }}></i>
+          <h4 className="font-weight-bold" style={{ color: '#333' }}>Không hỗ trợ Mobile</h4>
+          <p style={{ color: '#666', lineHeight: 1.6, maxWidth: '400px' }}>
+            Hệ thống quản trị (Admin Dashboard) chứa nhiều dữ liệu phức tạp. Vui lòng đăng nhập bằng <strong>máy tính</strong> để quản lý nội dung chính xác và tốt nhất.
+          </p>
+          <a href="/" className="btn btn-maincolor mt-3">Quay về trang chủ</a>
+        </div>
+        <div className="d-none d-lg-block" style={{ width: '100%', height: '100%' }}>
+          {content}
+        </div>
+      </>
+    );
   }
 
-  return children;
+  return content;
 };
 
 export default ProtectedRoute;

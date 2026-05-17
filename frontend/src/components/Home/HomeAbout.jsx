@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from '../../i18n/LanguageContext';
 import { useSiteConfig } from '../../context/SiteConfigContext';
 
@@ -12,14 +12,88 @@ const HomeAbout = () => {
 	const { t } = useTranslation();
 	const { siteConfig } = useSiteConfig();
 
+	useEffect(() => {
+		// Custom logic to force Photoswipe to close when tapping background on mobile
+		// This bypasses Photoswipe's default tapAction:'toggleControls' and avoids main.js caching issues
+		let touchStartY = 0;
+		let touchStartX = 0;
+
+		const handleTouchStart = (e) => {
+			if (e.touches.length > 0) {
+				touchStartX = e.touches[0].clientX;
+				touchStartY = e.touches[0].clientY;
+			}
+		};
+
+		const handleTouchEnd = (e) => {
+			const pswp = document.querySelector('.pswp');
+			if (!pswp || !pswp.classList.contains('pswp--open')) return;
+
+			// Ignore taps on the top UI bar (close, share, etc.)
+			if (e.target.closest('.pswp__ui')) return;
+
+			if (e.changedTouches.length > 0) {
+				const endX = e.changedTouches[0].clientX;
+				const endY = e.changedTouches[0].clientY;
+				
+				// If movement is less than 10px, it's considered a tap (not a swipe)
+				if (Math.abs(endX - touchStartX) < 10 && Math.abs(endY - touchStartY) < 10) {
+					const closeBtn = document.querySelector('.pswp__button--close');
+					if (closeBtn) {
+						// Trigger close
+						closeBtn.click();
+						
+						// Guarantee iframe stops playing immediately
+						setTimeout(() => {
+							const iframes = pswp.querySelectorAll('iframe');
+							iframes.forEach(iframe => {
+								iframe.src = '';
+								iframe.remove();
+							});
+						}, 100);
+					}
+				}
+			}
+		};
+
+		document.addEventListener('touchstart', handleTouchStart, { passive: true });
+		document.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+		return () => {
+			document.removeEventListener('touchstart', handleTouchStart);
+			document.removeEventListener('touchend', handleTouchEnd);
+		};
+	}, []);
+
 	const achievements = siteConfig.about?.achievements?.length > 0
 		? siteConfig.about.achievements
 		: FALLBACK_ACHIEVEMENTS;
 
 	let videoUrl = siteConfig.about?.videoUrl || '';
+	
+	// Format Google Drive URLs
 	if (videoUrl.includes('drive.google.com/file/d/') && videoUrl.includes('/view')) {
 		videoUrl = videoUrl.replace(/\/view.*/, '/preview');
 	}
+	
+	// Format YouTube URLs to proper embed format to prevent X-Frame-Options blocking
+	if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+		let videoId = '';
+		if (videoUrl.includes('youtu.be/')) {
+			videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+		} else if (videoUrl.includes('v=')) {
+			videoId = videoUrl.split('v=')[1].split('&')[0];
+		} else if (videoUrl.includes('/embed/')) {
+			videoId = videoUrl.split('/embed/')[1].split('?')[0];
+		} else if (videoUrl.includes('/shorts/')) {
+			videoId = videoUrl.split('/shorts/')[1].split('?')[0];
+		}
+		
+		if (videoId) {
+			videoUrl = `https://www.youtube.com/embed/${videoId}`;
+		}
+	}
+
 	const videoCover = siteConfig.about?.videoCover || '';
 
 	return (
@@ -28,7 +102,7 @@ const HomeAbout = () => {
 			<div className="row align-items-center">
 				<div className="col-12 col-lg-6 order-lg-1">
 					{(videoCover || videoUrl) && (
-						<a href={videoCover} className="photoswipe-link" data-iframe={videoUrl}>
+						<a href={videoCover} className="photoswipe-link" data-iframe={videoUrl} data-autoplay="true">
 							<img src={videoCover} alt="YUM Saigon About Video" style={{ width: '100%', objectFit: 'cover' }} />
 							<div className="video-text">
 								<h5>
@@ -40,7 +114,7 @@ const HomeAbout = () => {
 						</a>
 					)}
 				</div>
-				<div className="col-12 col-lg-6 order-lg-2  animate" data-animation="slideInRight">
+				<div className="col-12 col-lg-6 order-lg-2 animate" data-animation="slideInRight">
 					<div className="d-none d-lg-block divider-90"></div>
 					<div className="item-content">
 						<h6 className="fs-14 color-main">{t('home.about.subtitle')}</h6>
