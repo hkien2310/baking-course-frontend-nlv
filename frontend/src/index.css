@@ -18,3 +18,10 @@
 .fade-in-up-react {
   animation: fadeInUpReact 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Fix mobile menu black screen conflict with template */
+@media (max-width: 1199px) {
+  .mobile-active .top-nav {
+    display: none !important;
+  }
+}
