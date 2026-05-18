@@ -269,6 +269,10 @@ function initPhotoSwipe() {
 						item.html = '<div class="embed-responsive embed-responsive-16by9" style="background: url(/img/photoswipe/preloader.gif) center center no-repeat; background-color: #000;">';
 						item.html += '<iframe class="embed-responsive-item" src="' + finalSrc + '" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen"></iframe>';
 						item.html += '</div>';
+						
+						// Add missing dimensions for video so Photoswipe can calculate scale on mobile
+						item.w = 1200;
+						item.h = 675;
 					} else {
 						item.src = $this.attr('href');
 						//default values
@@ -718,10 +722,10 @@ function documentReadyInit() {
 		});
 	});
 
-	//toTop
-	if ($().UItoTop) {
-		$().UItoTop({ easingType: 'easeInOutQuart' });
-	}
+	//toTop (Disabled - Replaced with React component)
+	// if ($().UItoTop) {
+	// 	$().UItoTop({ easingType: 'easeInOutQuart' });
+	// }
 
 	//parallax
 	if ($().parallax) {

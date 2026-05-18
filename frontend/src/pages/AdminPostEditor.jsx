@@ -1,3 +1,4 @@
+import SharedQuillEditor from '../components/Admin/Shared/SharedQuillEditor';
 import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -8,7 +9,11 @@ import { ROUTES } from '../constants/routes';
 import { AdminInput, AdminSelect, AdminTextarea } from '../components/Admin/Shared/AdminFormControls';
 import AdminLoadingBlock from '../components/Admin/AdminLoadingBlock';
 import AdminEditorLayout from '../components/Admin/Shared/AdminEditorLayout';
+import { parseHtmlWithVideos } from '../utils/videoParser';
 import './AdminDesign.css';
+
+const today = new Date();
+const defaultDateString = today.toISOString();
 
 const AdminPostEditor = () => {
   const { id } = useParams();
@@ -21,7 +26,7 @@ const AdminPostEditor = () => {
 
   
   const [formData, setFormData] = useState({
-    title: '', slug: '', category: '', type: 'BLOG', thumbnail: '', authorName: 'Admin', dateString: '', content: '', desc: ''
+    title: '', slug: '', category: '', type: 'BLOG', thumbnail: '', authorName: 'Admin', dateString: defaultDateString, content: '', desc: ''
   });
 
   useEffect(() => {
@@ -47,13 +52,14 @@ const AdminPostEditor = () => {
             type: post.type || 'BLOG',
             thumbnail: post.thumbnail || '',
             authorName: post.authorName || 'Admin',
-            dateString: post.dateString || '',
+            dateString: post.dateString || defaultDateString,
             content: post.content || '',
             desc: post.desc || ''
           });
           setLoading(false);
         })
         .catch(err => {
+          console.error(err);
           toast.error("Lỗi khi tải bài viết");
           setLoading(false);
         });
@@ -80,6 +86,7 @@ const AdminPostEditor = () => {
       }
       navigate(ROUTES.ADMIN + "#posts");
     } catch (err) {
+      console.error(err);
       toast.error("Lỗi lưu bài viết");
     } finally {
       setSaving(false);
@@ -153,14 +160,7 @@ const AdminPostEditor = () => {
                 </div>
               </div>
 
-              <div className="row mt-3">
-                <div className="col-md-6">
-                  <AdminInput label="Tên Tác Giả" name="authorName" value={formData.authorName} onChange={handleChange} />
-                </div>
-                <div className="col-md-6">
-                  <AdminInput label="Ngày Hiển Thị" name="dateString" value={formData.dateString} onChange={handleChange} placeholder="12 Thg 8, 2026" />
-                </div>
-              </div>
+
 
               <div className="mt-3">
                 <AdminImageUpload
@@ -183,16 +183,15 @@ const AdminPostEditor = () => {
               </div>
 
               <div className="mt-3 flex-grow-1 d-flex flex-column">
-                <AdminTextarea 
-                  label={<>Nội dung chi tiết <span className="text-danger">*</span></>}
-                  name="content" 
-                  value={formData.content} 
-                  onChange={handleChange} 
-                  style={{ minHeight: '300px', fontFamily: 'monospace', lineHeight: '1.6' }} 
-                  placeholder="<p>Viết nội dung bài viết HTML tại đây...</p>"
-                  required
-                  minLength={50}
-                />
+                <label style={{ fontWeight: '600', marginBottom: '8px', color: 'var(--admin-heading)', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Nội dung chi tiết <span className="text-danger">*</span></label>
+                <div style={{ flexGrow: 1, paddingBottom: '40px' }}>
+                  <SharedQuillEditor 
+                    value={formData.content} 
+                    onChange={(value) => setFormData({ ...formData, content: value })} 
+                    style={{ height: '100%', minHeight: '300px' }}
+                    placeholder="Viết nội dung bài viết tại đây..."
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -223,7 +222,9 @@ const AdminPostEditor = () => {
                     {formData.desc || 'Đoạn chú thích ngắn gọn sẽ xuất hiện tại đây để thu hút người đọc...'}
                   </div>
 
-                  <div className="content-preview" style={{ lineHeight: '1.8', fontSize: '16px', color: '#333' }} dangerouslySetInnerHTML={{ __html: formData.content || '<p class="text-muted">Nội dung bài viết sẽ xuất hiện tại đây...</p>' }} />
+                  <div className="content-preview" style={{ lineHeight: '1.8', fontSize: '16px', color: '#333' }}>
+                    {formData.content ? parseHtmlWithVideos(formData.content) : <p className="text-muted">Nội dung bài viết sẽ xuất hiện tại đây...</p>}
+                  </div>
                 </div>
               </div>
 

@@ -22,8 +22,9 @@
             containerHoverIDHash = '#'+settings.containerHoverID;
 		
 		$('body').append('<a href="#" id="'+settings.containerID+'">'+settings.text+'</a>');
-		$(containerIDhash).hide().on('click.UItoTop',function(){
-			$('html, body').animate({scrollTop:0}, settings.scrollSpeed, settings.easingType);
+		$(containerIDhash).hide().on('click.UItoTop',function(e){
+			e.preventDefault();
+			window.scrollTo({ top: 0, behavior: 'smooth' });
 			$('#'+settings.containerHoverID, this).stop().animate({'opacity': 0 }, settings.inDelay, settings.easingType);
 			return false;
 		})

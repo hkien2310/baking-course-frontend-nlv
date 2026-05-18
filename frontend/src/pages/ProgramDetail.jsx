@@ -4,9 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import PageTitle from '../components/Shared/PageTitle';
 import PageLoading from '../components/Shared/PageLoading';
+import UniversalVideoPlayer from '../components/Shared/Video/UniversalVideoPlayer';
 import { getProgramBySlug, submitStudentWork, uploadImage, getMe, getApprovedStudentWorks } from '../services/api';
 import { toast } from 'react-toastify';
 import { formatPrice, formatStudentCount, calcDiscountPercent } from '../utils/formatters';
+import { parseHtmlWithVideos } from '../utils/videoParser';
 import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 import Input from '../components/Shared/Input';
@@ -55,27 +57,26 @@ const ProgramDetail = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Convert regular YouTube/Vimeo URLs to embeddable format + strip overlays
   const toEmbedUrl = (url) => {
     if (!url) return '';
     // YouTube: watch?v=ID or youtu.be/ID → /embed/ID
     const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
     if (ytMatch) return `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1`;
     // Already a youtube embed URL → append params
-    const ytEmbedMatch = url.match(/youtube\.com\/embed\/([\w-]+)/);
+    const ytEmbedMatch = url.match(/(?:youtube\.com|youtube-nocookie\.com)\/embed\/([\w-]+)/);
     if (ytEmbedMatch) return `https://www.youtube-nocookie.com/embed/${ytEmbedMatch[1]}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&disablekb=1`;
     // Vimeo: vimeo.com/ID → player.vimeo.com/video/ID
     const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
     if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?title=0&byline=0&portrait=0`;
-    
+
     // Google Drive Folder
     const gDriveFolderMatch = url.match(/drive\.google\.com\/drive\/folders\/([\w-]+)/);
     if (gDriveFolderMatch) return `https://drive.google.com/embeddedfolderview?id=${gDriveFolderMatch[1]}#grid`;
-    
+
     // Google Drive File (view/preview)
     const gDriveFileMatch = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
     if (gDriveFileMatch) return `https://drive.google.com/file/d/${gDriveFileMatch[1]}/preview`;
-    
+
     // Google Drive Open format
     const gDriveOpenMatch = url.match(/drive\.google\.com\/open\?id=([\w-]+)/);
     if (gDriveOpenMatch) return `https://drive.google.com/file/d/${gDriveOpenMatch[1]}/preview`;
@@ -88,7 +89,7 @@ const ProgramDetail = () => {
     getProgramBySlug(slug)
       .then(data => {
         setProgram(data);
-        
+
         // Auto-select first upcoming session if exists
         if (data.classSessions && data.classSessions.length > 0) {
           const upcoming = data.classSessions.filter(s => new Date(s.startDate) >= new Date());
@@ -98,7 +99,7 @@ const ProgramDetail = () => {
             setSelectedSessionId(data.classSessions[0].id);
           }
         }
-        
+
         setLoading(false);
       })
       .catch(err => {
@@ -112,7 +113,7 @@ const ProgramDetail = () => {
         if (data) setCurrentUser(data);
         if (data?.fullName) setCurrentUserName(data.fullName);
       })
-      .catch(() => {}); // Silent fail — user might not be logged in
+      .catch(() => { }); // Silent fail — user might not be logged in
   }, [slug]);
 
   useEffect(() => {
@@ -150,11 +151,11 @@ const ProgramDetail = () => {
   if (loading) {
     return (
       <>
-        <PageTitle 
+        <PageTitle
           title={t('programDetail.title') || 'Chi Tiết Khóa Học'}
           breadcrumbs={[
-            { label: t('header.home'), link: '/' }, 
-            { label: t('header.programs') || 'Khóa Học', link: ROUTES.PROGRAM }, 
+            { label: t('header.home'), link: '/' },
+            { label: t('header.programs') || 'Khóa Học', link: ROUTES.PROGRAM },
             { label: '...' }
           ]}
         />
@@ -185,14 +186,14 @@ const ProgramDetail = () => {
         </button>
       );
     }
-    const checkoutUrl = selectedSessionId 
+    const checkoutUrl = selectedSessionId
       ? `${ROUTES.CHECKOUT(slug)}?session=${selectedSessionId}`
       : ROUTES.CHECKOUT(slug);
 
     if (orderStatus === 'PENDING' || orderStatus === 'AWAITING_CONFIRM') {
       return (
-        <button 
-          className="btn-enroll btn-warning" 
+        <button
+          className="btn-enroll btn-warning"
           onClick={() => navigate(checkoutUrl)}
           style={{ borderRadius: '50px' }}
         >
@@ -203,8 +204,8 @@ const ProgramDetail = () => {
     if (program.price && program.price > 0) {
       const buyPrice = program.salePrice && program.price > program.salePrice ? program.salePrice : program.price;
       return (
-        <button 
-          className="btn-enroll" 
+        <button
+          className="btn-enroll"
           onClick={() => navigate(checkoutUrl)}
           style={{ borderRadius: '50px' }}
         >
@@ -226,12 +227,8 @@ const ProgramDetail = () => {
     return (
       <div className="premium-lesson-detail">
         {hasVideo && (
-          <div className="video-wrapper mb-4" onContextMenu={e => e.preventDefault()} style={{ borderRadius: '8px', overflow: 'hidden' }}>
-            <iframe
-              src={toEmbedUrl(video.url)}
-              title={video.title || `Lesson ${index + 1}`}
-              allowFullScreen
-            ></iframe>
+          <div className="video-wrapper mb-4" onContextMenu={e => e.preventDefault()} style={{ borderRadius: '8px' }}>
+            <UniversalVideoPlayer url={video.url} />
           </div>
         )}
 
@@ -264,15 +261,15 @@ const ProgramDetail = () => {
 
   return (
     <>
-      <PageTitle 
+      <PageTitle
         title={t('programDetail.title') || 'Chi Tiết Khóa Học'}
         breadcrumbs={[
-          { label: t('header.home'), link: '/' }, 
-          { label: t('header.programs') || 'Khóa Học', link: ROUTES.PROGRAM }, 
+          { label: t('header.home'), link: '/' },
+          { label: t('header.programs') || 'Khóa Học', link: ROUTES.PROGRAM },
           { label: program.title }
         ]}
       />
-      
+
       <section className="ls s-pt-75 s-pb-0 s-py-lg-100 c-gutter-60 program-single">
         <div className="container">
           <div className="row">
@@ -281,7 +278,7 @@ const ProgramDetail = () => {
                 {program.thumbnail && (
                   <img src={imgSrc(program.thumbnail)} alt={program.title} />
                 )}
-                
+
                 <div className="content-absolute bg-maincolor-transparent text-left ds">
                   <div className="d-inline">
                     <span>
@@ -299,32 +296,32 @@ const ProgramDetail = () => {
                   </div>
                 </div>
               </div>
-                
+
               <div className="item-content bordered">
                 <h4>{program.title}</h4>
                 {/* Main Tabs Navigation */}
                 <div className="pro-max-tabs-container mt-4 mb-4">
                   <div className="pro-max-tabs">
-                    <button 
+                    <button
                       className={`pro-max-tab ${activeTab === 'info' ? 'active' : ''}`}
                       onClick={() => setActiveTab('info')}
                     >
                       Giới thiệu
                     </button>
-                    <button 
+                    <button
                       className={`pro-max-tab ${activeTab === 'curriculum' ? 'active' : ''}`}
                       onClick={() => setActiveTab('curriculum')}
                     >
-                      Lộ trình học
+                      Nội dung khóa học
                     </button>
-                    <button 
+                    <button
                       className={`pro-max-tab ${activeTab === 'studentWorks' ? 'active' : ''}`}
                       onClick={() => setActiveTab('studentWorks')}
                     >
                       Sản phẩm học viên
                     </button>
                     {hasPurchased && (
-                      <button 
+                      <button
                         className={`pro-max-tab ${activeTab === 'qna' ? 'active' : ''}`}
                         onClick={() => setActiveTab('qna')}
                       >
@@ -337,7 +334,16 @@ const ProgramDetail = () => {
                 {/* Tab Content */}
                 <div className="pro-max-tab-content">
                   {activeTab === 'info' && (
-                    <div className="content-preview fade-in" dangerouslySetInnerHTML={{ __html: program.description?.replace(/\n/g, '<br/>') || t('common.noDescription') || 'Chưa có thông tin mô tả.' }} />
+                    <div className="fade-in">
+                      {premiumContent?.introVideoUrl && (
+                        <div className="video-wrapper mb-4" onContextMenu={e => e.preventDefault()} style={{ borderRadius: '8px' }}>
+                          <UniversalVideoPlayer url={premiumContent.introVideoUrl} />
+                        </div>
+                      )}
+                      <div className="content-preview">
+                        {parseHtmlWithVideos(program.description?.replace(/\n/g, '<br/>') || t('common.noDescription') || 'Chưa có thông tin mô tả.')}
+                      </div>
+                    </div>
                   )}
 
                   {activeTab === 'curriculum' && (
@@ -382,13 +388,13 @@ const ProgramDetail = () => {
                                   </h6>
                                   <div id="curriculum-sidebar-accordion" role="tablist">
                                     {premiumContent.videos.map((video, i) => (
-                                      <div 
-                                        key={i} 
+                                      <div
+                                        key={i}
                                         className={`p-3 mb-2 d-flex align-items-center ${activeVideoIndex === i ? 'active' : ''}`}
                                         onClick={() => setActiveVideoIndex(i)}
-                                        style={{ 
-                                          background: activeVideoIndex === i ? 'rgba(193,154,91,0.05)' : '#fff', 
-                                          border: `1px solid ${activeVideoIndex === i ? '#c19a5b' : '#eee'}`, 
+                                        style={{
+                                          background: activeVideoIndex === i ? 'rgba(193,154,91,0.05)' : '#fff',
+                                          border: `1px solid ${activeVideoIndex === i ? '#c19a5b' : '#eee'}`,
                                           borderRadius: '10px',
                                           cursor: 'pointer',
                                           transition: 'all 0.2s ease'
@@ -431,7 +437,7 @@ const ProgramDetail = () => {
                                         <div className="mt-2" style={{ height: '12px', width: '85%', background: '#ddd', borderRadius: '4px' }}></div>
                                         <div className="mt-2" style={{ height: '12px', width: '92%', background: '#ddd', borderRadius: '4px' }}></div>
                                       </div>
-                                      
+
                                       {/* Gradient Overlay + CTA Card */}
                                       <div className="d-flex flex-column justify-content-center align-items-center" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, background: 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.85) 60%, rgba(255,255,255,0.95) 100%)' }}>
                                         <div className="text-center" style={{ padding: '20px 28px' }}>
@@ -472,19 +478,19 @@ const ProgramDetail = () => {
                         </div>
                       ) : studentWorks.length > 0 ? (
                         <div className="mb-4">
-                          <div 
-                            className="d-flex align-items-stretch" 
-                            style={{ 
-                              overflowX: 'auto', 
-                              paddingBottom: '20px', 
+                          <div
+                            className="d-flex align-items-stretch"
+                            style={{
+                              overflowX: 'auto',
+                              paddingBottom: '20px',
                               gap: '24px',
                               scrollSnapType: 'x mandatory',
                               WebkitOverflowScrolling: 'touch'
                             }}
                           >
                             {studentWorks.map((work, idx) => (
-                              <div 
-                                className="bento-card" 
+                              <div
+                                className="bento-card"
                                 key={work.id || idx}
                                 style={{
                                   minWidth: '280px',
@@ -503,7 +509,7 @@ const ProgramDetail = () => {
                               </div>
                             ))}
                             {hasMoreStudentWorks && (
-                              <div 
+                              <div
                                 className="d-flex align-items-center justify-content-center"
                                 style={{
                                   minWidth: '200px',
@@ -580,92 +586,92 @@ const ProgramDetail = () => {
             </main>
 
             {!hasPurchased && (
-            <aside className="col-lg-5 col-xl-4">
-              <div className="bg-maincolor2 widget-search p-30 mb-60 mt-5 mt-lg-0">
-                <div className="widget widget_search">
-                  <h5>{t('programDetail.search') || 'Tìm kiếm trên Website'}</h5>
-                  <p>{t('programDetail.searchDesc') || 'Tìm kiếm thêm tin tức và ưu đãi hấp dẫn'}</p>
-                  <form role="search" className="search-form" onSubmit={(e) => {
-                    e.preventDefault();
-                    const val = e.target.search.value;
-                    if (val) navigate(`${ROUTES.PROGRAM}?search=${encodeURIComponent(val)}`);
-                  }}>
-                    <label htmlFor="search-form-widget">
-                      <span className="screen-reader-text">Search for:</span>
-                    </label>
-                    <div className="d-flex position-relative">
-                      <Input 
-                        type="search" 
-                        id="search-form-widget" 
-                        inputClassName="search-field" 
-                        placeholder={t('programDetail.searchPlaceholder') || 'Nhập từ khóa...'} 
-                        defaultValue="" 
-                        name="search"
-                        wrapperClassName="w-100"
-                      />
-                      <button type="submit" className="search-submit" style={{ position: 'absolute', right: 0, top: 0, height: '100%', border: 'none', background: 'transparent', padding: '0 15px' }}>
-                        <span className="screen-reader-text">{t('programDetail.searchPlaceholder') || 'Nhập từ khóa...'}</span>
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-
-              <div className="enrollment-widget widget_categories">
-                <h3 className="widget-title">
-                  {t('programDetail.getCourse') || 'Đăng ký khóa học'}
-                </h3>
-                <p>{t('programDetail.joinStudents', { count: program.students || 0 }) || `Cùng ${program.students || 0} học viên đã đăng ký trải nghiệm tuyệt vời này.`}</p>
-                
-                <div className="price-container mt-4">
-                  {program.salePrice && program.price > program.salePrice ? (
-                    <>
-                      <div className="d-flex align-items-center justify-content-center" style={{ gap: '10px', marginBottom: '4px' }}>
-                        <span className="price-original" style={{ margin: 0 }}>
-                          {formatPrice(program.price)}
-                        </span>
-                        {calcDiscountPercent(program.price, program.salePrice) && (
-                          <span className="discount-badge sale-badge" style={{ margin: 0 }}>
-                            -{calcDiscountPercent(program.price, program.salePrice)}%
-                          </span>
-                        )}
+              <aside className="col-lg-5 col-xl-4">
+                <div className="bg-maincolor2 widget-search p-30 mb-60 mt-5 mt-lg-0">
+                  <div className="widget widget_search">
+                    <h5>{t('programDetail.search') || 'Tìm kiếm trên Website'}</h5>
+                    <p>{t('programDetail.searchDesc') || 'Tìm kiếm thêm tin tức và ưu đãi hấp dẫn'}</p>
+                    <form role="search" className="search-form" onSubmit={(e) => {
+                      e.preventDefault();
+                      const val = e.target.search.value;
+                      if (val) navigate(`${ROUTES.PROGRAM}?search=${encodeURIComponent(val)}`);
+                    }}>
+                      <label htmlFor="search-form-widget">
+                        <span className="screen-reader-text">Search for:</span>
+                      </label>
+                      <div className="d-flex position-relative">
+                        <Input
+                          type="search"
+                          id="search-form-widget"
+                          inputClassName="search-field"
+                          placeholder={t('programDetail.searchPlaceholder') || 'Nhập từ khóa...'}
+                          defaultValue=""
+                          name="search"
+                          wrapperClassName="w-100"
+                        />
+                        <button type="submit" className="search-submit" style={{ position: 'absolute', right: 0, top: 0, height: '100%', border: 'none', background: 'transparent', padding: '0 15px' }}>
+                          <span className="screen-reader-text">{t('programDetail.searchPlaceholder') || 'Nhập từ khóa...'}</span>
+                        </button>
                       </div>
-                      <span className="price-sale">
-                        {formatPrice(program.salePrice)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="price-sale">
-                      {formatPrice(program.price)}
-                    </span>
-                  )}
+                    </form>
+                  </div>
                 </div>
 
-                <div className="mt-4">
-                  {getCTAButton()}
-                  {orderStatus === 'REJECTED' && (
-                    <div className="mt-3 text-center">
-                      <small className="text-danger">
-                        <i className="fa fa-exclamation-triangle mr-1"></i>
-                        {t('programDetail.rejectedMsg') || 'Thanh toán trước đó bị từ chối.'} 
-                        <br/>
-                        <a href="#" onClick={(e) => { e.preventDefault(); navigate(ROUTES.CHECKOUT(slug)); }} className="color-main font-weight-bold"> {t('programDetail.tryAgain') || 'Thử lại'}</a>
-                      </small>
-                    </div>
-                  )}
-                  
-                  <div className="secure-payment">
-                    <i className="fa fa-lock"></i> Thanh toán an toàn & bảo mật 100%
+                <div className="enrollment-widget widget_categories">
+                  <h3 className="widget-title">
+                    {t('programDetail.getCourse') || 'Đăng ký khóa học'}
+                  </h3>
+                  <p>{t('programDetail.joinStudents', { count: program.students || 0 }) || `Cùng ${program.students || 0} học viên đã đăng ký trải nghiệm tuyệt vời này.`}</p>
+
+                  <div className="price-container mt-4">
+                    {program.salePrice && program.price > program.salePrice ? (
+                      <>
+                        <div className="d-flex align-items-center justify-content-center" style={{ gap: '10px', marginBottom: '4px' }}>
+                          <span className="price-original" style={{ margin: 0 }}>
+                            {formatPrice(program.price)}
+                          </span>
+                          {calcDiscountPercent(program.price, program.salePrice) && (
+                            <span className="discount-badge sale-badge" style={{ margin: 0 }}>
+                              -{calcDiscountPercent(program.price, program.salePrice)}%
+                            </span>
+                          )}
+                        </div>
+                        <span className="price-sale">
+                          {formatPrice(program.salePrice)}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="price-sale">
+                        {formatPrice(program.price)}
+                      </span>
+                    )}
                   </div>
-                  
-                  <div className="features-list">
-                    <div className="feature-item"><i className="fa fa-check-circle"></i> Truy cập không giới hạn trọn đời</div>
-                    <div className="feature-item"><i className="fa fa-check-circle"></i> Hỗ trợ hỏi đáp 1-1 với giảng viên</div>
-                    <div className="feature-item"><i className="fa fa-check-circle"></i> Tài liệu công thức chuẩn định lượng</div>
+
+                  <div className="mt-4">
+                    {getCTAButton()}
+                    {orderStatus === 'REJECTED' && (
+                      <div className="mt-3 text-center">
+                        <small className="text-danger">
+                          <i className="fa fa-exclamation-triangle mr-1"></i>
+                          {t('programDetail.rejectedMsg') || 'Thanh toán trước đó bị từ chối.'}
+                          <br />
+                          <a href="#" onClick={(e) => { e.preventDefault(); navigate(ROUTES.CHECKOUT(slug)); }} className="color-main font-weight-bold"> {t('programDetail.tryAgain') || 'Thử lại'}</a>
+                        </small>
+                      </div>
+                    )}
+
+                    <div className="secure-payment">
+                      <i className="fa fa-lock"></i> Thanh toán an toàn & bảo mật 100%
+                    </div>
+
+                    <div className="features-list">
+                      <div className="feature-item"><i className="fa fa-check-circle"></i> Truy cập không giới hạn trọn đời</div>
+                      <div className="feature-item"><i className="fa fa-check-circle"></i> Hỗ trợ hỏi đáp 1-1 với giảng viên</div>
+                      <div className="feature-item"><i className="fa fa-check-circle"></i> Tài liệu công thức chuẩn định lượng</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </aside>
+              </aside>
             )}
           </div>
         </div>

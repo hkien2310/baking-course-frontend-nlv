@@ -29,6 +29,7 @@ import Policies from './pages/Policies';
 import { ROUTES } from './constants/routes';
 import ScrollToTop from './components/Shared/ScrollToTop';
 import { SiteConfigProvider } from './context/SiteConfigContext';
+import GoToTopButton from './components/Shared/GoToTopButton';
 
 function App() {
   return (
@@ -99,6 +100,7 @@ function App() {
         } />
       </Routes>
     </Router>
+    <GoToTopButton />
     <ToastContainer 
       position="top-right"
       autoClose={3000}

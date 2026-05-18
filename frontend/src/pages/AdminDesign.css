@@ -441,3 +441,13 @@
   color: var(--admin-text-base);
   line-height: 1.6;
 }
+
+/* Quill Editor Content Preview Styles */
+.content-preview iframe.ql-video, .content-preview iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  border-radius: 8px;
+  background-color: #000;
+}
+

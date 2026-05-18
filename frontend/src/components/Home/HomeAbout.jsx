@@ -94,6 +94,14 @@ const HomeAbout = () => {
 		}
 	}
 
+	// Format Vimeo URLs to proper embed format to prevent X-Frame-Options blocking
+	if (videoUrl.includes('vimeo.com')) {
+		const vimeoMatch = videoUrl.match(/vimeo\.com\/(\d+)/);
+		if (vimeoMatch) {
+			videoUrl = `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1&title=0&byline=0&portrait=0`;
+		}
+	}
+
 	const videoCover = siteConfig.about?.videoCover || '';
 
 	return (

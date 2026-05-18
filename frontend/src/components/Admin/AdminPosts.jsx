@@ -59,7 +59,7 @@ const AdminPosts = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <AdminHeader 
-        title="Quản lý Bài viết & Công thức" 
+        title="Quản lý Chia sẻ" 
         description="Quản lý các bài viết, tin tức, và công thức làm bánh" 
         action={<AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={handleOpenCreate} />} 
       />

@@ -234,7 +234,7 @@ const AdminDashboard = ({ user }) => {
           </li>
           <li className={activeTab === 'posts' ? 'active' : ''}>
             <a href="#posts" onClick={(e) => { e.preventDefault(); handleTabChange('posts'); }}>
-              <i className="fa fa-pencil"></i> Bài viết & Cẩm nang
+              <i className="fa fa-pencil"></i> Chia sẻ
             </a>
           </li>
 

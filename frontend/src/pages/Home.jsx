@@ -29,17 +29,17 @@ const Home = () => {
       const featuredData = featuredRes?.data || featuredRes || [];
       const newData = newRes?.data || newRes || [];
       const discountedData = discountedRes?.data || discountedRes || [];
-      
+
       // Only show programs with an actual expiration date in the Flash Sale slider
       // Those without saleEndDate are ignored for the hero section
       const heroSlides = discountedData.filter(p => p.saleEndDate);
-      
+
       /* [FALLBACK REMOVED] - Only show slider if there are actual expiring flash sales
       if (heroSlides.length === 0) {
         heroSlides = featuredData.length > 0 ? featuredData : newData.slice(0, 3);
       }
       */
-      
+
       setData({
         upcomingSlides: heroSlides,
         featuredPrograms: featuredData,

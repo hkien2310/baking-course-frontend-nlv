@@ -8,6 +8,18 @@ import { ROUTES } from '../constants/routes';
 import { useTranslation } from '../i18n/LanguageContext';
 import { imageUrl, PLACEHOLDER_IMAGE } from '../utils/imageUrl';
 import PageLoading from '../components/Shared/PageLoading';
+import { parseHtmlWithVideos } from '../utils/videoParser';
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return 'Gần đây';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return `${d.getDate()} Thg ${d.getMonth() + 1}, ${d.getFullYear()}`;
+  } catch {
+    return dateStr;
+  }
+};
 
 const PostDetail = () => {
   const { t } = useTranslation();
@@ -97,7 +109,9 @@ const PostDetail = () => {
                         <span className="screen-reader-text">Posted on</span>
                         <Link to={ROUTES.POST_DETAIL(post.slug)} rel="bookmark">
                           <i className="fa fa-calendar color-main2"></i>
-                          <time dateTime={post.dateIso} className="entry-date published updated">{post.dateString || t('common.recent') || 'Gần đây'}</time>
+                          <time dateTime={post.createdAt || post.dateString} className="entry-date published updated">
+                            {formatDate(post.createdAt || post.dateString)}
+                          </time>
                         </Link>
                       </span>
                       <span className="category-links links-maincolor">
@@ -105,12 +119,6 @@ const PostDetail = () => {
                         <Link to={ROUTES.RECEIPT} rel="category tag">
                           <i className="fa fa-tags color-main2"></i>
                           {post.category || t('receipt.title') || 'Cẩm Nang'}
-                        </Link>
-                      </span>
-                      <span className="author vcard">
-                        <Link className="url fn n" to={ROUTES.RECEIPT}>
-                          <i className="fa fa-user color-main2"></i>
-                          {post.authorName || 'Admin'}
                         </Link>
                       </span>
                     </span>
@@ -126,7 +134,9 @@ const PostDetail = () => {
                     )}
 
                     {/* Main content rendered from DB */}
-                    <div className="fs-16" dangerouslySetInnerHTML={{ __html: post.content.replace(/\n|\\n/g, '<br/>') }} />
+                    <div className="fs-16">
+                      {parseHtmlWithVideos(post.content.replace(/\n|\\n/g, '<br/>'))}
+                    </div>
                   </div>
                 </div>
               </article>
@@ -163,34 +173,7 @@ const PostDetail = () => {
                 </div>
               </div>
 
-              {/* ===== AUTHOR BIO ===== */}
-              <div className="ls author-bio side-item content-padding bordered">
-                <div className="row">
-                  <div className="col-xl-4 col-lg-6 col-md-6">
-                    <div className="item-media cover-image">
-                      <img src={`${import.meta.env.BASE_URL}images/author-bio.jpg`} alt="" />
-                    </div>
-                  </div>
-                  <div className="col-xl-8 col-lg-6 col-md-6">
-                    <div className="item-content">
-                      <h4>
-                        <Link to={ROUTES.RECEIPT}>{post.authorName || 'Muka Team'}</Link>
-                        <span className="small-text color-main"> Chef & Writer</span>
-                      </h4>
-                      <p>
-                        Passionate about bringing the best baking and culinary experiences. 
-                        Stay tuned for more recipes and lifestyle tips from {post.authorName || 'Muka Team'}.
-                      </p>
-                      <div className="author-social">
-                        <a href="#" className="fa fa-facebook"></a>
-                        <a href="#" className="fa fa-twitter"></a>
-                        <a href="#" className="fa fa-google-plus"></a>
-                        <a href="#" className="fa fa-youtube-play"></a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+
 
               {/* ===== RELATED POSTS ===== */}
               {relatedPosts.length > 0 && (
@@ -211,7 +194,7 @@ const PostDetail = () => {
                             <Link to={ROUTES.POST_DETAIL(rp.slug)}>{rp.title}</Link>
                           </h6>
                           <i className="fa fa-calendar color-main2"></i>
-                          <span className="small-text">{rp.dateString || 'Recent'}</span>
+                          <span className="small-text">{formatDate(rp.createdAt || rp.dateString)}</span>
                         </div>
                       </li>
                     ))}

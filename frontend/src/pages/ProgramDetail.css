@@ -71,9 +71,9 @@
                   .video-card:hover { transform: translateY(-3px); }
                   .video-wrapper {
                     position: relative;
-                    padding-bottom: 56.25%;
-                    height: 0;
                     background: #1a1a2e;
+                    border-radius: 8px;
+                    overflow: hidden;
                   }
                   .video-wrapper iframe {
                     position: absolute;
@@ -483,6 +483,9 @@
 .pro-max-tab-content .fade-in {
   animation: fadeInTab 0.4s ease forwards;
 }
+
+
+
 @keyframes fadeInTab {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }

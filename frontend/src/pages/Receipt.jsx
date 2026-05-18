@@ -12,20 +12,6 @@ import { imageUrl, PLACEHOLDER_IMAGE } from '../utils/imageUrl';
 
 const ITEMS_PER_PAGE = 6;
 
-// --- Skeleton Components ---
-const SkeletonFeatured = () => (
-  <div className="col-xl-4 col-md-6 mb-4">
-    <div className="skeleton-card featured">
-      <div className="skeleton-img" style={{ height: '280px' }}></div>
-      <div className="skeleton-content p-4">
-        <div className="skeleton-line sm mb-3"></div>
-        <div className="skeleton-line lg mb-3"></div>
-        <div className="skeleton-line md"></div>
-      </div>
-    </div>
-  </div>
-);
-
 const SkeletonCard = () => (
   <div className="col-lg-6 col-xl-4 mb-5">
     <div className="skeleton-card">
@@ -45,9 +31,7 @@ const Receipt = () => {
   const categoryFilter = searchParams.get('cat');
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [featuredPosts, setFeaturedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [featuredLoading, setFeaturedLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -59,22 +43,6 @@ const Receipt = () => {
     getCategories({ type: 'POST' })
       .then(res => setCategories(res || []))
       .catch(err => console.error("Could not load categories", err));
-  }, []);
-
-  useEffect(() => {
-    setFeaturedLoading(true);
-    getPosts({ limit: 3 })
-      .then(response => {
-        const data = response.data || response;
-        if (Array.isArray(data)) {
-          setFeaturedPosts(data.slice(0, 3));
-        }
-        setFeaturedLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch featured posts", err);
-        setFeaturedLoading(false);
-      });
   }, []);
 
   useEffect(() => {
@@ -97,9 +65,9 @@ const Receipt = () => {
       });
   }, [currentPage, categoryFilter]);
 
-  useInitOnLoaded(loading || featuredLoading);
+  useInitOnLoaded(loading);
 
-  if ((loading || featuredLoading) && posts.length === 0 && categories.length === 0 && featuredPosts.length === 0) {
+  if (loading && posts.length === 0 && categories.length === 0) {
     return <PageLoading />;
   }
 
@@ -206,61 +174,6 @@ const Receipt = () => {
 
 					<div className="d-none d-lg-block divider-40"></div>
 
-          {/* Featured Posts Skeleton or Content */}
-          {!categoryFilter && (posts.length > 0 || loading) && (featuredPosts.length > 0 || featuredLoading) && (
-            <div className="row c-mb-60 c-mb-lg-30 mb-5">
-              <div className="col-lg-12 blog-featured-posts">
-                <h3 className="text-center featured-title mb-5" style={{ fontWeight: '800', fontSize: '2.5rem', fontFamily: 'Playfair Display, serif', color: '#20252b' }}>
-                  {t('receipt.topPosts') || 'Bài viết nổi bật'}
-                </h3>
-                <div className="row justify-content-center">
-                  {featuredLoading ? (
-                    <>
-                      <SkeletonFeatured />
-                      <SkeletonFeatured />
-                      <SkeletonFeatured />
-                    </>
-                  ) : (
-                    featuredPosts.map((post) => (
-                      <div key={post.id} className="col-xl-4 col-md-6 mb-4">
-                        <article className="vertical-item text-center post type-post status-publish has-post-thumbnail featured h-100 shadow-sm border-0" style={{ borderRadius: '20px', overflow: 'hidden', background: '#fff' }}>
-                          <div className="item-media post-thumbnail">
-                            <Link to={ROUTES.POST_DETAIL(post.slug)}>
-                              <img 
-                                src={imageUrl(post.thumbnail)} 
-                                alt={post.title} 
-                                onError={handleImageError}
-                                style={{ height: '280px', objectFit: 'cover', width: '100%' }}
-                              />
-                            </Link>
-                          </div>
-                          <div className="item-content p-4 d-flex flex-column h-100">
-                            <header className="entry-header">
-                              <div className="entry-meta small-text mb-3" style={{ color: '#808080', fontWeight: '500' }}>
-                                <span className="posted-on">
-                                  <i className="fa fa-calendar" style={{ color: '#6ab78e', marginRight: '8px' }}></i>
-                                  <time dateTime={post.createdAt}>{new Date(post.createdAt).toLocaleDateString('vi-VN')}</time>
-                                </span>
-                              </div>
-                              <h4 className="entry-title mb-3" style={{ fontSize: '1.4rem', lineHeight: '1.3', fontFamily: 'Playfair Display, serif', fontWeight: '700' }}>
-                                <Link to={ROUTES.POST_DETAIL(post.slug)} rel="bookmark" className="dark-link" style={{ color: '#20252b' }}>
-                                  {post.title}
-                                </Link>
-                              </h4>
-                            </header>
-                            <div className="entry-content flex-grow-1">
-                              <p className="text-truncate-2" style={{ fontSize: '1rem', color: '#808080', lineHeight: '1.6' }}>{post.description || post.desc}</p>
-                            </div>
-                          </div>
-                        </article>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-					
 					<div className="row c-gutter-60 mt-4">
 						<main className="col-lg-12">
               <div className="row">

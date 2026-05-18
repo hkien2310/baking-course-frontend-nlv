@@ -38,12 +38,6 @@ const BlogCard = ({ post }) => {
                 {post.category || (t('receipt.title') || 'Cẩm Nang')}
               </Link>
             </span>
-            <span className="author vcard">
-              <Link className="url fn n" to={ROUTES.RECEIPT}>
-                <i className="fa fa-user color-main2"></i>
-                {post.author?.fullName || post.authorName || 'Admin'}
-              </Link>
-            </span>
           </span>
         </div>
       </div>

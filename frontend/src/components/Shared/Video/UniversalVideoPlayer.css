@@ -1,0 +1,91 @@
+.uvp-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  background-color: #000;
+  border-radius: 12px;
+  overflow: hidden; /* CRITICAL for iOS Safari to contain iframe */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  /* Fix iOS Safari iframe rendering bug where iframe stretches to internal content width */
+  -webkit-overflow-scrolling: touch;
+}
+
+.uvp-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  border: none;
+  border-radius: 12px;
+}
+
+/* Facade Mode UI */
+.uvp-facade {
+  cursor: pointer;
+}
+
+.uvp-thumb,
+.uvp-facade img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  border: none;
+  transition: opacity 0.3s ease;
+}
+
+.uvp-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #333333 0%, #111111 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.uvp-facade:hover .uvp-thumb,
+.uvp-facade:hover img,
+.uvp-facade:hover .uvp-placeholder {
+  opacity: 0.9;
+}
+
+.uvp-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 48px;
+  z-index: 10;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.uvp-facade:hover .uvp-play-button {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.uvp-play-bg {
+  fill: #212121;
+  fill-opacity: 0.8;
+  transition: fill 0.1s cubic-bezier(0.4, 0, 1, 1), fill-opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.uvp-facade:hover .uvp-play-bg {
+  fill: #fc834b; /* Theme color */
+  fill-opacity: 1;
+}
+
+.uvp-play-icon {
+  fill: #ffffff;
+}
