@@ -4,6 +4,10 @@ import UniversalVideoPlayer from '../components/Shared/Video/UniversalVideoPlaye
 
 export const parseHtmlWithVideos = (html) => {
   if (!html) return null;
+  
+  // Clean up non-breaking spaces that prevent natural word wrapping
+  const cleanHtml = html.replace(/&nbsp;/g, ' ');
+  
   const mediaRegex = /(https?:\/\/(?:www\.)?(?:youtube\.com\/(?:watch|embed)|youtube-nocookie\.com\/(?:watch|embed)|youtu\.be|vimeo\.com|drive\.google\.com\/(?:file\/d\/|open\?id=))[\w\-?=&#%./]+)/gi;
 
   const options = {
@@ -86,5 +90,5 @@ export const parseHtmlWithVideos = (html) => {
     }
   };
 
-  return parse(html, options);
+  return parse(cleanHtml, options);
 };
