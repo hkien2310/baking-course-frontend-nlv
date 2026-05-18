@@ -31,8 +31,8 @@
 .content-preview, 
 .program-content-box,
 .ql-editor {
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
   word-break: normal !important;
   white-space: pre-wrap !important;
   max-width: 100%;
@@ -42,8 +42,8 @@
 .content-preview p,
 .program-content-box p,
 .ql-editor p {
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
   word-break: normal !important;
   white-space: pre-wrap !important;
   max-width: 100%;
