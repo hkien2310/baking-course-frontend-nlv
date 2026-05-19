@@ -112,9 +112,14 @@ async function processIpnCallback(queryParams) {
     return { RspCode: '04', Message: 'Invalid Amount' };
   }
 
-  // 4. Check idempotency — already confirmed
+  // 4. Check idempotency and terminal states
   if (order.status === 'CONFIRMED') {
     return { RspCode: '02', Message: 'Order already confirmed' };
+  }
+  
+  if (order.status === 'CANCELLED' || order.status === 'REJECTED') {
+    console.warn(`VNPay IPN: Order ${order.orderCode} is in terminal state ${order.status}. Cannot process payment.`);
+    return { RspCode: '99', Message: 'Order is in invalid state' };
   }
 
   // 5. Build raw payload (exclude secret hash for safety)
@@ -125,6 +130,7 @@ async function processIpnCallback(queryParams) {
   // 6. Process based on response code
   if (vnpResponseCode === '00' && vnpTransactionStatus === '00') {
     // Payment successful — confirm order via centralized OrderService
+    // orderService.completeOrder is now idempotent and transaction-safe
     await orderService.completeOrder(order.id, {
       paidAt: new Date(),
       paidViaWebhook: true,
@@ -137,7 +143,7 @@ async function processIpnCallback(queryParams) {
     });
     console.log(`VNPay IPN: Order ${order.orderCode} CONFIRMED (txnRef: ${vnpTxnRef})`);
   } else {
-    // Payment failed — update gateway info but keep PENDING
+    // Payment failed or was cancelled by user on gateway
     await prisma.order.update({
       where: { id: order.id },
       data: {
@@ -147,7 +153,7 @@ async function processIpnCallback(queryParams) {
         rawGatewayPayload: rawPayload,
       },
     });
-    console.log(`VNPay IPN: Order ${order.orderCode} payment FAILED (code: ${vnpResponseCode})`);
+    console.log(`VNPay IPN: Order ${order.orderCode} payment FAILED/CANCELLED (code: ${vnpResponseCode}, status: ${vnpTransactionStatus})`);
   }
 
   return { RspCode: '00', Message: 'Confirm Success' };

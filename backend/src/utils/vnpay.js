@@ -13,15 +13,12 @@ const querystring = require('qs');
  */
 function sortParams(params) {
   const sorted = {};
-  const str = [];
-  for (let key in params) {
-    if (params.hasOwnProperty(key) && params[key] !== '' && params[key] !== undefined && params[key] !== null) {
-      str.push(encodeURIComponent(key));
-    }
-  }
-  str.sort();
-  for (let key = 0; key < str.length; key++) {
-    sorted[str[key]] = encodeURIComponent(params[str[key]]).replace(/%20/g, '+');
+  const keys = Object.keys(params)
+    .filter(key => params[key] !== '' && params[key] !== undefined && params[key] !== null)
+    .sort();
+
+  for (const key of keys) {
+    sorted[encodeURIComponent(key)] = encodeURIComponent(params[key]).replace(/%20/g, '+');
   }
   return sorted;
 }

@@ -21,27 +21,25 @@ const { determineTier, DEFAULT_LOYALTY_CONFIG } = require('./loyaltyService');
  * @param {object} [tx] - Optional Prisma transaction client
  */
 async function completeOrder(orderId, completionData = {}, tx = null) {
-  const client = tx || prisma;
-
-  // 1. Fetch order and check status
-  const order = await client.order.findUnique({
-    where: { id: orderId },
-    include: {
-      user: { select: { id: true, totalSpent: true, points: true } }
-    }
-  });
-
-  if (!order) {
-    throw new Error(`Order ${orderId} not found.`);
-  }
-
-  if (order.status === 'CONFIRMED') {
-    console.warn(`Order ${orderId} is already confirmed. Skipping duplicate completion logic.`);
-    return order;
-  }
-
-  // 2. Perform completion within a transaction if not already in one
   const performCompletion = async (innerTx) => {
+    // 1. Fetch order and user INSIDE the transaction to ensure consistency
+    const order = await innerTx.order.findUnique({
+      where: { id: orderId },
+      include: {
+        user: { select: { id: true, totalSpent: true, points: true } }
+      }
+    });
+
+    if (!order) {
+      throw new Error(`Order ${orderId} not found.`);
+    }
+
+    // 2. Atomic status check
+    if (order.status === 'CONFIRMED') {
+      console.warn(`Order ${orderId} is already confirmed. Skipping duplicate completion logic.`);
+      return order;
+    }
+
     // A. Update Order Status
     const updatedOrder = await innerTx.order.update({
       where: { id: orderId },
@@ -65,7 +63,7 @@ async function completeOrder(orderId, completionData = {}, tx = null) {
     }
 
     const user = order.user;
-    const newTotalSpent = (user.totalSpent || 0) + (order.finalPrice || order.amount - (order.vatAmount || 0)); // Ensure we use net price after all discounts
+    const newTotalSpent = (user.totalSpent || 0) + (order.finalPrice || order.amount - (order.vatAmount || 0)); 
     const newPoints = (user.points || 0) + (order.pointsEarned || 0);
     const newTier = determineTier(newTotalSpent, loyaltyConfig.tiers);
 
@@ -78,18 +76,14 @@ async function completeOrder(orderId, completionData = {}, tx = null) {
       }
     });
 
-    const orderCodeLog = updatedOrder ? updatedOrder.orderCode : order.orderCode;
-    console.log(`Order ${orderCodeLog} completed: Enrollment created & Loyalty updated (Tier: ${newTier}, Points: +${order.pointsEarned}).`);
-    return updatedOrder || order;
+    console.log(`Order ${order.orderCode} completed: Enrollment created & Loyalty updated (Tier: ${newTier}, Points: +${order.pointsEarned}).`);
+    return updatedOrder;
   };
 
   if (tx) {
     return performCompletion(tx);
   } else {
-    if (typeof client.$transaction !== 'function') {
-      return performCompletion(client);
-    }
-    return client.$transaction(performCompletion);
+    return prisma.$transaction(performCompletion);
   }
 }
 
