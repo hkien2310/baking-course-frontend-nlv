@@ -78,17 +78,16 @@ exports.getAllPrograms = async (req, res) => {
       where.AND = AND;
     }
 
-    let orderBy = {};
+    let orderBy = [];
     if (sortBy === 'price_asc') {
-      // Because price logic is complex, Prisma sorting might just use base price
-      orderBy = { price: 'asc' };
+      orderBy = [{ sortOrder: 'asc' }, { price: 'asc' }];
     } else if (sortBy === 'price_desc') {
-      orderBy = { price: 'desc' };
+      orderBy = [{ sortOrder: 'asc' }, { price: 'desc' }];
     } else if (sortBy === 'popular') {
-      orderBy = { students: 'desc' };
+      orderBy = [{ sortOrder: 'asc' }, { students: 'desc' }];
     } else {
-      // Default newest
-      orderBy = { createdAt: 'desc' };
+      // Default: manual sortOrder first, then newest
+      orderBy = [{ sortOrder: 'asc' }, { createdAt: 'desc' }];
     }
 
     if (page) {
@@ -477,5 +476,28 @@ exports.getTimetable = async (req, res) => {
     res.json(classSessions);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch timetables' });
+  }
+};
+
+exports.reorderPrograms = async (req, res) => {
+  try {
+    const { programs } = req.body;
+    if (!Array.isArray(programs)) {
+      return res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
+    }
+
+    await prisma.$transaction(
+      programs.map((prog) =>
+        prisma.program.update({
+          where: { id: prog.id },
+          data: { sortOrder: prog.sortOrder },
+        })
+      )
+    );
+
+    res.json({ message: 'Cập nhật thứ tự thành công' });
+  } catch (error) {
+    console.error('reorderPrograms error:', error);
+    res.status(500).json({ error: 'Failed to reorder programs' });
   }
 };

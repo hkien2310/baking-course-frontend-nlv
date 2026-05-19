@@ -97,6 +97,11 @@ export const getPrograms = async (params = {}) => {
   return data;
 };
 
+export const reorderPrograms = async (programs) => {
+  const { data } = await api.put('/programs/reorder', { programs });
+  return data;
+};
+
 export const getUpcomingPrograms = async (limit = 3) => {
   const { data } = await api.get('/programs/upcoming', { params: { limit } });
   return data;

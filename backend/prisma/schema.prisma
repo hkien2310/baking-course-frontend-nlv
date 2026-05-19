@@ -37,6 +37,7 @@ model RefreshToken {
 model Program {
   id             String         @id @default(uuid())
   slug           String         @unique
+  sortOrder      Int            @default(0)
   title          String
   description    String?
   reviews        Int            @default(0)

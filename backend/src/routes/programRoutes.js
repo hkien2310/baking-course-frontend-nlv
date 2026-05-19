@@ -11,5 +11,6 @@ router.put('/:id', auth, programController.updateProgram);
 router.patch('/:id/feature', auth, programController.toggleFeatured);
 router.delete('/:id', auth, programController.deleteProgram);
 router.get('/:identifier', programController.getProgramByIdOrSlug);
+router.put('/reorder', auth, programController.reorderPrograms);
 
 module.exports = router;
