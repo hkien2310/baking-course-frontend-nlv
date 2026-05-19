@@ -95,7 +95,7 @@ const HomeSlider = ({ slides }) => {
       <div className="flexslider" data-nav="true" data-dots="false">
         <ul className="slides">
           {slides.map((slide, index) => (
-            <li key={slide.id || index} className={`ds text-center ${index === 1 ? 'slide02' : index === 2 ? 'slide03' : ''}`} style={{ position: 'relative', width: '100%', height: '90vh', minHeight: '700px', maxHeight: '1000px' }}>
+            <li key={slide.id || index} className={`ds text-center ${index === 1 ? 'slide02' : index === 2 ? 'slide03' : ''}`} style={{ position: 'relative', width: '100%', aspectRatio: '16/9', minHeight: '400px', maxHeight: '90vh' }}>
               <img 
                 src={slide.thumbnail || `/images/slide0${index + 1}.jpg`} 
                 alt={slide.title} 

@@ -6,6 +6,7 @@ import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminModal from './AdminModal';
 import AdminActionBtn from './Shared/AdminActionBtn';
 import AdminConfirmModal from './AdminConfirmModal';
+import AdminImageUpload from './AdminImageUpload';
 import { getBanners, createBanner, updateBanner, deleteBanner, getPrograms, reorderBanners, uploadImage } from '../../services/api';
 import usePendingAction from './usePendingAction';
 
@@ -143,31 +144,6 @@ const AdminBanners = () => {
       });
     } catch (err) {
       toast.error('Lỗi khi xóa banner');
-    }
-  };
-
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Validate size (e.g. max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Kích thước ảnh vượt quá 5MB');
-      return;
-    }
-
-    setIsUploadingImage(true);
-    try {
-      const res = await uploadImage(file);
-      setFormData(prev => ({ ...prev, imageUrl: res.url || res.imageUrl || res }));
-      toast.success('Tải ảnh lên thành công');
-    } catch (err) {
-      console.error(err);
-      toast.error('Lỗi khi tải ảnh lên');
-    } finally {
-      setIsUploadingImage(false);
-      // Reset input value so same file can be selected again if needed
-      e.target.value = null;
     }
   };
 
@@ -330,46 +306,12 @@ const AdminBanners = () => {
           </div>
 
           <div className="form-group mb-3">
-            <label className="font-weight-bold mb-2">Hình ảnh Banner <span className="text-danger">*</span></label>
-            
-            <div className="d-flex align-items-center mb-2" style={{ gap: '10px' }}>
-              <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
-                <AdminButton 
-                  type="button"
-                  variant="outline" 
-                  icon={isUploadingImage ? 'spinner fa-spin' : 'upload'} 
-                  label={isUploadingImage ? 'Đang tải...' : 'Tải ảnh lên'}
-                  disabled={isUploadingImage}
-                />
-                <input 
-                  type="file" 
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={isUploadingImage}
-                  style={{
-                    position: 'absolute', top: 0, right: 0, minWidth: '100%', minHeight: '100%',
-                    fontSize: '100px', textAlign: 'right', filter: 'alpha(opacity=0)',
-                    opacity: 0, outline: 'none', background: 'white', cursor: 'pointer', display: 'block'
-                  }}
-                />
-              </div>
-              <span className="text-muted small">hoặc nhập đường dẫn ảnh (URL) ở dưới</span>
-            </div>
-
-            <input 
-              type="url" 
-              className="admin-form-control" 
-              value={formData.imageUrl} 
-              onChange={(e) => setFormData({...formData, imageUrl: e.target.value})} 
-              placeholder="https://... hoặc tải ảnh lên"
-              required
+            <AdminImageUpload 
+              label={<span>Hình ảnh Banner <span className="text-danger">*</span></span>}
+              name="imageUrl"
+              value={formData.imageUrl}
+              onChange={(url) => setFormData({...formData, imageUrl: url})}
             />
-            
-            {formData.imageUrl && (
-              <div className="mt-3 p-2 bg-light rounded text-center" style={{ border: '1px dashed #ccc' }}>
-                <img src={formData.imageUrl} alt="Preview" style={{maxHeight: '150px', maxWidth: '100%', borderRadius: '4px', objectFit: 'contain'}} />
-              </div>
-            )}
           </div>
 
           <div className="form-group mb-3">
