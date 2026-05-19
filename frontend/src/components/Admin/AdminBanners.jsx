@@ -6,7 +6,7 @@ import AdminLoadingBlock from './AdminLoadingBlock';
 import AdminModal from './AdminModal';
 import AdminActionBtn from './Shared/AdminActionBtn';
 import AdminConfirmModal from './AdminConfirmModal';
-import { getBanners, createBanner, updateBanner, deleteBanner, getPrograms } from '../../services/api';
+import { getBanners, createBanner, updateBanner, deleteBanner, getPrograms, reorderBanners } from '../../services/api';
 import usePendingAction from './usePendingAction';
 
 // Helper to format date as yyyy-MM-dd
@@ -41,6 +41,41 @@ const AdminBanners = () => {
   });
   
   const { isPending, hasPending, withPending } = usePendingAction();
+  const dragItem = React.useRef(null);
+  const dragOverItem = React.useRef(null);
+  const [draggedIdx, setDraggedIdx] = useState(null);
+
+  const handleDragStart = (position) => {
+    dragItem.current = position;
+    setDraggedIdx(position);
+  };
+
+  const handleDragOver = (e, position) => {
+    e.preventDefault();
+    dragOverItem.current = position;
+  };
+
+  const handleDrop = async () => {
+    setDraggedIdx(null);
+    if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+      const newBanners = [...banners];
+      const item = newBanners.splice(dragItem.current, 1)[0];
+      newBanners.splice(dragOverItem.current, 0, item);
+      
+      setBanners(newBanners);
+
+      const payload = newBanners.map((b, idx) => ({ id: b.id, sortOrder: idx }));
+      try {
+        await reorderBanners(payload);
+        toast.success('Đã cập nhật thứ tự banner!');
+      } catch (err) {
+        toast.error('Lỗi khi cập nhật vị trí');
+        fetchData();
+      }
+    }
+    dragItem.current = null;
+    dragOverItem.current = null;
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -137,7 +172,7 @@ const AdminBanners = () => {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
       <AdminHeader 
         title="Quản lý Banner" 
-        description="Quản lý banner hiển thị ở đầu trang chủ" 
+        description="Quản lý banner hiển thị ở đầu trang chủ. Kéo thả biểu tượng ☰ để sắp xếp." 
         action={<AdminButton variant="primary" icon="plus" label="Thêm Mới" onClick={() => setIsModalOpen(true)} />} 
       />
 
@@ -149,6 +184,7 @@ const AdminBanners = () => {
             <table className="admin-table">
               <thead>
                 <tr>
+                  <th style={{ width: '40px' }}></th>
                   <th>Ảnh</th>
                   <th>Tiêu đề Banner</th>
                   <th>Link đến</th>
@@ -160,13 +196,28 @@ const AdminBanners = () => {
               <tbody>
                 {banners.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="text-center py-4" style={{color: '#888'}}>
+                    <td colSpan="7" className="text-center py-4" style={{color: '#888'}}>
                       <i>Chưa có dữ liệu banner.</i>
                     </td>
                   </tr>
                 ) : (
-                  banners.map((row) => (
-                    <tr key={row.id}>
+                  banners.map((row, idx) => (
+                    <tr 
+                      key={row.id}
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragOver={(e) => handleDragOver(e, idx)}
+                      onDrop={handleDrop}
+                      onDragEnd={() => setDraggedIdx(null)}
+                      style={{ 
+                        cursor: 'grab', 
+                        opacity: draggedIdx === idx ? 0.5 : 1,
+                        backgroundColor: draggedIdx === idx ? '#f8f9fa' : 'transparent'
+                      }}
+                    >
+                      <td className="text-center text-muted">
+                        <i className="fa fa-bars" style={{ cursor: 'grab' }}></i>
+                      </td>
                       <td>
                         <img src={row.imageUrl} alt={row.title} width="80" style={{borderRadius: '4px', objectFit: 'cover', height: '45px'}}/>
                       </td>

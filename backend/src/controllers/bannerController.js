@@ -11,7 +11,10 @@ exports.getAllBanners = async (req, res) => {
 
     const banners = await prisma.banner.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { sortOrder: 'asc' },
+        { createdAt: 'desc' }
+      ],
     });
 
     res.json(banners);
@@ -75,5 +78,28 @@ exports.deleteBanner = async (req, res) => {
   } catch (error) {
     console.error('deleteBanner error:', error);
     res.status(500).json({ error: 'Lỗi khi xóa banner' });
+  }
+};
+
+exports.reorderBanners = async (req, res) => {
+  try {
+    const { banners } = req.body;
+    if (!Array.isArray(banners)) {
+      return res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
+    }
+
+    await prisma.$transaction(
+      banners.map((banner) =>
+        prisma.banner.update({
+          where: { id: banner.id },
+          data: { sortOrder: banner.sortOrder },
+        })
+      )
+    );
+
+    res.json({ message: 'Cập nhật thứ tự banner thành công' });
+  } catch (error) {
+    console.error('reorderBanners error:', error);
+    res.status(500).json({ error: 'Failed to reorder banners' });
   }
 };

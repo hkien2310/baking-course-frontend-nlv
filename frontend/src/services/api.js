@@ -261,6 +261,10 @@ export const updateBanner = async (id, bannerData) => {
   const { data } = await api.put(`/banners/${id}`, bannerData);
   return data;
 };
+export const reorderBanners = async (banners) => {
+  const { data } = await api.put('/banners/reorder', { banners });
+  return data;
+};
 export const deleteBanner = async (id) => {
   const { data } = await api.delete(`/banners/${id}`);
   return data;
