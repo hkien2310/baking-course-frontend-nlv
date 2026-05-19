@@ -6,6 +6,7 @@ import AdminPosts from '../components/Admin/AdminPosts';
 import AdminSliders from '../components/Admin/AdminSliders';
 import AdminEnrollments from '../components/Admin/AdminEnrollments';
 import AdminLoyalty from '../components/Admin/AdminLoyalty';
+import AdminBanners from '../components/Admin/AdminBanners';
 
 // [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
@@ -103,6 +104,8 @@ const AdminDashboard = ({ user }) => {
         return <AdminSettings />;
       case 'password':
         return <AdminPassword />;
+      case 'banners':
+        return <AdminBanners />;
       case 'qna':
         return <AdminQnA />;
       case 'overview':
@@ -235,6 +238,11 @@ const AdminDashboard = ({ user }) => {
           <li className={activeTab === 'posts' ? 'active' : ''}>
             <a href="#posts" onClick={(e) => { e.preventDefault(); handleTabChange('posts'); }}>
               <i className="fa fa-pencil"></i> Chia sẻ
+            </a>
+          </li>
+          <li className={activeTab === 'banners' ? 'active' : ''}>
+            <a href="#banners" onClick={(e) => { e.preventDefault(); handleTabChange('banners'); }}>
+              <i className="fa fa-picture-o"></i> Banner Trang Chủ
             </a>
           </li>
 

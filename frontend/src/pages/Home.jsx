@@ -5,7 +5,7 @@ import HomeClasses from '../components/Home/HomeClasses';
 import HomeNewCourses from '../components/Home/HomeNewCourses';
 import HomeAbout from '../components/Home/HomeAbout';
 import TestimonialsSlider from '../components/Shared/TestimonialsSlider';
-import { getUpcomingPrograms, getPrograms, getApprovedStudentWorks } from '../services/api';
+import { getBanners, getPrograms, getApprovedStudentWorks } from '../services/api';
 import { useTranslation } from '../i18n/LanguageContext';
 import PageLoading from '../components/Shared/PageLoading';
 
@@ -21,27 +21,26 @@ const Home = () => {
 
   useEffect(() => {
     Promise.all([
-      getPrograms({ hasDiscount: true, page: 1, limit: 5 }), // Fetch programs with active discount
+      getBanners({ isActive: true }), // Fetch active banners
       getPrograms({ isFeatured: true, page: 1, limit: 3 }),
       getPrograms({ isFeatured: false, page: 1, limit: 8 }),
       getApprovedStudentWorks()
-    ]).then(([discountedRes, featuredRes, newRes, studentWorksRes]) => {
+    ]).then(([bannersRes, featuredRes, newRes, studentWorksRes]) => {
       const featuredData = featuredRes?.data || featuredRes || [];
       const newData = newRes?.data || newRes || [];
-      const discountedData = discountedRes?.data || discountedRes || [];
+      const bannersData = bannersRes?.data || bannersRes || [];
 
-      // Only show programs with an actual expiration date in the Flash Sale slider
-      // Those without saleEndDate are ignored for the hero section
-      const heroSlides = discountedData.filter(p => p.saleEndDate);
-
-      /* [FALLBACK REMOVED] - Only show slider if there are actual expiring flash sales
-      if (heroSlides.length === 0) {
-        heroSlides = featuredData.length > 0 ? featuredData : newData.slice(0, 3);
-      }
-      */
+      // Map banner data to what HomeSlider expects (title, thumbnail, saleEndDate)
+      const mappedBanners = bannersData.map(banner => ({
+        id: banner.id,
+        title: banner.title,
+        slug: banner.targetUrl?.replace('/program/', '') || '',
+        thumbnail: banner.imageUrl,
+        saleEndDate: banner.countdownDate
+      }));
 
       setData({
-        upcomingSlides: heroSlides,
+        upcomingSlides: mappedBanners,
         featuredPrograms: featuredData,
         newPrograms: newData,
         studentWorks: studentWorksRes?.data || studentWorksRes || []

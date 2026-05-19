@@ -243,6 +243,29 @@ export const updateEnrollmentStatus = async (id, status) => {
   return data;
 };
 
+export const changeStudentWorkStatus = async (id, status) => {
+  const { data } = await api.patch(`/student-work/${id}/status`, { status });
+  return data;
+};
+
+// ---------------------- BANNERS ----------------------
+export const getBanners = async (params = {}) => {
+  const { data } = await api.get('/banners', { params });
+  return data;
+};
+export const createBanner = async (bannerData) => {
+  const { data } = await api.post('/banners', bannerData);
+  return data;
+};
+export const updateBanner = async (id, bannerData) => {
+  const { data } = await api.put(`/banners/${id}`, bannerData);
+  return data;
+};
+export const deleteBanner = async (id) => {
+  const { data } = await api.delete(`/banners/${id}`);
+  return data;
+};
+
 export const deleteEnrollment = async (id) => {
   const { data } = await api.delete(`/enrollments/${id}`);
   return data;
