@@ -238,7 +238,11 @@ const AdminPostEditor = () => {
                   )}
                   
                   <div style={{ color: 'var(--admin-primary)', fontWeight: '700', fontSize: '13px', marginBottom: '12px', letterSpacing: '0.15px' }}>
-                    {formData.category || 'CHUYÊN MỤC'} • {formData.dateString || 'MỚI NHẤT'}
+                    {formData.category || 'CHUYÊN MỤC'} • {(() => {
+                      if (!formData.dateString) return 'MỚI NHẤT';
+                      const d = new Date(formData.dateString);
+                      return isNaN(d.getTime()) ? formData.dateString : d.toLocaleDateString('vi-VN');
+                    })()}
                   </div>
                   
                   <h1 style={{ fontSize: '32px', color: '#1a1a1a', marginBottom: '20px', fontWeight: '800', lineHeight: '1.3' }}>
