@@ -52,7 +52,7 @@ const AdminPostEditor = () => {
             type: post.type || 'BLOG',
             thumbnail: post.thumbnail || '',
             authorName: post.authorName || 'Admin',
-            dateString: post.dateString || defaultDateString,
+            dateString: post.dateString || post.createdAt || defaultDateString,
             content: post.content || '',
             desc: post.desc || ''
           });
@@ -163,10 +163,22 @@ const AdminPostEditor = () => {
                     type="date"
                     label="Ngày hiển thị"
                     name="dateString" 
-                    value={formData.dateString ? formData.dateString.split('T')[0] : ''} 
+                    value={(() => {
+                      if (!formData.dateString) return '';
+                      try {
+                        const d = new Date(formData.dateString);
+                        if (isNaN(d.getTime())) return '';
+                        // Always output strict YYYY-MM-DD format for <input type="date">
+                        // Use local timezone to prevent offset issues (e.g. 23:00 UTC becoming previous day)
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                      } catch (e) {
+                        return '';
+                      }
+                    })()} 
                     onChange={(e) => {
-                      // Save it as a valid ISO string so the DB is happy, or just string.
-                      // If user selects "2024-10-15", it comes as "2024-10-15"
                       const d = new Date(e.target.value);
                       const str = isNaN(d.getTime()) ? formData.dateString : d.toISOString();
                       setFormData({ ...formData, dateString: str });

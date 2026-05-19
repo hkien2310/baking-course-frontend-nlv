@@ -53,7 +53,13 @@ const AdminPosts = () => {
     { label: 'Tiêu đề', key: 'title' },
     { label: 'Chuyên mục', render: (row) => <span className="badge badge-info bg-info">{row.category}</span> },
     { label: 'Tác giả', render: (row) => row.authorName || 'Admin' },
-    { label: 'Ngày đăng', render: (row) => row.dateString || new Date(row.createdAt).toLocaleDateString() }
+    { label: 'Ngày đăng', render: (row) => {
+      if (row.dateString) {
+        const d = new Date(row.dateString);
+        return isNaN(d.getTime()) ? row.dateString : d.toLocaleDateString('vi-VN');
+      }
+      return new Date(row.createdAt).toLocaleDateString('vi-VN');
+    } }
   ];
 
   return (

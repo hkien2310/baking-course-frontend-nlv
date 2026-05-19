@@ -112,7 +112,7 @@ const Footer = () => {
                       </Link>
                       <div className="media-body">
                         <p><Link to={ROUTES.POST_DETAIL(post.slug)}>{post.title}</Link></p>
-                        <h6 className="item-meta"><i className="fa fa-calendar color-main"></i>{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'N/A'}</h6>
+                        <h6 className="item-meta"><i className="fa fa-calendar color-main"></i>{post.dateString || post.dateIso || post.createdAt ? new Date(post.dateString || post.dateIso || post.createdAt).toLocaleDateString('vi-VN') : 'N/A'}</h6>
                       </div>
                     </li>
                   )) : (
