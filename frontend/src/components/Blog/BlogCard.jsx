@@ -28,7 +28,7 @@ const BlogCard = ({ post }) => {
               <span className="screen-reader-text">Posted on</span>
               <Link to={ROUTES.POST_DETAIL(post.slug || 'sample-post')} rel="bookmark">
                 <i className="fa fa-calendar color-main2"></i>
-                <time dateTime={post.dateIso || post.createdAt} className="entry-date published updated">{new Date(post.createdAt || post.dateIso || new Date()).toLocaleDateString('vi-VN')}</time>
+                <time dateTime={post.dateString || post.dateIso || post.createdAt} className="entry-date published updated">{new Date(post.dateString || post.dateIso || post.createdAt || new Date()).toLocaleDateString('vi-VN')}</time>
               </Link>
             </span>
             <span className="category-links links-maincolor">

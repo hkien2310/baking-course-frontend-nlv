@@ -39,9 +39,6 @@ const ProgramCard = ({ cls }) => {
     <div className="program-card-v3 bordered">
       {/* Image */}
       <div className="pc3-image">
-        {cls.programType && (
-          <span className="pc3-category-pill">{getCategoryLabel()}</span>
-        )}
         <Link to={ROUTES.PROGRAM_DETAIL(cls.slug)}>
           <img src={imageUrl(cls.thumbnail, `${import.meta.env.BASE_URL}images/gallery/09.jpg`)} alt={cls.title} />
         </Link>

@@ -109,8 +109,8 @@ const PostDetail = () => {
                         <span className="screen-reader-text">Posted on</span>
                         <Link to={ROUTES.POST_DETAIL(post.slug)} rel="bookmark">
                           <i className="fa fa-calendar color-main2"></i>
-                          <time dateTime={post.createdAt || post.dateString} className="entry-date published updated">
-                            {formatDate(post.createdAt || post.dateString)}
+                          <time dateTime={post.dateString || post.dateIso || post.createdAt} className="entry-date published updated">
+                            {formatDate(post.dateString || post.dateIso || post.createdAt)}
                           </time>
                         </Link>
                       </span>
@@ -194,7 +194,7 @@ const PostDetail = () => {
                             <Link to={ROUTES.POST_DETAIL(rp.slug)}>{rp.title}</Link>
                           </h6>
                           <i className="fa fa-calendar color-main2"></i>
-                          <span className="small-text">{formatDate(rp.createdAt || rp.dateString)}</span>
+                          <span className="small-text">{formatDate(rp.dateString || rp.dateIso || rp.createdAt)}</span>
                         </div>
                       </li>
                     ))}

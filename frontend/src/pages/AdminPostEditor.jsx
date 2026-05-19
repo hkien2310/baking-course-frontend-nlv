@@ -134,7 +134,7 @@ const AdminPostEditor = () => {
               </div>
 
               <div className="row mt-4">
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <AdminSelect 
                     label="Loại"
                     name="type" 
@@ -146,7 +146,7 @@ const AdminPostEditor = () => {
                     ]}
                   />
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <AdminSelect 
                     label="Chuyên mục"
                     name="category" 
@@ -156,6 +156,21 @@ const AdminPostEditor = () => {
                       { value: '', label: '-- Chọn có sẵn --' },
                       ...categories.map(c => ({ value: c.name, label: c.name }))
                     ]}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <AdminInput 
+                    type="date"
+                    label="Ngày hiển thị"
+                    name="dateString" 
+                    value={formData.dateString ? formData.dateString.split('T')[0] : ''} 
+                    onChange={(e) => {
+                      // Save it as a valid ISO string so the DB is happy, or just string.
+                      // If user selects "2024-10-15", it comes as "2024-10-15"
+                      const d = new Date(e.target.value);
+                      const str = isNaN(d.getTime()) ? formData.dateString : d.toISOString();
+                      setFormData({ ...formData, dateString: str });
+                    }} 
                   />
                 </div>
               </div>
