@@ -103,9 +103,9 @@ const HomeSlider = ({ slides }) => {
               />
               <div 
                 className="flexslider-overlay" 
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', zIndex: 1 }}
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.65)', zIndex: 1 }}
               ></div>
-              <div className="container-fluid" style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', alignItems: 'center' }}>
+              <div className="container-fluid" style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', alignItems: 'center', paddingBottom: '80px' }}>
                 <div className="row w-100">
                   <div className="col-md-12">
                     <div className="intro_layers_wrapper">
