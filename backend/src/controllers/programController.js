@@ -37,26 +37,17 @@ exports.getAllPrograms = async (req, res) => {
       where.category = { in: [...new Set([...names, ...categoryInputs])] };
     }
 
-    // Special Tiered Discount Logic
+    // Simply return any program that has a salePrice
     if (hasDiscount === 'true') {
-      // Step 1: Check if there are any expiring sales in the currently filtered set
-      const expiringSalesCount = await prisma.program.count({
-        where: {
-          ...where,
-          salePrice: { not: null },
-          saleEndDate: { gte: now }
-        }
+      where.salePrice = { not: null };
+      
+      // Optionally only return non-expired ones:
+      AND.push({
+        OR: [
+          { saleEndDate: null },
+          { saleEndDate: { gte: now } }
+        ]
       });
-
-      if (expiringSalesCount > 0) {
-        // If expiring exist, ONLY return those
-        where.salePrice = { not: null };
-        where.saleEndDate = { gte: now };
-      } else {
-        // If not, return programs with perpetual discounts (no end date)
-        where.salePrice = { not: null };
-        where.saleEndDate = null;
-      }
     }
 
     if (isFeatured !== undefined) {
