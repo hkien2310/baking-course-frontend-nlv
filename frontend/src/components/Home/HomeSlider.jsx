@@ -138,8 +138,8 @@ const HomeSlider = ({ slides }) => {
                             </div>
                           );
                         })()}
-                        <div className="intro_layer flex-btn" data-animation="fadeInUp">
-                          <div className="d-inline-flex" style={{ gap: '15px' }}>
+                        <div className="intro_layer flex-btn mt-3" data-animation="fadeInUp">
+                          <div className="d-flex justify-content-center flex-wrap" style={{ gap: '15px' }}>
                             <Button to={`/program/${slide.slug}`} variant="main">{t('home.slider.enrollNow')}</Button>
                             <Button to="/contact#contact-form-section" variant="outline">{t('home.slider.ourFeedback')}</Button>
                           </div>
