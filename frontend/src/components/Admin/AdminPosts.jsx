@@ -52,7 +52,6 @@ const AdminPosts = () => {
     { label: 'Ảnh', render: (row) => <img src={row.thumbnail} alt="" width="50" style={{borderRadius: '4px'}}/> },
     { label: 'Tiêu đề', key: 'title' },
     { label: 'Chuyên mục', render: (row) => <span className="badge badge-info bg-info">{row.category}</span> },
-    { label: 'Tác giả', render: (row) => row.authorName || 'Admin' },
     { label: 'Ngày đăng', render: (row) => {
       if (row.dateString) {
         const d = new Date(row.dateString);
