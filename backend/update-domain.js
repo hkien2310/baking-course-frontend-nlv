@@ -10,10 +10,10 @@ async function revertSocials() {
 
       if (value.socials) {
         if (value.socials.instagram && value.socials.instagram.includes('hoclambanhkhongkho')) {
-          value.socials.instagram = 'https://instagram.com/yumsaigon.com';
+          value.socials.instagram = 'https://instagram.com/hoclambanhonline.com';
         }
         if (value.socials.tiktok && value.socials.tiktok.includes('hoclambanhkhongkho')) {
-          value.socials.tiktok = 'https://www.tiktok.com/@yumsaigon.com';
+          value.socials.tiktok = 'https://www.tiktok.com/@hoclambanhonline.com';
         }
       }
 

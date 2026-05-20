@@ -15,8 +15,8 @@ const SECTIONS = [
 const Policies = () => {
   const { siteConfig } = useSiteConfig();
   const location = useLocation();
-  const companyName = siteConfig?.name || 'YUM Saigon';
-  const email = siteConfig?.contact?.email || 'yumsaigon2020@gmail.com';
+  const companyName = siteConfig?.name || 'Học Làm Bánh Online';
+  const email = siteConfig?.contact?.email || 'cskh.hoclambanhonline@gmail.com';
   const phone = siteConfig?.contact?.phone || '0938561989';
   const address = siteConfig?.contact?.address || '114B Hoàng Hoa Thám Phường Bảy Hiền TP Hồ Chí Minh';
   const website = siteConfig?.contact?.website || 'www.hoclambanhkhongkho.com';

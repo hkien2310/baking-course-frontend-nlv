@@ -4,21 +4,21 @@ const { DEFAULT_LOYALTY_CONFIG } = require('../services/loyaltyService');
 
 // The default config we fall back to if database is empty
 const DEFAULT_SITE_CONFIG = {
-  name: "YUM Saigon",
-  logoText: "YUM Saigon",
+  name: "Học Làm Bánh Online",
+  logoText: "Học Làm Bánh Online",
   logoDot: "",
-  description: "Mỗi công thức tại YUM Saigon được xây dựng từ trải nghiệm thực tế, hướng đến sự ổn định và khả năng ứng dụng trong kinh doanh.",
+  description: "Mỗi công thức tại Học Làm Bánh Online được xây dựng từ trải nghiệm thực tế, hướng đến sự ổn định và khả năng ứng dụng trong kinh doanh.",
   contact: {
     address: "114B Hoàng Hoa Thám Phường Bảy Hiền TP Hồ Chí Minh",
     phone: "0938561989",
-    email: "yumsaigon2020@gmail.com",
-    website: "www.hoclambanhkhongkho.com",
+    email: "cskh.hoclambanhonline@gmail.com",
+    website: "www.hoclambanhonline.com",
     workingHours: "T2-T7: 8:00 - 17:00",
     googleMapsUrl: "https://maps.google.com/maps?q=114B%20Ho%C3%A0ng%20Hoa%20Th%C3%A1m%20Ph%C6%B0%E1%BB%9Dng%20B%E1%BA%A3y%20Hi%E1%BB%81n%20TP%20H%E1%BB%93%20Ch%C3%AD%20Minh&t=&z=16&ie=UTF8&iwloc=&output=embed"
   },
   socials: {
-    facebook: "https://facebook.com/yumsaigon2020",
-    instagram: "https://instagram.com/hoclambanhkhongkho",
+    facebook: "https://facebook.com/hoclambanhonline",
+    instagram: "https://instagram.com/hoclambanhonline.com",
     tiktok: "https://www.tiktok.com/@hoclambanhkhongkho",
     youtube: "#"
   },
@@ -29,8 +29,8 @@ const DEFAULT_SITE_CONFIG = {
   },
   about: {
     historyParagraphs: [
-      'YUM Saigon được thành lập với mục tiêu mang nghệ thuật ẩm thực đến gần hơn với mọi người. Ban đầu, chúng tôi chỉ là một phòng lab nhỏ dành cho những người yêu thích bánh kem và bánh mì nghệ thuật.',
-      'Trải qua quá trình phát triển, YUM Saigon đã đào tạo nhiều học viên. Đội ngũ tự tin khẳng định chất lượng qua các khóa học thực tế, và hơn hết là ngọn lửa đam mê truyền lửa cho thế hệ tương lai.'
+      'Học Làm Bánh Online được thành lập với mục tiêu mang nghệ thuật ẩm thực đến gần hơn với mọi người. Ban đầu, chúng tôi chỉ là một phòng lab nhỏ dành cho những người yêu thích bánh kem và bánh mì nghệ thuật.',
+      'Trải qua quá trình phát triển, Học Làm Bánh Online đã đào tạo nhiều học viên. Đội ngũ tự tin khẳng định chất lượng qua các khóa học thực tế, và hơn hết là ngọn lửa đam mê truyền lửa cho thế hệ tương lai.'
     ],
     historyFeatures: [
       'Cơ sở vật chất hiện đại chuẩn',
