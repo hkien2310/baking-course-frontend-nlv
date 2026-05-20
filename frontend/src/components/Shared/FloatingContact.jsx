@@ -7,7 +7,7 @@ const FloatingContact = () => {
   // Define contact links based on site config
   const phone = siteConfig?.contact?.phone?.replace(/\s+/g, '') || '0938561989';
   const zaloUrl = siteConfig?.socials?.zalo || `https://zalo.me/${phone}`;
-  const messengerUrl = siteConfig?.socials?.messenger || 'https://m.me/hoclambanhonline';
+  const messengerUrl = siteConfig?.socials?.messenger || 'https://m.me/yumsaigon';
 
   return (
     <div className="floating-contact-widget" style={{
