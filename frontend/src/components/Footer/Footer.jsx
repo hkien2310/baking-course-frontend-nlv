@@ -76,29 +76,29 @@ const Footer = () => {
                   </Link>
                 </div>
                 <p className="after-logo">{siteConfig.description}</p>
-                <p className="icon-inline">
-                  <span className="icon-styled color-main2"><i className="fa fa-building"></i></span>
-                  <span style={{ fontWeight: 600 }}>{siteConfig.contact?.legalName || 'CÔNG TY TNHH YUM SAIGON'}</span>
+                <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-building"></i></span>
+                  <span style={{ fontWeight: 600, wordBreak: 'break-word', paddingTop: '2px' }}>{siteConfig.contact?.legalName || 'CÔNG TY TNHH YUM SAIGON'}</span>
                 </p>
-                <p className="icon-inline">
-                  <span className="icon-styled color-main2"><i className="fa fa-id-card"></i></span>
-                  <span>Mã số thuế: {siteConfig.contact?.taxCode || '0314500740'}</span>
+                <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-id-card"></i></span>
+                  <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}>Mã số thuế: {siteConfig.contact?.taxCode || '0314500740'}</span>
                 </p>
-                <p className="icon-inline">
-                  <span className="icon-styled color-main2"><i className="fa fa-map-marker"></i></span>
-                  <span>{siteConfig.contact.address}</span>
+                <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-map-marker"></i></span>
+                  <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}>{siteConfig.contact.address}</span>
                 </p>
-                <p className="icon-inline">
-                  <span className="icon-styled color-main2"><i className="fa fa-phone"></i></span>
-                  <span>{siteConfig.contact.phone}</span>
+                <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-phone"></i></span>
+                  <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}>{siteConfig.contact.phone}</span>
                 </p>
-                <p className="icon-inline">
-                  <span className="icon-styled color-main2"><i className="fa fa-envelope"></i></span>
-                  <span><a className="border-bottom" href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a></span>
+                <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-envelope"></i></span>
+                  <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}><a className="border-bottom" href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a></span>
                 </p>
-                <p className="icon-inline">
-                  <span className="icon-styled color-main2"><i className="fa fa-internet-explorer"></i></span>
-                  <span><Link to={ROUTES.HOME}>{siteConfig.contact.website}</Link></span>
+                <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-globe"></i></span>
+                  <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}><Link to={ROUTES.HOME}>{siteConfig.contact.website}</Link></span>
                 </p>
                 <div className="widget_social_icons mt-4">
                   <SocialIconLink platform="facebook" href={siteConfig.socials?.facebook} title="facebook" />
