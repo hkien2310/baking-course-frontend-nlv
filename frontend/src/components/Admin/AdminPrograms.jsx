@@ -198,8 +198,8 @@ const AdminPrograms = () => {
         }}
         title="Xóa khóa học"
         message={
-          deleteTarget?.students > 0
-            ? `CẢNH BÁO: Đã có ${deleteTarget.students} học sinh học khóa học "${deleteTarget.title}". Việc xóa khóa học sẽ gỡ bỏ dữ liệu liên quan đến học sinh và đơn hàng. Bạn có chắc chắn muốn xóa không?`
+          deleteTarget?._count?.enrollments > 0
+            ? `CẢNH BÁO: Đã có ${deleteTarget._count.enrollments} học viên thật đăng ký khóa học "${deleteTarget.title}". Việc xóa khóa học sẽ gỡ bỏ dữ liệu liên quan đến học viên và đơn hàng. Bạn có chắc chắn muốn xóa không?`
             : `Bạn có chắc chắn muốn xóa khóa học "${deleteTarget?.title}" không? Hành động này không thể hoàn tác.`
         }
       />

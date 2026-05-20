@@ -89,7 +89,7 @@ exports.getAllPrograms = async (req, res) => {
         skip,
         take: limit,
         orderBy,
-        include: { chief: true, classSessions: { include: { enrollments: true } } },
+        include: { chief: true, classSessions: { include: { enrollments: true } }, _count: { select: { enrollments: true } } },
       });
 
       // Process programs to expire sales and strip premium content
@@ -113,7 +113,7 @@ exports.getAllPrograms = async (req, res) => {
     const programs = await prisma.program.findMany({
       where,
       orderBy,
-      include: { chief: true, classSessions: { include: { enrollments: true } } },
+      include: { chief: true, classSessions: { include: { enrollments: true } }, _count: { select: { enrollments: true } } },
     });
 
     const processedPrograms = programs.map(p => {
