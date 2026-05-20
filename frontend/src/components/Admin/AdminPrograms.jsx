@@ -51,7 +51,15 @@ const AdminPrograms = () => {
         await fetchData();
       });
     } catch (err) {
-      toast.error('Lỗi khi xóa khóa học');
+      toast.error(err?.response?.data?.error || 'Lỗi khi xóa khóa học');
+    }
+  };
+
+  const handleDeleteClick = (row) => {
+    if (row._count?.enrollments > 0) {
+      toast.error(`Không thể xóa khóa học "${row.title}" vì đã có ${row._count.enrollments} học viên đăng ký.`);
+    } else {
+      setDeleteTarget(row);
     }
   };
 
@@ -173,7 +181,7 @@ const AdminPrograms = () => {
                           />
                           <AdminActionBtn 
                             variant="delete" 
-                            onClick={() => setDeleteTarget(row)} 
+                            onClick={() => handleDeleteClick(row)} 
                             title="Xóa" 
                             disabled={isPending(`delete-${row.id}`)}
                             loading={isPending(`delete-${row.id}`)} 

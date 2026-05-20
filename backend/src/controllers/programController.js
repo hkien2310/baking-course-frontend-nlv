@@ -392,6 +392,16 @@ exports.deleteProgram = async (req, res) => {
     const program = await prisma.program.findUnique({ where: { id } });
     if (!program) return res.status(404).json({ error: 'Program not found' });
 
+    // Check constraints: Do not delete if there are active enrollments or orders
+    const enrollmentsCount = await prisma.enrollment.count({ where: { programId: id } });
+    const ordersCount = await prisma.order.count({ where: { programId: id } });
+    
+    if (enrollmentsCount > 0 || ordersCount > 0) {
+      return res.status(400).json({ 
+        error: 'Không thể xóa khóa học vì đã có học viên đăng ký hoặc phát sinh đơn hàng. Hãy sử dụng tính năng Ẩn khóa học thay thế.' 
+      });
+    }
+
     await prisma.program.delete({ where: { id } });
 
     // Clean up uploaded images
