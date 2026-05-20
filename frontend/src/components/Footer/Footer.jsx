@@ -67,9 +67,9 @@ const Footer = () => {
           <div className="row">
             <div className="divider-30 d-none d-xl-block"></div>
 
-            <div className="col-md-12 col-lg-4 animate text-center text-lg-left" data-animation="fadeInUp">
+            <div className="col-md-12 col-lg-4 animate text-left" data-animation="fadeInUp">
               <div className="widget widget_icons_list footer-list">
-                <div className="text-center">
+                <div className="text-left">
                   <Link to={ROUTES.HOME} className="logo logo-footer">
                     <img src={`${import.meta.env.BASE_URL}images/logo_yum_saigon.png`} alt="" style={{ maxWidth: '120px', marginRight: '15px' }} />
                     <span className="logo-text color-darkgrey">{siteConfig.logoText}<strong className="color-main">{siteConfig.logoDot}</strong></span>
@@ -77,27 +77,27 @@ const Footer = () => {
                 </div>
                 <p className="after-logo">{siteConfig.description}</p>
                 <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
-                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-building"></i></span>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'left' }}><i className="fa fa-building"></i></span>
                   <span style={{ fontWeight: 600, wordBreak: 'break-word', paddingTop: '2px' }}>{siteConfig.contact?.legalName || 'CÔNG TY TNHH YUM SAIGON'}</span>
                 </p>
                 <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
-                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-id-card"></i></span>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'left' }}><i className="fa fa-id-card"></i></span>
                   <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}>Mã số thuế: {siteConfig.contact?.taxCode || '0314500740'}</span>
                 </p>
                 <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
-                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-map-marker"></i></span>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'left' }}><i className="fa fa-map-marker"></i></span>
                   <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}>{siteConfig.contact.address}</span>
                 </p>
                 <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
-                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-phone"></i></span>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'left' }}><i className="fa fa-phone"></i></span>
                   <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}>{siteConfig.contact.phone}</span>
                 </p>
                 <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
-                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-envelope"></i></span>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'left' }}><i className="fa fa-envelope"></i></span>
                   <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}><a className="border-bottom" href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a></span>
                 </p>
                 <p className="icon-inline" style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '15px' }}>
-                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'center' }}><i className="fa fa-globe"></i></span>
+                  <span className="icon-styled color-main2" style={{ width: '30px', flexShrink: 0, textAlign: 'left' }}><i className="fa fa-globe"></i></span>
                   <span style={{ wordBreak: 'break-word', paddingTop: '2px' }}><Link to={ROUTES.HOME}>{siteConfig.contact.website}</Link></span>
                 </p>
                 <div className="widget_social_icons mt-4">
