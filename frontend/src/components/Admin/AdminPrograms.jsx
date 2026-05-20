@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getPrograms, deleteProgram, reorderPrograms } from '../../services/api';
+import { getPrograms, deleteProgram, reorderPrograms, toggleProgramActive } from '../../services/api';
 import { ROUTES } from '../../constants/routes';
 import { formatPrice } from '../../utils/formatters';
 import usePendingAction from './usePendingAction';
@@ -26,7 +26,7 @@ const AdminPrograms = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const data = await getPrograms();
+      const data = await getPrograms({ includeHidden: true });
       setPrograms(data.data || data || []);
     } finally {
       setLoading(false);
@@ -60,6 +60,18 @@ const AdminPrograms = () => {
       toast.error(`Không thể xóa khóa học "${row.title}" vì đã có ${row._count.enrollments} học viên đăng ký.`);
     } else {
       setDeleteTarget(row);
+    }
+  };
+
+  const handleToggleActive = async (row) => {
+    try {
+      await withPending(`toggle-${row.id}`, async () => {
+        await toggleProgramActive(row.id);
+        toast.success(row.isActive ? 'Đã ẩn khóa học' : 'Đã hiện khóa học');
+        await fetchData();
+      });
+    } catch (err) {
+      toast.error('Lỗi khi thay đổi trạng thái khóa học');
     }
   };
 
@@ -167,12 +179,21 @@ const AdminPrograms = () => {
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                          <span className="badge badge-success">ĐÃ XUẤT BẢN</span>
+                          <span className={`badge ${row.isActive ? 'badge-success' : 'badge-secondary'}`}>
+                            {row.isActive ? 'ĐÃ XUẤT BẢN' : 'ĐÃ ẨN'}
+                          </span>
                           {row.isFeatured && <span className="badge" style={{ background: '#c19a5b', color: '#fff' }}>⭐ Nổi bật</span>}
                         </div>
                       </td>
                       <td className="text-center">
                         <div className="d-flex justify-content-center" style={{ gap: '4px' }}>
+                          <AdminActionBtn 
+                            variant={row.isActive ? 'hide' : 'view'} 
+                            onClick={() => handleToggleActive(row)} 
+                            title={row.isActive ? 'Ẩn khóa học' : 'Hiện khóa học'} 
+                            disabled={isPending(`toggle-${row.id}`)}
+                            loading={isPending(`toggle-${row.id}`)} 
+                          />
                           <AdminActionBtn 
                             variant="edit" 
                             onClick={() => handleOpenEdit(row)} 

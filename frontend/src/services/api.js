@@ -127,6 +127,11 @@ export const deleteProgram = async (id) => {
   return data;
 };
 
+export const toggleProgramActive = async (id) => {
+  const { data } = await api.patch(`/programs/${id}/toggle-active`);
+  return data;
+};
+
 // ---------------- CATEGORIES (Program) ----------------
 export const getCategories = async (params = {}) => {
   const { data } = await api.get('/categories', { params });

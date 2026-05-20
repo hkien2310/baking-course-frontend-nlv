@@ -7,10 +7,13 @@ exports.getAllPrograms = async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit) || 10;
-    const { dayOfWeek, chiefId, search, category, minPrice, maxPrice, sortBy, isFeatured, hasDiscount } = req.query;
+    const { dayOfWeek, chiefId, search, category, minPrice, maxPrice, sortBy, isFeatured, hasDiscount, includeHidden } = req.query;
 
     const now = new Date();
     const where = {};
+    if (includeHidden !== 'true') {
+      where.isActive = true;
+    }
     const AND = [];
 
     // Base filters (apply these first to build the core where clause)
@@ -422,6 +425,7 @@ exports.getUpcomingPrograms = async (req, res) => {
 
     const programs = await prisma.program.findMany({
       where: {
+        isActive: true,
         classSessions: { some: { startDate: { gte: now } } }
       },
       include: { classSessions: true },
@@ -431,6 +435,22 @@ exports.getUpcomingPrograms = async (req, res) => {
     res.json(programs);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch upcoming programs' });
+  }
+};
+
+exports.toggleProgramActive = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const program = await prisma.program.findUnique({ where: { id } });
+    if (!program) return res.status(404).json({ error: 'Program not found' });
+
+    const updatedProgram = await prisma.program.update({
+      where: { id },
+      data: { isActive: !program.isActive }
+    });
+    res.json({ message: 'Program status updated', isActive: updatedProgram.isActive });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to toggle program status' });
   }
 };
 

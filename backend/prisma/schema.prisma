@@ -48,6 +48,7 @@ model Program {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   isFeatured     Boolean        @default(false)
+  isActive       Boolean        @default(true)
   classIncludes  Json?
   curriculum     Json?
   learningGoals  Json?

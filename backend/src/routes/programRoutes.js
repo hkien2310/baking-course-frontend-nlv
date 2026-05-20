@@ -11,6 +11,6 @@ router.put('/reorder', auth, programController.reorderPrograms);
 router.put('/:id', auth, programController.updateProgram);
 router.patch('/:id/feature', auth, programController.toggleFeatured);
 router.delete('/:id', auth, programController.deleteProgram);
-router.get('/:identifier', programController.getProgramByIdOrSlug);
+router.patch(..:id/toggle-active., auth, programController.toggleProgramActive);router.get('/:identifier', programController.getProgramByIdOrSlug);
 
 module.exports = router;
