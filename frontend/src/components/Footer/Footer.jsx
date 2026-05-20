@@ -77,6 +77,14 @@ const Footer = () => {
                 </div>
                 <p className="after-logo">{siteConfig.description}</p>
                 <p className="icon-inline">
+                  <span className="icon-styled color-main2"><i className="fa fa-building"></i></span>
+                  <span style={{ fontWeight: 600 }}>{siteConfig.contact?.legalName || 'CÔNG TY TNHH YUM SAIGON'}</span>
+                </p>
+                <p className="icon-inline">
+                  <span className="icon-styled color-main2"><i className="fa fa-id-card"></i></span>
+                  <span>Mã số thuế: {siteConfig.contact?.taxCode || '0314500740'}</span>
+                </p>
+                <p className="icon-inline">
                   <span className="icon-styled color-main2"><i className="fa fa-map-marker"></i></span>
                   <span>{siteConfig.contact.address}</span>
                 </p>

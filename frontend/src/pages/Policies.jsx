@@ -15,7 +15,8 @@ const SECTIONS = [
 const Policies = () => {
   const { siteConfig } = useSiteConfig();
   const location = useLocation();
-  const companyName = siteConfig?.contact?.legalName || siteConfig?.name || 'YUM Saigon - Học làm bánh online';
+  const companyName = 'YUM Saigon';
+  const infoCompanyName = siteConfig?.name || 'YUM Saigon - Học làm bánh online';
   const taxCode = siteConfig?.contact?.taxCode || '0314500740';
   const email = siteConfig?.contact?.email || 'cskh.hoclambanhonline@gmail.com';
   const phone = siteConfig?.contact?.phone || '0938561989';
@@ -284,7 +285,7 @@ const Policies = () => {
                     <i className="fa fa-building-o mr-2"></i>Địa chỉ của đơn vị thu thập và quản lý thông tin
                   </h6>
                   <p style={{ margin: 0, lineHeight: 1.8, fontSize: '14px', color: '#555' }}>
-                    <strong style={{ fontSize: '16px', color: '#333' }}>{companyName}</strong><br />
+                    <strong style={{ fontSize: '16px', color: '#333' }}>{infoCompanyName}</strong><br />
                     Mã số doanh nghiệp: <strong>{taxCode}</strong><br />
                     Địa chỉ: {address}<br />
                     Điện thoại hỗ trợ / khiếu nại: {phone}<br />
