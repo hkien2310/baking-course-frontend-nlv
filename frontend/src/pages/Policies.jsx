@@ -15,7 +15,8 @@ const SECTIONS = [
 const Policies = () => {
   const { siteConfig } = useSiteConfig();
   const location = useLocation();
-  const companyName = siteConfig?.name || 'YUM Saigon - Học làm bánh online';
+  const companyName = siteConfig?.contact?.legalName || siteConfig?.name || 'YUM Saigon - Học làm bánh online';
+  const taxCode = siteConfig?.contact?.taxCode || '0314500740';
   const email = siteConfig?.contact?.email || 'cskh.hoclambanhonline@gmail.com';
   const phone = siteConfig?.contact?.phone || '0938561989';
   const address = siteConfig?.contact?.address || '114B Hoàng Hoa Thám Phường Bảy Hiền TP Hồ Chí Minh';
@@ -45,7 +46,7 @@ const Policies = () => {
         <div className="container" style={{ overflow: 'visible' }}>
           <div className="row" style={{ overflow: 'visible' }}>
             {/* Mobile Sticky Navigation */}
-            <div className="d-lg-none col-12 mb-4" style={{ position: 'sticky', top: '75px', zIndex: 100, background: '#fff', margin: '-30px 0 30px 0', padding: '15px 0', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch', borderBottom: '1px solid #eee', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+            <div className="d-lg-none col-12 mb-4" style={{ position: 'sticky', top: '75px', zIndex: 100, background: '#fff', margin: '-30px 0 30px 0', padding: '15px 0', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch', borderBottom: '1px solid #ddd', boxShadow: '0 4px 15px rgba(0,0,0,0.08)', willChange: 'transform' }}>
                 {SECTIONS.map(s => (
                   <a
                     key={`mobile-${s.id}`}
@@ -58,8 +59,8 @@ const Policies = () => {
                       display: 'inline-flex', alignItems: 'center', gap: '6px',
                       padding: '8px 16px', marginRight: '10px',
                       background: '#f8f8f8', borderRadius: '20px',
-                      color: '#333', fontSize: '13px', textDecoration: 'none',
-                      border: '1px solid #eaeaea', fontWeight: '500'
+                      color: '#222', fontSize: '13px', textDecoration: 'none',
+                      border: '1px solid #ddd', fontWeight: '600'
                     }}
                   >
                     {s.title}
@@ -68,11 +69,11 @@ const Policies = () => {
             </div>
 
             {/* Sidebar Navigation */}
-            <div className="col-lg-3 d-none d-lg-block" style={{ alignSelf: 'flex-start', position: 'sticky', top: '120px', zIndex: 10 }}>
+            <div className="col-lg-3 d-none d-lg-block" style={{ alignSelf: 'flex-start', position: 'sticky', top: '110px', zIndex: 10, willChange: 'transform' }}>
               <div style={{
                 background: '#fff', borderRadius: '12px',
-                border: '1px solid #eee', padding: '20px',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.05)'
+                border: '1px solid #e0e0e0', padding: '20px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
               }}>
                 <h6 style={{ color: '#c19a5b', fontWeight: 700, marginBottom: '15px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Mục lục
@@ -89,8 +90,8 @@ const Policies = () => {
                       style={{
                         display: 'flex', alignItems: 'center', gap: '10px',
                         padding: '10px 12px', borderRadius: '8px', marginBottom: '4px',
-                        color: '#333', textDecoration: 'none', fontSize: '14px',
-                        transition: 'all 0.2s'
+                        color: '#222', textDecoration: 'none', fontSize: '14px',
+                        fontWeight: '500', transition: 'all 0.2s'
                       }}
                       onMouseEnter={e => { e.currentTarget.style.background = '#fff8f0'; e.currentTarget.style.color = '#c19a5b'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#333'; }}
@@ -283,7 +284,8 @@ const Policies = () => {
                     <i className="fa fa-building-o mr-2"></i>Địa chỉ của đơn vị thu thập và quản lý thông tin
                   </h6>
                   <p style={{ margin: 0, lineHeight: 1.8, fontSize: '14px', color: '#555' }}>
-                    <strong>{companyName}</strong><br />
+                    <strong style={{ fontSize: '16px', color: '#333' }}>{companyName}</strong><br />
+                    Mã số doanh nghiệp: <strong>{taxCode}</strong><br />
                     Địa chỉ: {address}<br />
                     Điện thoại hỗ trợ / khiếu nại: {phone}<br />
                     Email: {email}<br />

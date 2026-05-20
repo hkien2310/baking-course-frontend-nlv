@@ -9,6 +9,8 @@ const DEFAULT_SITE_CONFIG = {
   logoDot: "",
   description: "Mỗi công thức tại Học Làm Bánh Online được xây dựng từ trải nghiệm thực tế, hướng đến sự ổn định và khả năng ứng dụng trong kinh doanh.",
   contact: {
+    legalName: "CÔNG TY TNHH YUM SAIGON",
+    taxCode: "0314500740",
     address: "114B Hoàng Hoa Thám Phường Bảy Hiền TP Hồ Chí Minh",
     phone: "0938561989",
     email: "cskh.hoclambanhonline@gmail.com",
