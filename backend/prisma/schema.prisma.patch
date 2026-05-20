@@ -1,0 +1,15 @@
+--- backend/prisma/schema.prisma
++++ backend/prisma/schema.prisma
+@@ -61,6 +61,6 @@
+-  classSessions  ClassSession[]
+-  enrollments    Enrollment[]
+-  orders         Order[]
+-  chief          Chief?         @relation(fields: [chiefId], references: [id])
+-  studentWorks   StudentWork[]
+-  qnas           CourseQA[]
++  classSessions  ClassSession[] @relation(onDelete: Cascade)
++  enrollments    Enrollment[]   @relation(onDelete: Cascade)
++  orders         Order[]        @relation(onDelete: Cascade)
++  chief          Chief?         @relation(fields: [chiefId], references: [id])
++  studentWorks   StudentWork[]  @relation(onDelete: Cascade)
++  qnas           CourseQA[]     @relation(onDelete: Cascade)
