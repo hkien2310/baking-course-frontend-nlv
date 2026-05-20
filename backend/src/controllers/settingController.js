@@ -4,7 +4,7 @@ const { DEFAULT_LOYALTY_CONFIG } = require('../services/loyaltyService');
 
 // The default config we fall back to if database is empty
 const DEFAULT_SITE_CONFIG = {
-  name: "Học Làm Bánh Online",
+  name: "YUM Saigon - Học làm bánh online",
   logoText: "Học Làm Bánh Online",
   logoDot: "",
   description: "Mỗi công thức tại Học Làm Bánh Online được xây dựng từ trải nghiệm thực tế, hướng đến sự ổn định và khả năng ứng dụng trong kinh doanh.",
