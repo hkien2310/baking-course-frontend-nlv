@@ -1,5 +1,5 @@
 import { useInitOnLoaded } from '../hooks/useInitOnLoaded';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProgramBySlug, createProgram, updateProgram, getChiefs, getCategories } from '../services/api';
 import { toast } from 'react-toastify';
@@ -45,6 +45,32 @@ const AdminProgramEditor = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [expandedLessonIndex, setExpandedLessonIndex] = useState(0);
   const [saving, setSaving] = useState(false);
+
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
+  const [draggedIdx, setDraggedIdx] = useState(null);
+
+  const handleDragStart = (position) => {
+    dragItem.current = position;
+    setDraggedIdx(position);
+  };
+
+  const handleDragOver = (e, position) => {
+    e.preventDefault();
+    dragOverItem.current = position;
+  };
+
+  const handleDrop = () => {
+    setDraggedIdx(null);
+    if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+      const updatedVideos = [...(formData.premiumContent?.videos || [])];
+      const item = updatedVideos.splice(dragItem.current, 1)[0];
+      updatedVideos.splice(dragOverItem.current, 0, item);
+      setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updatedVideos } });
+    }
+    dragItem.current = null;
+    dragOverItem.current = null;
+  };
 
   const TABS = [
     { id: 0, label: 'Thông tin chung & Hình ảnh' },
@@ -476,25 +502,44 @@ const AdminProgramEditor = () => {
                 <i className="fa fa-play-circle" style={{ color: '#c19a5b' }}></i> Danh sách Bài Giảng
               </h6>
               {(formData.premiumContent?.videos || []).map((video, i) => (
-                <LessonCollapse
+                <div 
                   key={i}
-                  index={i}
-                  title={video.title}
-                  isFree={video.isFree}
-                  isOpen={expandedLessonIndex === i}
-                  onToggle={() => setExpandedLessonIndex(expandedLessonIndex === i ? -1 : i)}
-                  mode="admin"
-                  rightActions={
-                    <button type="button" className="btn-remove-array" onClick={(e) => {
-                      e.stopPropagation();
-                      const updated = [...(formData.premiumContent?.videos || [])];
-                      updated.splice(i, 1);
-                      setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
-                    }}>
-                      <i className="fa fa-trash"></i>
-                    </button>
-                  }
+                  draggable
+                  onDragStart={() => handleDragStart(i)}
+                  onDragEnter={(e) => handleDragOver(e, i)}
+                  onDragEnd={handleDrop}
+                  onDragOver={(e) => e.preventDefault()}
+                  style={{
+                    opacity: draggedIdx === i ? 0.5 : 1,
+                    border: dragOverItem.current === i ? '2px dashed #c19a5b' : 'none',
+                    borderRadius: '12px',
+                    transition: 'all 0.2s ease',
+                    marginBottom: '1rem'
+                  }}
                 >
+                  <LessonCollapse
+                    index={i}
+                    title={video.title}
+                    isFree={video.isFree}
+                    isOpen={expandedLessonIndex === i}
+                    onToggle={() => setExpandedLessonIndex(expandedLessonIndex === i ? -1 : i)}
+                    mode="admin"
+                    rightActions={
+                      <div className="d-flex align-items-center" style={{ gap: '4px' }}>
+                        <button type="button" className="btn-remove-array" style={{ cursor: 'grab', color: '#888' }} title="Kéo thả để sắp xếp">
+                          <i className="fa fa-bars"></i>
+                        </button>
+                        <button type="button" className="btn-remove-array" onClick={(e) => {
+                          e.stopPropagation();
+                          const updated = [...(formData.premiumContent?.videos || [])];
+                          updated.splice(i, 1);
+                          setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: updated } });
+                        }} title="Xóa bài học">
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </div>
+                    }
+                  >
                   <div>
                     {/* Lesson Access Type */}
                     <div className="mb-3 p-3" style={{ background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
@@ -595,6 +640,7 @@ const AdminProgramEditor = () => {
 
                   </div>
                 </LessonCollapse>
+                </div>
               ))}
               <button type="button" className="btn btn-add-array mt-2" onClick={() => {
                 setFormData({ ...formData, premiumContent: { ...formData.premiumContent, videos: [...(formData.premiumContent?.videos || []), { title: '', url: '', isFree: false, resources: [], guides: '' }] } });
