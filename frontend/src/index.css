@@ -55,3 +55,8 @@
     max-width: 70% !important;
   }
 }
+
+/* Remove max-width limit in fullscreen mode so the video expands fully */
+.pswp--fs .pswp__zoom-wrap .embed-responsive {
+  max-width: 100% !important;
+}
