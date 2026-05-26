@@ -48,3 +48,10 @@
   white-space: pre-wrap !important;
   max-width: 100%;
 }
+
+/* Fix Photoswipe video size bug on larger screens (especially for vertical videos) */
+@media (min-width: 1200px) {
+  .pswp__zoom-wrap .embed-responsive {
+    max-width: 70% !important;
+  }
+}
