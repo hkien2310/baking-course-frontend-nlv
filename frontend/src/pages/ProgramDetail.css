@@ -223,10 +223,24 @@
                     line-height: 1.8;
                     font-size: 15px;
                     color: #444;
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                    word-break: break-word;
+                    max-width: 100%;
                   }
                   .guide-content h2, .guide-content h3 {
                     color: #c19a5b;
                     margin-top: 20px;
+                  }
+                  .quill-content {
+                    max-width: 100%;
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                    word-break: break-word;
+                  }
+                  .quill-content img, .guide-content img {
+                    max-width: 100%;
+                    height: auto;
                   }
 
                   /* ─── Lock Overlay ─── */
