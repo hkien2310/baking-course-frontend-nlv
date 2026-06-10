@@ -32,8 +32,18 @@ exports.createStaffAccount = async (req, res) => {
     if (!fullName || !email || !password) {
       return res.status(400).json({ error: 'Vui lòng cung cấp đầy đủ thông tin.' });
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Email không hợp lệ.' });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Mật khẩu phải có ít nhất 6 ký tự.' });
+    }
     if (!['ADMIN', 'EDITOR'].includes(role)) {
       return res.status(400).json({ error: 'Role không hợp lệ.' });
+    }
+    if (role === 'EDITOR' && (!permissions || permissions.length === 0)) {
+      return res.status(400).json({ error: 'Vui lòng chọn ít nhất 1 quyền truy cập cho nhân viên.' });
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -67,10 +77,18 @@ exports.updateStaffAccount = async (req, res) => {
     const { fullName, role, permissions, password } = req.body;
     const data = {};
 
+    if (role && !['ADMIN', 'EDITOR'].includes(role)) {
+      return res.status(400).json({ error: 'Role không hợp lệ.' });
+    }
+    if (role === 'EDITOR' && (!permissions || permissions.length === 0)) {
+      return res.status(400).json({ error: 'Vui lòng chọn ít nhất 1 quyền truy cập cho nhân viên.' });
+    }
+
     if (fullName) data.fullName = fullName;
-    if (role && ['ADMIN', 'EDITOR'].includes(role)) data.role = role;
+    if (role) data.role = role;
     if (permissions) data.permissions = permissions.filter(p => ALLOWED_PERMISSIONS.includes(p));
     if (password) {
+      if (password.length < 6) return res.status(400).json({ error: 'Mật khẩu phải có ít nhất 6 ký tự.' });
       const salt = await bcrypt.genSalt(10);
       data.password = await bcrypt.hash(password, salt);
     }

@@ -80,7 +80,17 @@ const AdminAccounts = () => {
   const handleSave = async () => {
     setFormError('');
     if (!form.fullName || !form.email) return setFormError('Vui lòng nhập đầy đủ họ tên và email.');
-    if (!editing && !form.password)   return setFormError('Vui lòng nhập mật khẩu.');
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) return setFormError('Email không hợp lệ.');
+    
+    if (!editing && !form.password) return setFormError('Vui lòng nhập mật khẩu.');
+    if (!editing && form.password.length < 6) return setFormError('Mật khẩu phải có ít nhất 6 ký tự.');
+    if (editing && form.password && form.password.length < 6) return setFormError('Mật khẩu phải có ít nhất 6 ký tự.');
+    
+    if (!form.isAdmin && form.permissions.length === 0) {
+      return setFormError('Vui lòng chọn ít nhất 1 quyền truy cập cho nhân viên.');
+    }
     setSaving(true);
     try {
       const payload = { fullName: form.fullName, role: form.isAdmin ? 'ADMIN' : 'EDITOR', permissions: form.isAdmin ? [] : form.permissions };
