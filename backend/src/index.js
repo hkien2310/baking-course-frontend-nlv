@@ -35,6 +35,7 @@ const studentWorkRoutes = require('./routes/studentWorkRoutes');
 const promoCodeRoutes = require('./routes/promoCodeRoutes');
 const qnaRoutes = require('./routes/qnaRoutes');
 const bannerRoutes = require('./routes/bannerRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 app.use('/api/programs', programRoutes);
 app.use('/api/posts', postRoutes);
@@ -56,6 +57,7 @@ app.use('/api/student-work', studentWorkRoutes);
 app.use('/api/promo-codes', promoCodeRoutes);
 app.use('/api/qna', qnaRoutes);
 app.use('/api/banners', bannerRoutes);
+app.use('/api/users', userRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

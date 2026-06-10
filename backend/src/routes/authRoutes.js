@@ -18,6 +18,11 @@ router.post('/register', authController.register);
 // @access  Private
 router.get('/me', authMiddleware, authController.getMe);
 
+// @route   PUT api/auth/me
+// @desc    Cập nhật thông tin cá nhân
+// @access  Private
+router.put('/me', authMiddleware, authController.updateMe);
+
 // @route   POST api/auth/refresh
 // @desc    Làm mới access token bằng refresh token
 // @access  Public

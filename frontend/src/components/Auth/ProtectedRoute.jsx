@@ -32,7 +32,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     return <Navigate to={`/auth?redirect=${encodeURIComponent(currentPath)}`} replace />;
   }
 
-  if (requireAdmin && user.role !== 'ADMIN') {
+  if (requireAdmin && user.role !== 'ADMIN' && user.role !== 'EDITOR') {
     return <Navigate to="/my-account" replace />;
   }
 

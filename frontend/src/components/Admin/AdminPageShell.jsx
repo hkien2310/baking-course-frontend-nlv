@@ -17,12 +17,12 @@ const AdminPageShell = ({ title, subtitle, loading = false, loadingRows = 5, chi
   return (
     <div className="admin-page-shell">
       {(title || subtitle || actions) && (
-        <div className="admin-content-header">
+        <div className="admin-content-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           <div>
             {title && <h2>{title}</h2>}
             {subtitle && <p style={{ color: '#88929e' }}>{subtitle}</p>}
           </div>
-          {actions ? <div>{actions}</div> : null}
+          {actions ? <div style={{ flexShrink: 0 }}>{actions}</div> : null}
         </div>
       )}
       {children}

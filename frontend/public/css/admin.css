@@ -97,6 +97,7 @@ body.admin-mode, .admin-layout {
   flex-grow: 1;
   overflow-y: auto;
   min-height: 0;
+  padding-right: 8px;
 }
 
 /* Custom scrollbar for menu */
@@ -115,18 +116,44 @@ body.admin-mode, .admin-layout {
 }
 
 .admin-menu li {
-  margin-bottom: 4px;
+  margin-bottom: 1px;
+}
+
+/* Section header buttons match menu item look exactly */
+.admin-menu .sidebar-section-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--admin-text-muted);
+  text-align: left;
+}
+.admin-menu .sidebar-section-btn .chevron {
+  font-size: 10px;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+
+.admin-menu li a,
+.admin-menu .sidebar-section-btn {
+  color: var(--admin-text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-menu li a {
   display: flex;
-  padding: 12px 20px;
-  color: var(--admin-text-muted);
+  padding: 7px 20px;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
   border-radius: 4px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   position: relative;
 }
@@ -139,7 +166,8 @@ body.admin-mode, .admin-layout {
 }
 
 .admin-menu li.active a,
-.admin-menu li a:hover {
+.admin-menu li a:hover,
+.admin-menu .sidebar-section-btn:hover {
   color: var(--admin-brand);
   background-color: transparent;
 }
@@ -671,7 +699,7 @@ body.admin-mode {
 /* Template main.css forces ALL buttons to orange pill shape (border-radius:50px, padding:9px 63px).
    Reset for admin layout so custom buttons render correctly.
    !important required because template uses bare `button` selector loaded globally. */
-.admin-layout button:not(.btn):not(.admin-action-btn):not(.admin-btn),
+.admin-layout button:not(.btn):not(.admin-action-btn):not(.admin-btn):not(.sidebar-section-btn),
 .admin-layout input[type="submit"]:not(.btn) {
   background-color: transparent !important;
   border: none !important;
@@ -682,7 +710,7 @@ body.admin-mode {
   font-size: inherit !important;
 }
 
-.admin-layout button:not(.btn):not(.admin-action-btn):not(.admin-btn):hover {
+.admin-layout button:not(.btn):not(.admin-action-btn):not(.admin-btn):not(.sidebar-section-btn):hover {
   background-color: transparent !important;
   border-color: transparent !important;
 }

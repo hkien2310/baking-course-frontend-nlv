@@ -12,7 +12,8 @@ const generateTokens = async (user) => {
     user: {
       id: user.id,
       role: user.role,
-      fullName: user.fullName
+      fullName: user.fullName,
+      permissions: user.permissions || []
     },
   };
 
@@ -157,7 +158,8 @@ exports.refreshToken = async (req, res) => {
       user: {
         id: storedToken.user.id,
         role: storedToken.user.role,
-        fullName: storedToken.user.fullName
+        fullName: storedToken.user.fullName,
+        permissions: storedToken.user.permissions || []
       },
     };
 
@@ -189,6 +191,27 @@ exports.logout = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
+    const isStaff = req.user.role === 'ADMIN' || req.user.role === 'EDITOR';
+
+    if (isStaff) {
+      // Staff chỉ cần thông tin cơ bản, không query enrollments/orders
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          role: true,
+          permissions: true,
+          createdAt: true,
+        }
+      });
+
+      if (!user) return res.status(404).json({ error: 'Không tìm thấy người dùng.' });
+      return res.json(user);
+    }
+
+    // USER: lấy đầy đủ bao gồm enrollments, orders, loyalty
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
       select: {
@@ -197,7 +220,6 @@ exports.getMe = async (req, res) => {
         email: true,
         role: true,
         createdAt: true,
-        // Loyalty fields
         totalSpent: true,
         points: true,
         memberTier: true,
@@ -217,16 +239,14 @@ exports.getMe = async (req, res) => {
       }
     });
 
-    if (!user) {
-      return res.status(404).json({ error: 'Không tìm thấy người dùng.' });
-    }
-
+    if (!user) return res.status(404).json({ error: 'Không tìm thấy người dùng.' });
     res.json(user);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Internal Server Error.');
   }
 };
+
 
 exports.changePassword = async (req, res) => {
   try {
@@ -261,5 +281,25 @@ exports.changePassword = async (req, res) => {
   } catch (err) {
     console.error('Change password error:', err);
     res.status(500).json({ error: 'Lỗi hệ thống khi đổi mật khẩu.' });
+  }
+};
+
+exports.updateMe = async (req, res) => {
+  try {
+    const { fullName } = req.body;
+    if (!fullName || !fullName.trim()) {
+      return res.status(400).json({ error: 'Họ tên không được để trống.' });
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { fullName: fullName.trim() },
+      select: { id: true, fullName: true, email: true, role: true, permissions: true },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error('updateMe error:', err);
+    res.status(500).json({ error: 'Lỗi hệ thống khi cập nhật thông tin.' });
   }
 };

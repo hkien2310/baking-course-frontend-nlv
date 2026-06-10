@@ -540,4 +540,31 @@ export const answerQuestion = async (id, answer) => {
   return data;
 };
 
+// ---------------- STAFF ACCOUNTS ----------------
+export const getStaffAccounts = async () => {
+  const { data } = await api.get('/users/staff');
+  return data;
+};
+
+export const createStaffAccount = async (payload) => {
+  const { data } = await api.post('/users/staff', payload);
+  return data;
+};
+
+export const updateStaffAccount = async (id, payload) => {
+  const { data } = await api.patch(`/users/staff/${id}`, payload);
+  return data;
+};
+
+export const deleteStaffAccount = async (id) => {
+  const { data } = await api.delete(`/users/staff/${id}`);
+  return data;
+};
+
+// ---------------- AUTH / ME ----------------
+export const updateMe = async (payload) => {
+  const { data } = await api.put('/auth/me', payload);
+  return data;
+};
+
 export default api;

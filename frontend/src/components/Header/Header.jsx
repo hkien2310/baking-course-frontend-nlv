@@ -112,7 +112,7 @@ const Header = () => {
             <div className="col-xl-2 col-lg-3 text-left text-xl-right d-none d-lg-block">
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
                 {hasToken ? (
-                  <Button to={localStorage.getItem('role') === 'ADMIN' ? ROUTES.ADMIN : ROUTES.MY_ACCOUNT} variant="main2">{t('userDash.title') || 'Dashboard'}</Button>
+                  <Button to={['ADMIN','EDITOR'].includes(localStorage.getItem('role')) ? ROUTES.ADMIN : ROUTES.MY_ACCOUNT} variant="main2">{t('userDash.title') || 'Dashboard'}</Button>
                 ) : (
                   <Button to={ROUTES.AUTH} variant="main2">{t('header.cta')}</Button>
                 )}
@@ -244,7 +244,7 @@ const Header = () => {
         <div style={{ padding: '24px', marginTop: 'auto', borderTop: '1px solid #eee' }}>
           {hasToken ? (
             <Link 
-              to={localStorage.getItem('role') === 'ADMIN' ? ROUTES.ADMIN : ROUTES.MY_ACCOUNT} 
+              to={['ADMIN','EDITOR'].includes(localStorage.getItem('role')) ? ROUTES.ADMIN : ROUTES.MY_ACCOUNT} 
               onClick={closeMobileMenu}
               style={{
                 display: 'block', textAlign: 'center', backgroundColor: '#00a651', color: '#fff',

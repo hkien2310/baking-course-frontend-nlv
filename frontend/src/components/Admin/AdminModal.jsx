@@ -1,41 +1,38 @@
 import React from 'react';
-import AdminButton from './Shared/AdminButton';
 
+/**
+ * AdminModal — scrollable modal với header sticky.
+ * CSS class .admin-modal đã có padding: 0 và max-height: 90vh.
+ * Header và body được chia riêng, body scroll độc lập.
+ */
 const AdminModal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="admin-modal-overlay" style={{}}>
-      <div className="admin-modal" style={{ position: 'relative' }}>
-        <div className="admin-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '15px', borderBottom: '1px solid #e2e8f0', marginBottom: '20px' }}>
-          <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>{title}</h4>
-          <button 
+    <div className="admin-modal-overlay">
+      <div className="admin-modal" style={{ display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
+
+        {/* Header — dùng CSS class, không override padding */}
+        <div className="admin-modal-header" style={{ flexShrink: 0 }}>
+          <h4>{title}</h4>
+          <button
             type="button"
-            onClick={onClose} 
             className="admin-modal-close-icon-only"
-            style={{ 
-              background: 'transparent', 
-              border: 'none', 
-              padding: 0,
-              cursor: 'pointer',
-              color: '#64748b',
-              fontSize: '20px',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.color = '#0f172a'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = '#64748b'; }}
-            title="Đóng (Close)"
+            onClick={onClose}
+            title="Đóng"
           >
             <i className="fa fa-times"></i>
           </button>
         </div>
-        <div className="admin-modal-body">
+
+        {/* Body — scrollable */}
+        <div className="admin-modal-body" style={{ overflowY: 'auto', flex: 1 }}>
           {children}
         </div>
+
       </div>
     </div>
   );
 };
 
 export default AdminModal;
-

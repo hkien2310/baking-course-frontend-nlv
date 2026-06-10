@@ -31,7 +31,7 @@ const Auth = () => {
     getMe()
       .then(user => {
         if (user.role) localStorage.setItem('role', user.role);
-        if (user.role === 'ADMIN') navigate(ROUTES.ADMIN, { replace: true });
+        if (['ADMIN', 'EDITOR'].includes(user.role)) navigate(ROUTES.ADMIN, { replace: true });
         else navigate(redirectTo || ROUTES.MY_ACCOUNT, { replace: true });
       })
       .catch(() => {
@@ -53,7 +53,7 @@ const Auth = () => {
       localStorage.setItem('token', data.token);
       if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
       if (data.user && data.user.role) localStorage.setItem('role', data.user.role);
-      if (data.user?.role === 'ADMIN') navigate(ROUTES.ADMIN);
+      if (['ADMIN', 'EDITOR'].includes(data.user?.role)) navigate(ROUTES.ADMIN);
       else navigate(redirectTo || ROUTES.MY_ACCOUNT);
     } catch (err) {
       setLoginError(err.response?.data?.error || t('auth.loginFailed') || 'Đăng nhập thất bại. Vui lòng thử lại.');

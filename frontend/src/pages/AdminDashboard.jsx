@@ -7,6 +7,7 @@ import AdminSliders from '../components/Admin/AdminSliders';
 import AdminEnrollments from '../components/Admin/AdminEnrollments';
 import AdminLoyalty from '../components/Admin/AdminLoyalty';
 import AdminBanners from '../components/Admin/AdminBanners';
+import AdminAccounts from '../components/Admin/AdminAccounts';
 
 // [TEMPORARILY HIDDEN] import AdminChiefs from '../components/Admin/AdminChiefs';
 import AdminOrders from '../components/Admin/AdminOrders';
@@ -24,6 +25,16 @@ const AdminDashboard = ({ user }) => {
   const [stats, setStats] = useState({ programs: 0, categories: 0, posts: 0, enrollments: 0, contacts: 0, sliders: 0, testimonials: 0, orders: 0 });
   const [statsLoading, setStatsLoading] = useState(true);
   const navigate = useNavigate();
+
+  // Default: only Nội dung open; sections toggle independently
+  const [collapsed, setCollapsed] = useState({ ops: true, system: true });
+  const toggleSection = (key) => setCollapsed(p => ({ ...p, [key]: !p[key] }));
+  // Check explicit closed FIRST so user can always close any section
+  const isSectionOpen = (key, tabs) => {
+    if (collapsed[key] === true) return false;   // explicitly closed → always respect
+    if (tabs.includes(activeTab)) return true;   // has active child & not closed → open
+    return !collapsed[key];                      // false/undefined → open
+  };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -103,11 +114,13 @@ const AdminDashboard = ({ user }) => {
       case 'settings':
         return <AdminSettings />;
       case 'password':
-        return <AdminPassword />;
+        return <AdminPassword user={user} />;
       case 'banners':
         return <AdminBanners />;
       case 'qna':
         return <AdminQnA />;
+      case 'accounts':
+        return <AdminAccounts />;
       case 'overview':
       default:
         if (statsLoading) {
@@ -180,7 +193,7 @@ const AdminDashboard = ({ user }) => {
               <div className="admin-paper-header">
                 <h4>Thông tin hệ thống</h4>
               </div>
-              <p style={{color: '#6c757d', lineHeight: '1.6'}}>
+              <p style={{color: '#6c757d', lineHeight: '1.6', padding: '12px 16px'}}>
                 Chọn chức năng từ thanh công cụ bên trái để quản lý nội dung. Các thay đổi sẽ được cập nhật trực tiếp trên trang chủ.
               </p>
             </div>
@@ -192,92 +205,181 @@ const AdminDashboard = ({ user }) => {
   return (
     <div className="admin-layout d-flex admin-content-ready">
       {/* Fixed Sidebar */}
-      <div className="admin-sidebar" style={{ width: '280px', flexShrink: 0 }}>
-        <div className="admin-logo-section">
+      <div className="admin-sidebar" style={{ width: '260px', flexShrink: 0 }}>
+        {/* Logo */}
+        <div className="admin-logo-section" style={{ marginBottom: '24px' }}>
           <i className="fa fa-cutlery"></i>
-          <h5>YUM Saigon Admin</h5>
-          <p>{user.email}</p>
+          <h5>YUM Saigon</h5>
+          <p style={{ fontSize: '11px' }}>{user.email}</p>
         </div>
-        
-        <ul className="admin-menu">
-          <li className={activeTab === 'overview' ? 'active' : ''}>
-            <a href="#overview" onClick={(e) => { e.preventDefault(); handleTabChange('overview'); }}>
-              <i className="fa fa-th-large"></i> Tổng quan
-            </a>
-          </li>
-          {/* <li className={activeTab === 'enrollments' ? 'active' : ''}>
-            <a href="#enrollments" onClick={(e) => { e.preventDefault(); handleTabChange('enrollments'); }}>
-              <i className="fa fa-graduation-cap"></i> Ghi danh
-            </a>
-          </li> */}
-          <li className={activeTab === 'orders' ? 'active' : ''}>
-            <a href="#orders" onClick={(e) => { e.preventDefault(); handleTabChange('orders'); }}>
-              <i className="fa fa-credit-card"></i> Đơn hàng
-            </a>
-          </li>
-          <li className={activeTab === 'studentWorks' ? 'active' : ''}>
-            <a href="#studentWorks" onClick={(e) => { e.preventDefault(); handleTabChange('studentWorks'); }}>
-              <i className="fa fa-camera"></i> Sản phẩm HV
-            </a>
-          </li>
-          <li className={activeTab === 'contacts' ? 'active' : ''}>
-            <a href="#contacts" onClick={(e) => { e.preventDefault(); handleTabChange('contacts'); }}>
-              <i className="fa fa-envelope"></i> Tin nhắn liên hệ
-            </a>
-          </li>
-          <li className={activeTab === 'categories' ? 'active' : ''}>
-            <a href="#categories" onClick={(e) => { e.preventDefault(); handleTabChange('categories'); }}>
-              <i className="fa fa-tags"></i> Danh mục
-            </a>
-          </li>
-          <li className={activeTab === 'programs' ? 'active' : ''}>
-            <a href="#programs" onClick={(e) => { e.preventDefault(); handleTabChange('programs'); }}>
-              <i className="fa fa-book"></i> Khóa học
-            </a>
-          </li>
-          <li className={activeTab === 'posts' ? 'active' : ''}>
-            <a href="#posts" onClick={(e) => { e.preventDefault(); handleTabChange('posts'); }}>
-              <i className="fa fa-pencil"></i> Chia sẻ
-            </a>
-          </li>
-          <li className={activeTab === 'banners' ? 'active' : ''}>
-            <a href="#banners" onClick={(e) => { e.preventDefault(); handleTabChange('banners'); }}>
-              <i className="fa fa-picture-o"></i> Banner Trang Chủ
-            </a>
-          </li>
 
-          {/* [TEMPORARILY HIDDEN] Ẩn menu Sliders trang chủ
-          <li className={activeTab === 'sliders' ? 'active' : ''}>
-            <a href="#sliders" onClick={(e) => { e.preventDefault(); handleTabChange('sliders'); }}>
-              <i className="fa fa-image"></i> Sliders trang chủ
-            </a>
-          </li>
-          */}
-          
-          <li className={activeTab === 'settings' ? 'active' : ''}>
-            <a href="#settings" onClick={(e) => { e.preventDefault(); handleTabChange('settings'); }}>
-              <i className="fa fa-cogs"></i> Cấu hình Website
-            </a>
-          </li>
-          <li className={activeTab === 'qna' ? 'active' : ''}>
-            <a href="#qna" onClick={(e) => { e.preventDefault(); handleTabChange('qna'); }}>
-              <i className="fa fa-comments"></i> Hỏi Đáp (Q&A)
-            </a>
-          </li>
-          <li className={activeTab === 'loyalty' ? 'active' : ''}>
-            <a href="#loyalty" onClick={(e) => { e.preventDefault(); handleTabChange('loyalty'); }}>
-              <i className="fa fa-gift"></i> Giảm giá & Tích điểm
-            </a>
-          </li>
-          <li className={activeTab === 'password' ? 'active' : ''}>
-            <a href="#password" onClick={(e) => { e.preventDefault(); handleTabChange('password'); }}>
-              <i className="fa fa-lock"></i> Đổi mật khẩu
-            </a>
-          </li>
+        <ul className="admin-menu" style={{ gap: 0 }}>
+
+          {/* ── NỘI DUNG (Tổng quan + content) ── */}
+          {(() => {
+            const key = 'content';
+            const tabs = ['overview','categories','programs','posts','banners'];
+            const open = isSectionOpen(key, tabs);
+            return (
+              <>
+                <li style={{ listStyle: 'none' }}>
+                  <button
+                    onClick={() => toggleSection(key)}
+                    className="sidebar-section-btn"
+                  >
+                    <span>Nội dung</span>
+                    <i className="fa fa-chevron-down chevron" style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}></i>
+                  </button>
+                </li>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, overflow: 'hidden', maxHeight: open ? '600px' : '0', transition: 'max-height 0.25s ease' }}>
+                  <li className={activeTab === 'overview' ? 'active' : ''}>
+                    <a href="#overview" onClick={(e) => { e.preventDefault(); handleTabChange('overview'); }}>
+                      <i className="fa fa-th-large"></i> Tổng quan
+                    </a>
+                  </li>
+                  {(user.role === 'ADMIN' || user.permissions?.includes('categories')) && (
+                    <li className={activeTab === 'categories' ? 'active' : ''}>
+                      <a href="#categories" onClick={(e) => { e.preventDefault(); handleTabChange('categories'); }}>
+                        <i className="fa fa-tags"></i> Danh mục
+                      </a>
+                    </li>
+                  )}
+                  {(user.role === 'ADMIN' || user.permissions?.includes('programs')) && (
+                    <li className={activeTab === 'programs' ? 'active' : ''}>
+                      <a href="#programs" onClick={(e) => { e.preventDefault(); handleTabChange('programs'); }}>
+                        <i className="fa fa-book"></i> Khóa học
+                      </a>
+                    </li>
+                  )}
+                  {(user.role === 'ADMIN' || user.permissions?.includes('posts')) && (
+                    <li className={activeTab === 'posts' ? 'active' : ''}>
+                      <a href="#posts" onClick={(e) => { e.preventDefault(); handleTabChange('posts'); }}>
+                        <i className="fa fa-pencil"></i> Chia sẻ
+                      </a>
+                    </li>
+                  )}
+                  {user.role === 'ADMIN' && (
+                    <li className={activeTab === 'banners' ? 'active' : ''}>
+                      <a href="#banners" onClick={(e) => { e.preventDefault(); handleTabChange('banners'); }}>
+                        <i className="fa fa-picture-o"></i> Banner Trang Chủ
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </>
+            );
+          })()}
+
+          {/* ── VẬN HÀNH ── */}
+          {(user.role === 'ADMIN' || user.permissions?.some(p => ['orders','contacts','studentWorks','qna'].includes(p))) && (() => {
+            const key = 'ops';
+            const tabs = ['orders','contacts','studentWorks','qna'];
+            const open = isSectionOpen(key, tabs);
+            return (
+              <>
+                <li style={{ listStyle: 'none' }}>
+                  <button
+                    onClick={() => toggleSection(key)}
+                    className="sidebar-section-btn"
+                  >
+                    <span>Vận hành</span>
+                    <i className="fa fa-chevron-down chevron" style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}></i>
+                  </button>
+                </li>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, overflow: 'hidden', maxHeight: open ? '600px' : '0', transition: 'max-height 0.25s ease' }}>
+                  {(user.role === 'ADMIN' || user.permissions?.includes('orders')) && (
+                    <li className={activeTab === 'orders' ? 'active' : ''}>
+                      <a href="#orders" onClick={(e) => { e.preventDefault(); handleTabChange('orders'); }}>
+                        <i className="fa fa-credit-card"></i> Đơn hàng
+                      </a>
+                    </li>
+                  )}
+                  {(user.role === 'ADMIN' || user.permissions?.includes('contacts')) && (
+                    <li className={activeTab === 'contacts' ? 'active' : ''}>
+                      <a href="#contacts" onClick={(e) => { e.preventDefault(); handleTabChange('contacts'); }}>
+                        <i className="fa fa-envelope"></i> Tin nhắn
+                      </a>
+                    </li>
+                  )}
+                  {(user.role === 'ADMIN' || user.permissions?.includes('studentWorks')) && (
+                    <li className={activeTab === 'studentWorks' ? 'active' : ''}>
+                      <a href="#studentWorks" onClick={(e) => { e.preventDefault(); handleTabChange('studentWorks'); }}>
+                        <i className="fa fa-camera"></i> Sản phẩm HV
+                      </a>
+                    </li>
+                  )}
+                  {(user.role === 'ADMIN' || user.permissions?.includes('qna')) && (
+                    <li className={activeTab === 'qna' ? 'active' : ''}>
+                      <a href="#qna" onClick={(e) => { e.preventDefault(); handleTabChange('qna'); }}>
+                        <i className="fa fa-comments"></i> Hỏi Đáp Q&A
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </>
+            );
+          })()}
+
+          {/* ── HỆ THỐNG: loyalty + accounts + settings + password ── */}
+          {user.role === 'ADMIN' && (() => {
+            const key = 'system';
+            const tabs = ['loyalty','accounts','settings','password'];
+            const open = isSectionOpen(key, tabs);
+            return (
+              <>
+                <li style={{ listStyle: 'none' }}>
+                  <button
+                    onClick={() => toggleSection(key)}
+                    className="sidebar-section-btn"
+                  >
+                    <span>Hệ thống</span>
+                    <i className="fa fa-chevron-down chevron" style={{ transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}></i>
+                  </button>
+                </li>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0, overflow: 'hidden', maxHeight: open ? '600px' : '0', transition: 'max-height 0.25s ease' }}>
+                  <li className={activeTab === 'loyalty' ? 'active' : ''}>
+                    <a href="#loyalty" onClick={(e) => { e.preventDefault(); handleTabChange('loyalty'); }}>
+                      <i className="fa fa-gift"></i> Giảm giá & Điểm
+                    </a>
+                  </li>
+                  <li className={activeTab === 'accounts' ? 'active' : ''}>
+                    <a href="#accounts" onClick={(e) => { e.preventDefault(); handleTabChange('accounts'); }}>
+                      <i className="fa fa-users"></i> Nhân viên
+                    </a>
+                  </li>
+                  <li className={activeTab === 'settings' ? 'active' : ''}>
+                    <a href="#settings" onClick={(e) => { e.preventDefault(); handleTabChange('settings'); }}>
+                      <i className="fa fa-cogs"></i> Cấu hình
+                    </a>
+                  </li>
+                  <li className={activeTab === 'password' ? 'active' : ''}>
+                    <a href="#password" onClick={(e) => { e.preventDefault(); handleTabChange('password'); }}>
+                      <i className="fa fa-user-circle"></i> Tài khoản của tôi
+                    </a>
+                  </li>
+                </ul>
+              </>
+            );
+          })()}
+
+          {/* EDITOR: Tài khoản của tôi (standalone, not in system group) */}
+          {user.role === 'EDITOR' && (
+            <>
+              <li style={{ pointerEvents: 'none' }}>
+                <span style={{ display: 'block', margin: '8px 20px', borderTop: '1px solid var(--admin-border-subtle)' }} />
+              </li>
+              <li className={activeTab === 'password' ? 'active' : ''}>
+                <a href="#password" onClick={(e) => { e.preventDefault(); handleTabChange('password'); }}>
+                  <i className="fa fa-user-circle"></i> Tài khoản của tôi
+                </a>
+              </li>
+            </>
+          )}
+
         </ul>
-        
+
         <button className="admin-logout-btn mt-auto" onClick={handleLogout}>
-          <i className="fa fa-sign-out" style={{marginRight: '8px'}}></i> Đăng xuất an toàn
+          <i className="fa fa-sign-out" style={{ marginRight: '8px' }}></i> Đăng xuất
         </button>
       </div>
 
