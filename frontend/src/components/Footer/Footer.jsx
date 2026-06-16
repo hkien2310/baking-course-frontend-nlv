@@ -108,7 +108,7 @@ const Footer = () => {
                 </div>
                 <div className="mt-4">
                   <a href="http://online.gov.vn/Home/WebDetails/143788" target="_blank" rel="noopener noreferrer">
-                    <img src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png" alt="Đã thông báo Bộ Công Thương" style={{ maxWidth: '160px' }} />
+                    <img src={`${import.meta.env.BASE_URL}images/logoSaleNoti.png`} alt="Đã thông báo Bộ Công Thương" style={{ maxWidth: '160px' }} />
                   </a>
                 </div>
               </div>
