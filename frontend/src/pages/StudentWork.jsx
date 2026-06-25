@@ -69,22 +69,22 @@ const StudentWork = () => {
                             {work.program?.title || 'Khóa học'}
                           </div>
                           <h5 style={{ marginTop: '8px' }}>{work.studentName}</h5>
-                          <p style={{ 
-                            color: '#666', 
-                            fontSize: '14px', 
-                            display: '-webkit-box', 
-                            WebkitLineClamp: 2, 
-                            WebkitBoxOrient: 'vertical', 
-                            overflow: 'hidden', 
+                          <p style={{
+                            color: '#666',
+                            fontSize: '14px',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
                             minHeight: '42px',
                             marginBottom: '10px'
                           }}>
                             {work.description}
                           </p>
-                          <small className="text-muted">
+                          {/* <small className="text-muted">
                             <i className="fa fa-calendar mr-1"></i>
                             {new Date(work.createdAt).toLocaleDateString('vi-VN')}
-                          </small>
+                          </small> */}
                         </div>
                       </div>
                     </div>
@@ -95,10 +95,10 @@ const StudentWork = () => {
               {totalPages > 1 && (
                 <div className="row mt-5">
                   <div className="col-12 text-center">
-                    <Pagination 
-                      currentPage={page} 
-                      totalPages={totalPages} 
-                      onPageChange={(p) => setPage(p)} 
+                    <Pagination
+                      currentPage={page}
+                      totalPages={totalPages}
+                      onPageChange={(p) => setPage(p)}
                     />
                   </div>
                 </div>

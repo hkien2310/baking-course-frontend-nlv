@@ -136,13 +136,88 @@ const ProgramDetail = () => {
     const nextPage = studentWorksPage + 1;
     try {
       const res = await getApprovedStudentWorks(nextPage, 4, program.id);
-      setStudentWorks(prev => [...prev, ...(res.data || [])]);
+      setStudentWorks(prev => {
+        const combined = [...prev, ...(res.data || [])];
+        const unique = combined.filter((item, index, self) =>
+          self.findIndex(t => t.id === item.id) === index
+        );
+        return unique;
+      });
       setStudentWorksPage(res.currentPage);
       setHasMoreStudentWorks(res.currentPage < res.totalPages);
     } catch (err) {
       console.error("Failed to load more student works", err);
     } finally {
       setLoadingMoreWorks(false);
+    }
+  };
+
+  // Initialize student name when modal opens
+  useEffect(() => {
+    if (showSubmitModal) {
+      setSubmitData({
+        studentName: currentUserName || currentUser?.fullName || currentUser?.username || '',
+        description: ''
+      });
+      setSubmitImage(null);
+      setSubmitImagePreview('');
+    }
+  }, [showSubmitModal, currentUser, currentUserName]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Kích thước ảnh tối đa là 5MB.');
+        return;
+      }
+      setSubmitImage(file);
+      setSubmitImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSubmitData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitWork = async (e) => {
+    e.preventDefault();
+    if (!submitData.studentName.trim()) {
+      toast.error('Vui lòng nhập tên người nộp.');
+      return;
+    }
+    if (!submitImage) {
+      toast.error('Vui lòng tải lên hình ảnh sản phẩm.');
+      return;
+    }
+    if (!submitData.description.trim()) {
+      toast.error('Vui lòng nhập mô tả hoặc cảm nhận sản phẩm.');
+      return;
+    }
+
+    setSubmittingWork(true);
+    try {
+      // 1. Upload image
+      const uploadRes = await uploadImage(submitImage);
+      const imgPath = uploadRes.url;
+
+      // 2. Submit student work
+      await submitStudentWork({
+        studentName: submitData.studentName,
+        imageUrl: imgPath,
+        description: submitData.description,
+        programId: program.id
+      });
+
+      toast.success('Nộp bài thành công! Bài của bạn sẽ được duyệt trước khi hiển thị.');
+      setShowSubmitModal(false);
+    } catch (err) {
+      console.error("Submit student work failed", err);
+      const errMsg = err.response?.data?.error || 'Có lỗi xảy ra khi nộp sản phẩm.';
+      toast.error(errMsg);
+    } finally {
+      setSubmittingWork(false);
     }
   };
 
@@ -677,13 +752,150 @@ const ProgramDetail = () => {
         </div>
       </section>
 
-      {/* Submit Work Modal placeholder */}
+      {/* Submit Work Modal */}
       {showSubmitModal && (
-        <div className="admin-modal-overlay" onClick={() => setShowSubmitModal(false)} style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px' }}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '500px', background: '#fff', borderRadius: '12px', padding: '30px' }}>
-            <h5>Thông báo</h5>
-            <p>Tính năng đang hoàn thiện...</p>
-            <button className="btn btn-maincolor w-100" onClick={() => setShowSubmitModal(false)}>Đóng</button>
+        <div className="admin-modal-overlay" onClick={() => !submittingWork && setShowSubmitModal(false)} style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '15px', backdropFilter: 'blur(5px)', background: 'rgba(0,0,0,0.4)' }}>
+          <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '550px', background: '#fff', borderRadius: '16px', padding: '30px', boxShadow: '0 10px 30px rgba(0,0,0,0.15)', border: 'none' }}>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h4 className="m-0 font-weight-bold" style={{ color: '#333' }}>Nộp Sản Phẩm Học Viên</h4>
+              <button 
+                type="button" 
+                className="close" 
+                onClick={() => !submittingWork && setShowSubmitModal(false)}
+                style={{ fontSize: '28px', border: 'none', background: 'none', cursor: 'pointer', outline: 'none' }}
+                disabled={submittingWork}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmitWork}>
+              <div className="form-group mb-3">
+                <label className="font-weight-bold mb-1" style={{ fontSize: '14px', color: '#555' }}>Tên hiển thị học viên <span className="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  name="studentName"
+                  className="form-control" 
+                  placeholder="Nhập tên hiển thị của bạn..."
+                  value={submitData.studentName}
+                  onChange={handleInputChange}
+                  required
+                  disabled={submittingWork}
+                  style={{ borderRadius: '8px', padding: '10px 12px', border: '1px solid #ddd' }}
+                />
+              </div>
+
+              <div className="form-group mb-3">
+                <label className="font-weight-bold mb-1" style={{ fontSize: '14px', color: '#555' }}>Hình ảnh sản phẩm thành quả <span className="text-danger">*</span></label>
+                
+                {!submitImagePreview ? (
+                  <div 
+                    onClick={() => !submittingWork && document.getElementById('student-work-file').click()}
+                    style={{ 
+                      border: '2px dashed #c19a5b', 
+                      borderRadius: '12px', 
+                      padding: '30px 20px', 
+                      textAlign: 'center', 
+                      cursor: 'pointer', 
+                      background: '#fffbf7',
+                      transition: 'all 0.2s ease'
+                    }}
+                    className="upload-dropzone"
+                  >
+                    <i className="fa fa-cloud-upload mb-2" style={{ fontSize: '36px', color: '#c19a5b' }}></i>
+                    <p className="m-0 font-weight-bold" style={{ fontSize: '14px', color: '#8b7355' }}>Nhấp để chọn ảnh sản phẩm</p>
+                    <small className="text-muted">Định dạng JPG, PNG, WEBP (Tối đa 5MB)</small>
+                  </div>
+                ) : (
+                  <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', border: '1px solid #eee' }}>
+                    <img 
+                      src={submitImagePreview} 
+                      alt="Preview" 
+                      style={{ width: '100%', maxHeight: '250px', objectFit: 'cover' }}
+                    />
+                    {!submittingWork && (
+                      <button 
+                        type="button" 
+                        onClick={() => { setSubmitImage(null); setSubmitImagePreview(''); }}
+                        style={{ 
+                          position: 'absolute', 
+                          top: '10px', 
+                          right: '10px', 
+                          background: 'rgba(255,255,255,0.9)', 
+                          border: 'none', 
+                          borderRadius: '50%', 
+                          width: '32px', 
+                          height: '32px', 
+                          minWidth: '32px',
+                          minHeight: '32px',
+                          padding: '0',
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                          cursor: 'pointer',
+                          color: '#ff4d4f'
+                        }}
+                      >
+                        <i className="fa fa-trash"></i>
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                <input 
+                  type="file" 
+                  id="student-work-file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                  disabled={submittingWork}
+                />
+              </div>
+
+              <div className="form-group mb-4">
+                <label className="font-weight-bold mb-1" style={{ fontSize: '14px', color: '#555' }}>Cảm nhận & Mô tả sản phẩm <span className="text-danger">*</span></label>
+                <textarea 
+                  name="description"
+                  className="form-control" 
+                  rows="4"
+                  placeholder="Chia sẻ một chút về quá trình làm bánh, mùi vị, hoặc cảm nghĩ của bạn..."
+                  value={submitData.description}
+                  onChange={handleInputChange}
+                  required
+                  disabled={submittingWork}
+                  style={{ borderRadius: '8px', padding: '10px 12px', border: '1px solid #ddd', resize: 'none' }}
+                ></textarea>
+              </div>
+
+              <div className="d-flex gap-3">
+                <button 
+                  type="button" 
+                  className="btn btn-light w-50" 
+                  onClick={() => setShowSubmitModal(false)}
+                  disabled={submittingWork}
+                  style={{ borderRadius: '8px', padding: '12px', fontWeight: '600' }}
+                >
+                  Hủy bỏ
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-maincolor w-50"
+                  disabled={submittingWork}
+                  style={{ borderRadius: '8px', padding: '12px', fontWeight: '600', background: 'var(--colorMain, #c19a5b)', color: '#fff', border: 'none' }}
+                >
+                  {submittingWork ? (
+                    <>
+                      <i className="fa fa-spinner fa-spin mr-1"></i> Đang gửi bài...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fa fa-paper-plane mr-1"></i> Nộp sản phẩm
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

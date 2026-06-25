@@ -10,6 +10,7 @@ jest.mock('@prisma/client', () => {
     user: {
       findUnique: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
     refreshToken: {
       create: jest.fn(),
@@ -24,6 +25,9 @@ jest.mock('@prisma/client', () => {
 // Mock bcrypt and jwt to avoid external dependencies and speed up tests
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
+jest.mock('../src/services/emailService', () => ({
+  sendEmail: jest.fn().mockResolvedValue({ success: true }),
+}));
 
 const authRoutes = require('../src/routes/authRoutes');
 
@@ -153,6 +157,63 @@ describe('Auth Controller Tests', () => {
 
       expect(res.statusCode).toBe(401);
       expect(res.body).toHaveProperty('error', 'Invalid token.');
+    });
+  });
+
+  describe('POST /api/auth/forgot-password & /reset-password', () => {
+    const testEmail = 'user@example.com';
+
+    it('should return 404 if email does not exist', async () => {
+      prismaMock.user.findUnique.mockResolvedValue(null);
+
+      const res = await request(app)
+        .post('/api/auth/forgot-password')
+        .send({ email: testEmail });
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body.error).toBe('Không tìm thấy tài khoản với email này.');
+    });
+
+    it('should return 200 and send an email if email exists', async () => {
+      const mockUser = { id: 1, email: testEmail, fullName: 'Test User' };
+      prismaMock.user.findUnique.mockResolvedValue(mockUser);
+
+      const emailServiceMock = require('../src/services/emailService');
+      emailServiceMock.sendEmail.mockClear();
+
+      const res = await request(app)
+        .post('/api/auth/forgot-password')
+        .send({ email: testEmail });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(emailServiceMock.sendEmail).toHaveBeenCalled();
+
+      // Extract the OTP code from the email call args
+      const sendEmailCallArgs = emailServiceMock.sendEmail.mock.calls[0][0];
+      const emailHtml = sendEmailCallArgs.html;
+      const codeMatch = emailHtml.match(/>(\d{6})<\/span>/);
+      const generatedCode = codeMatch ? codeMatch[1] : null;
+
+      expect(generatedCode).not.toBeNull();
+
+      bcrypt.genSalt.mockResolvedValue('salt');
+      bcrypt.hash.mockResolvedValue('hashed_new_password');
+      prismaMock.user.update.mockResolvedValue({ id: 1, email: testEmail });
+
+      const resetRes = await request(app)
+        .post('/api/auth/reset-password')
+        .send({
+          email: testEmail,
+          code: generatedCode,
+          newPassword: 'newpassword123'
+        });
+
+      expect(resetRes.statusCode).toBe(200);
+      expect(resetRes.body.success).toBe(true);
+      expect(prismaMock.user.update).toHaveBeenCalledWith(expect.objectContaining({
+        where: { email: testEmail }
+      }));
     });
   });
 });

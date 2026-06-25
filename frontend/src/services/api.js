@@ -35,6 +35,16 @@ api.interceptors.response.use(
     const { config, response } = error;
     const originalRequest = config;
 
+    // Do NOT refresh token for authentication endpoints (login, register, refresh, logout)
+    if (originalRequest && originalRequest.url && (
+      originalRequest.url.includes('/auth/login') ||
+      originalRequest.url.includes('/auth/register') ||
+      originalRequest.url.includes('/auth/refresh') ||
+      originalRequest.url.includes('/auth/logout')
+    )) {
+      return Promise.reject(error);
+    }
+
     if (response && response.status === 401 && !originalRequest._retry) {
       const refreshToken = localStorage.getItem('refreshToken');
       
@@ -327,6 +337,16 @@ export const loginUser = async (credentials) => {
   return data;
 };
 
+export const forgotPassword = async (email) => {
+  const { data } = await api.post('/auth/forgot-password', { email });
+  return data;
+};
+
+export const resetPassword = async (payload) => {
+  const { data } = await api.post('/auth/reset-password', payload);
+  return data;
+};
+
 export const logoutUser = async () => {
   const refreshToken = localStorage.getItem('refreshToken');
   try {
@@ -413,6 +433,12 @@ export const updatePaymentConfig = async (payload) => {
 // ---------------- VNPAY ----------------
 export const createVnpayPaymentUrl = async (orderId, bankCode) => {
   const { data } = await api.post('/vnpay/create-payment-url', { orderId, bankCode });
+  return data; // { paymentUrl }
+};
+
+// ---------------- PAYOS ----------------
+export const createPayosPaymentUrl = async (orderId) => {
+  const { data } = await api.post('/payos/create-payment-url', { orderId });
   return data; // { paymentUrl }
 };
 

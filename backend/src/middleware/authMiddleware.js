@@ -42,6 +42,31 @@ const requirePermission = (module) => (req, res, next) => {
   return res.status(403).json({ error: 'Không có quyền truy cập module này.' });
 };
 
+// Cho phép giải mã token JWT nếu có, nhưng không bắt buộc (dùng cho các API công khai cần nhận diện user nếu đã đăng nhập)
+const optionalAuth = function (req, res, next) {
+  const authHeader = req.header('Authorization');
+  let token;
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else {
+    token = req.header('x-auth-token');
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret_123');
+    req.user = decoded.user;
+  } catch (err) {
+    // Silent fail if invalid or expired token is passed to a public route
+  }
+  next();
+};
+
 module.exports = auth;
 module.exports.requireRole = requireRole;
 module.exports.requirePermission = requirePermission;
+module.exports.optionalAuth = optionalAuth;

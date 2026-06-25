@@ -38,4 +38,14 @@ router.post('/logout', authController.logout);
 // @access  Private
 router.put('/change-password', authMiddleware, authController.changePassword);
 
+// @route   POST api/auth/forgot-password
+// @desc    Yêu cầu khôi phục mật khẩu (OTP)
+// @access  Public
+router.post('/forgot-password', authController.forgotPassword);
+
+// @route   POST api/auth/reset-password
+// @desc    Đặt lại mật khẩu mới bằng OTP
+// @access  Public
+router.post('/reset-password', authController.resetPassword);
+
 module.exports = router;

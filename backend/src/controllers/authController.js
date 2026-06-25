@@ -1,8 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const emailService = require('../services/emailService');
 
 const prisma = new PrismaClient();
+const resetCodes = new Map();
 
 const ACCESS_TOKEN_EXPIRY = '1h';
 const REFRESH_TOKEN_EXPIRY_DAYS = 7;
@@ -301,5 +303,104 @@ exports.updateMe = async (req, res) => {
   } catch (err) {
     console.error('updateMe error:', err);
     res.status(500).json({ error: 'Lỗi hệ thống khi cập nhật thông tin.' });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Vui lòng cung cấp email.' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ error: 'Không tìm thấy tài khoản với email này.' });
+    }
+
+    // Generate a 6-digit OTP code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    resetCodes.set(email, { code, expires });
+
+    console.log(`[PASSWORD RESET] Email: ${email} | Code: ${code}`);
+
+    // Send email via emailService
+    await emailService.sendEmail({
+      to: email,
+      subject: '[YumSaigon] Mã OTP Khôi Phục Mật Khẩu',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px;">
+          <h2 style="color: #c19a5b; text-align: center;">Khôi Phục Mật Khẩu</h2>
+          <p>Xin chào <strong>${user.fullName}</strong>,</p>
+          <p>Bạn đã yêu cầu khôi phục mật khẩu cho tài khoản trên hệ thống <strong>YumSaigon</strong>.</p>
+          <p>Mã OTP xác nhận của bạn là:</p>
+          <div style="text-align: center; margin: 30px 0;">
+            <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; background-color: #f7f7f7; padding: 10px 20px; border-radius: 5px; border: 1px dashed #c19a5b; color: #222;">${code}</span>
+          </div>
+          <p style="color: #666; font-size: 14px;">Mã OTP này có hiệu lực trong vòng <strong>10 phút</strong>. Vui lòng không chia sẻ mã này với bất kỳ ai.</p>
+          <p>Nếu bạn không yêu cầu thay đổi này, hãy bỏ qua email này.</p>
+          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+          <p style="font-size: 12px; color: #999; text-align: center;">YumSaigon - Học làm bánh chuyên nghiệp</p>
+        </div>
+      `
+    });
+
+    // Determine if SMTP is configured
+    const smtpConfigured = process.env.SMTP_USER && process.env.SMTP_PASS;
+
+    res.json({ 
+      success: true, 
+      message: 'Mã OTP khôi phục mật khẩu đã được gửi đến email của bạn.',
+      ...(!smtpConfigured ? { code } : {})
+    });
+  } catch (err) {
+    console.error('ForgotPassword error:', err);
+    res.status(500).json({ error: 'Lỗi hệ thống khi yêu cầu khôi phục mật khẩu.' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+    if (!email || !code || !newPassword) {
+      return res.status(400).json({ error: 'Vui lòng điền đầy đủ email, mã OTP và mật khẩu mới.' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Mật khẩu mới phải có tối thiểu 6 ký tự.' });
+    }
+
+    const record = resetCodes.get(email);
+    if (!record) {
+      return res.status(400).json({ error: 'Yêu cầu khôi phục mật khẩu không tồn tại hoặc đã hết hạn.' });
+    }
+
+    if (record.code !== code) {
+      return res.status(400).json({ error: 'Mã OTP không chính xác.' });
+    }
+
+    if (Date.now() > record.expires) {
+      resetCodes.delete(email);
+      return res.status(400).json({ error: 'Mã OTP đã hết hạn.' });
+    }
+
+    // Update password
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(newPassword, salt);
+
+    await prisma.user.update({
+      where: { email },
+      data: { password: hash },
+    });
+
+    // Clear reset code
+    resetCodes.delete(email);
+
+    res.json({ success: true, message: 'Đặt lại mật khẩu thành công!' });
+  } catch (err) {
+    console.error('ResetPassword error:', err);
+    res.status(500).json({ error: 'Lỗi hệ thống khi đặt lại mật khẩu.' });
   }
 };

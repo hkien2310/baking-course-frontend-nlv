@@ -52,7 +52,10 @@ exports.getApprovedWorks = async (req, res) => {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [
+          { createdAt: 'desc' },
+          { id: 'asc' }
+        ],
         include: {
           program: { select: { id: true, title: true, slug: true } }
         }
