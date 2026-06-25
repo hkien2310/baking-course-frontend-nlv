@@ -18,10 +18,10 @@ const Policies = () => {
   const companyName = 'YUM Saigon';
   const infoCompanyName = siteConfig?.name || 'YUM Saigon - Học làm bánh online';
   const taxCode = siteConfig?.contact?.taxCode || '0314500740';
-  const email = siteConfig?.contact?.email || 'cskh.hoclambanhonline@gmail.com';
+  const email = siteConfig?.contact?.email || 'yumsaigon2020@gmail.com';
   const phone = siteConfig?.contact?.phone || '0938561989';
   const address = siteConfig?.contact?.address || '114B Hoàng Hoa Thám Phường Bảy Hiền TP Hồ Chí Minh';
-  const website = siteConfig?.contact?.website || 'www.hoclambanhkhongkho.com';
+  const website = siteConfig?.contact?.website || 'www.hoclambanhonline.com';
   const domain = website.replace('www.', '').replace('https://', '').replace('http://', '');
 
   useEffect(() => {

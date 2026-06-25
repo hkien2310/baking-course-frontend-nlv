@@ -15,7 +15,7 @@ const AboutHistory = ({ history }) => {
             <div className="item-content">
               <div className="section-heading">
                 <h6 className="small-text color-main2">{t('about.subtitle') || 'Về chúng tôi'}</h6>
-                <h3>{t('about.heading') || 'Lịch sử Muka'}</h3>
+                <h3>{t('about.heading') || 'Lịch sử YumSaigon'}</h3>
               </div>
             </div>
             {history.historyParagraphs.map((p, i) => (

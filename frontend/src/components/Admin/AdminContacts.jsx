@@ -199,7 +199,7 @@ const AdminContacts = () => {
                 label="Đóng"
               />
               <a 
-                href={`mailto:${selectedContact.email}?subject=Re: ${encodeURIComponent(selectedContact.subject || 'Phản hồi từ Muka Bakery')}`}
+                href={`mailto:${selectedContact.email}?subject=Re: ${encodeURIComponent(selectedContact.subject || 'Phản hồi từ YumSaigon')}`}
                 className="btn btn-primary"
                 style={{ background: 'var(--admin-brand)', borderColor: 'var(--admin-brand)', color: 'white' }}
               >

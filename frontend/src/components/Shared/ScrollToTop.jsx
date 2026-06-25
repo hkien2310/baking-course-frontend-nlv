@@ -13,7 +13,7 @@ const ScrollToTop = () => {
     });
 
     // Also dispatch a custom event or trigger jQuery doc ready if the theme requires layout recalculation
-    // The Muka theme calculates header height natively on load. If it's broken, firing a fake resize event helps.
+    // The YumSaigon theme calculates header height natively on load. If it's broken, firing a fake resize event helps.
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 100);

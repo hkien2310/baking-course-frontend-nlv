@@ -55,7 +55,7 @@
       "title": "Our Form for Enrollment"
     },
     "blog": {
-      "subtitle": "Latest news Muka",
+      "subtitle": "Latest news YumSaigon",
       "title": "Our Fresh Blog Posts",
       "allCategories": "All Categories"
     }
@@ -63,24 +63,25 @@
   "about": {
     "title": "About Us",
     "subtitle": "About us",
-    "heading": "Muka History",
+    "heading": "YumSaigon History",
     "video": {
       "subtitle": "our achievements",
-      "title": "Hello, Welcome to Muka!"
+      "title": "Hello, Welcome to YumSaigon!"
     },
-    "historyTitle": "Muka History",
+    "historyTitle": "YumSaigon History",
     "achievementsSubtitle": "our achievements",
-    "welcomeTitle": "Hello, Welcome to Muka!"
+    "welcomeTitle": "Hello, Welcome to YumSaigon!"
   },
   "auth": {
     "checkingSession": "Checking session...",
     "title": "Account",
-    "loginTitle": "Login to your account",
+    "loginTitle": "Login",
     "loginBtn": "Login",
     "loginFailed": "Login failed. Please try again.",
-    "registerTitle": "Create a new account",
+    "registerTitle": "Create account",
     "registerBtn": "Register Now",
-    "regFailed": "Registration failed. Please check your info."
+    "forgotTitle": "Forgot password",
+    "regFailed": "Registration failed. Please check your information."
   },
   "contact": {
     "title": "Contact Us",

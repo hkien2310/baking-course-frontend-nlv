@@ -63,23 +63,24 @@
   "about": {
     "title": "Giới thiệu",
     "subtitle": "Về chúng tôi",
-    "heading": "Lịch sử Muka",
+    "heading": "Lịch sử YumSaigon",
     "video": {
       "subtitle": "Thành tựu của chúng tôi",
-      "title": "Xin chào, Chào mừng bạn đến với Muka!"
+      "title": "Xin chào, Chào mừng bạn đến với YumSaigon!"
     },
-    "historyTitle": "Lịch sử Muka",
+    "historyTitle": "Lịch sử YumSaigon",
     "achievementsSubtitle": "thành tựu của chúng tôi",
-    "welcomeTitle": "Xin chào, Chào mừng đến Muka!"
+    "welcomeTitle": "Xin chào, Chào mừng đến YumSaigon!"
   },
   "auth": {
     "checkingSession": "Đang kiểm tra phiên...",
     "title": "Tài Khoản",
-    "loginTitle": "Đăng nhập tài khoản",
+    "loginTitle": "Đăng nhập",
     "loginBtn": "Đăng nhập",
     "loginFailed": "Đăng nhập thất bại. Vui lòng thử lại.",
-    "registerTitle": "Tạo tài khoản mới",
+    "registerTitle": "Tạo tài khoản",
     "registerBtn": "Đăng ký ngay",
+    "forgotTitle": "Quên mật khẩu",
     "regFailed": "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin."
   },
   "contact": {

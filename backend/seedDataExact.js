@@ -64,7 +64,7 @@ async function main() {
   console.log('Seeding Programs...');
   
   const pgrmTemplate = {
-    classIncludes: ["Tài liệu công thức chi tiết chuẩn nhà hàng", "Nguyên liệu cao cấp được chuẩn bị sẵn", "Phiếu giảm giá mua dụng cụ bếp độc quyền tại Muka"],
+    classIncludes: ["Tài liệu công thức chi tiết chuẩn nhà hàng", "Nguyên liệu cao cấp được chuẩn bị sẵn", "Phiếu giảm giá mua dụng cụ bếp độc quyền tại YumSaigon"],
     curriculum: [
       { title: "Bài 1: Giới thiệu và An toàn thực phẩm", content: "Hiểu về các nguyên tắc an toàn, sơ chế vi khuẩn và cách giữ vệ sinh trạm làm việc, cách dùng dao an toàn nhất." },
       { title: "Bài 2: Kỹ năng xử lý nhiệt và kỹ thuật cắt bản", content: "Nắm vững các kỹ thuật xào, áp chảo và 5 cách thái nguyên liệu chuẩn như brunoise, julienne." }
@@ -192,7 +192,7 @@ async function main() {
   ].map((p, idx) => ({
     ...p,
     thumbnail: thumbnails[idx % thumbnails.length],
-    content: `<p>${p.desc}</p><p>Nấu ăn là một hành trình thú vị. Nó không chỉ đơn thuần là việc kết hợp các nguyên liệu trên lửa, mà còn là sự thăng hoa của cảm xúc, của sự tỉ mỉ và tình yêu dành cho người thưởng thức. Từ việc lựa chọn những lát thịt tươi ngon nhất ngoài chợ sáng cho đến khoảnh khắc bạn vung dao lướt qua nhánh măng tây.</p><p>Tại Muka Baking, chúng tôi luôn khuyên học viên rằng 50% độ ngon của món ăn nằm ở bí quyết chuẩn bị, và 50% còn lại đến từ sự tuân thủ nghiêm ngặt kỹ thuật lửa và gia vị. Hãy luôn kiên nhẫn, vì nụ cười khi thưởng thức bữa ăn ngon sẽ đền đáp tất cả.</p>`,
+    content: `<p>${p.desc}</p><p>Nấu ăn là một hành trình thú vị. Nó không chỉ đơn thuần là việc kết hợp các nguyên liệu trên lửa, mà còn là sự thăng hoa của cảm xúc, của sự tỉ mỉ và tình yêu dành cho người thưởng thức. Từ việc lựa chọn những lát thịt tươi ngon nhất ngoài chợ sáng cho đến khoảnh khắc bạn vung dao lướt qua nhánh măng tây.</p><p>Tại YumSaigon, chúng tôi luôn khuyên học viên rằng 50% độ ngon của món ăn nằm ở bí quyết chuẩn bị, và 50% còn lại đến từ sự tuân thủ nghiêm ngặt kỹ thuật lửa và gia vị. Hãy luôn kiên nhẫn, vì nụ cười khi thưởng thức bữa ăn ngon sẽ đền đáp tất cả.</p>`,
     createdAt: new Date(new Date('2018-01-19T00:00:00Z').getTime() + idx * 86400000)
   }));
 
