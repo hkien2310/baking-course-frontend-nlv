@@ -367,7 +367,8 @@
       "viewCourses": "View Courses"
     },
     "noCourses": "You don't have any courses yet",
-    "browseCatalog": "Browse our course catalog!"
+    "browseCatalog": "Browse our course catalog!",
+    "viewCourses": "View Courses"
   },
   "receipt": {
     "loading": "Loading Posts...",

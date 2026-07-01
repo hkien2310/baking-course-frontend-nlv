@@ -368,7 +368,8 @@
       "viewCourses": "Xem khóa học"
     },
     "noCourses": "Bạn chưa có khóa học nào",
-    "browseCatalog": "Khám phá khóa học ngay!"
+    "browseCatalog": "Khám phá khóa học ngay!",
+    "viewCourses": "Xem khóa học"
   },
   "receipt": {
     "loading": "Đang tải bài viết...",
