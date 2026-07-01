@@ -365,7 +365,9 @@
       "empty": "No orders yet",
       "emptyDesc": "Your orders will appear here after payment.",
       "viewCourses": "View Courses"
-    }
+    },
+    "noCourses": "You don't have any courses yet",
+    "browseCatalog": "Browse our course catalog!"
   },
   "receipt": {
     "loading": "Loading Posts...",

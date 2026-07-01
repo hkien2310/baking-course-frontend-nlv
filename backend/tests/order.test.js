@@ -32,10 +32,13 @@ jest.mock('@prisma/client', () => {
 });
 
 // Mock the middleware and service before importing routes
-jest.mock('../src/middleware/authMiddleware', () => (req, res, next) => {
+const mockAuth = (req, res, next) => {
   req.user = { id: 'user-123', role: 'USER' };
   next();
-});
+};
+mockAuth.requireRole = jest.fn(() => (req, res, next) => next());
+mockAuth.requirePermission = jest.fn(() => (req, res, next) => next());
+jest.mock('../src/middleware/authMiddleware', () => mockAuth);
 
 jest.mock('../src/services/enrollmentService', () => ({
   createEnrollmentForOrder: jest.fn(),

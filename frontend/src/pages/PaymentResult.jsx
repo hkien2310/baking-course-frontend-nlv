@@ -254,7 +254,7 @@ const PaymentResult = () => {
                       <li className="d-flex justify-content-between mb-3 pb-3" style={{ borderBottom: '1px dashed #e8e8e8' }}>
                         <span style={{ color: '#88929e' }}>Phương thức</span>
                         <strong style={{ color: '#222' }}>
-                          {order.paymentMethod === 'VNPAY' ? 'VNPay' : (order.paidViaWebhook ? 'Chuyển khoản' : 'Thủ công')}
+                          {order.paymentMethod === 'PAYOS' ? 'PayOS' : order.paymentMethod === 'VNPAY' ? 'VNPay' : (order.paidViaWebhook ? 'Chuyển khoản' : 'Thủ công')}
                         </strong>
                       </li>
                       {order.paidAt && (

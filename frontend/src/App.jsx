@@ -72,7 +72,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
 
-        {/* ADMIN LAYOUT (No Header/Footer from Muka) */}
+        {/* ADMIN LAYOUT (No Header/Footer from YumSaigon) */}
         <Route path={ROUTES.ADMIN} element={
           <ProtectedRoute requireAdmin={true}>
             <AdminDashboard />

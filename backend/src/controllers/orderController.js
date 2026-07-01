@@ -471,6 +471,14 @@ exports.confirmOrder = async (req, res) => {
     const { adminNote } = req.body;
     const orderId = req.params.id;
 
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) {
+      return res.status(404).json({ error: 'Không tìm thấy đơn hàng.' });
+    }
+    if (order.status === 'CONFIRMED') {
+      return res.status(400).json({ error: 'Đơn hàng đã được duyệt trước đó.' });
+    }
+
     const updated = await orderService.completeOrder(orderId, {
       adminNote: adminNote || 'Confirmed by admin.'
     });

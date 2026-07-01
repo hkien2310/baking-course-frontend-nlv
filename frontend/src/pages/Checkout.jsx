@@ -4,7 +4,7 @@ import './Checkout.css';
 import { toast } from 'react-toastify';
 import PageTitle from '../components/Shared/PageTitle';
 import PageLoading from '../components/Shared/PageLoading';
-import { getProgramBySlug, getPaymentConfig, createOrder, getOrderById, submitOrderProof, cancelOrder, uploadImage, createVnpayPaymentUrl, getMyOrders, getLoyaltyConfig, validatePromoCode, previewOrder } from '../services/api';
+import { getProgramBySlug, getPaymentConfig, createOrder, getOrderById, submitOrderProof, cancelOrder, uploadImage, createVnpayPaymentUrl, createPayosPaymentUrl, getMyOrders, getLoyaltyConfig, validatePromoCode, previewOrder } from '../services/api';
 import { getMe } from '../services/api';
 import { formatPrice, getOrderStatusBadge } from '../utils/formatters';
 import { ROUTES } from '../constants/routes';
@@ -39,7 +39,7 @@ const Checkout = ({ user }) => {
   const [step, setStep] = useState(STEPS.SUMMARY);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('VNPAY');
+  const [paymentMethod, setPaymentMethod] = useState('PAYOS');
   // Loyalty
   const [loyaltyConfig, setLoyaltyConfig] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
@@ -242,9 +242,9 @@ const Checkout = ({ user }) => {
       }
       
       // Directly initiate payment redirect
-      const vnpayRes = await createVnpayPaymentUrl(res.order.id);
-      if (vnpayRes.paymentUrl) {
-        window.location.assign(vnpayRes.paymentUrl);
+      const payosRes = await createPayosPaymentUrl(res.order.id);
+      if (payosRes.paymentUrl) {
+        window.location.assign(payosRes.paymentUrl);
       } else {
         throw new Error('Không nhận được liên kết thanh toán.');
       }
@@ -254,15 +254,15 @@ const Checkout = ({ user }) => {
     }
   };
 
-  const handleVnpayPayment = async () => {
+  const handlePayosPayment = async () => {
     if (!order) return;
     setSubmitting(true);
     try {
-      const res = await createVnpayPaymentUrl(order.id);
-      // Redirect to VNPay payment page
+      const res = await createPayosPaymentUrl(order.id);
+      // Redirect to PayOS payment page
       window.location.href = res.paymentUrl;
     } catch (err) {
-      toast.error(err.response?.data?.error || t('checkout.toast.vnpayFailed'));
+      toast.error(err.response?.data?.error || 'Không thể tạo thanh toán PayOS. Vui lòng thử lại.');
       setSubmitting(false);
     }
   };
@@ -651,15 +651,15 @@ const Checkout = ({ user }) => {
                         disabled={submitting || !isPriceApplied}
                       >
                         {submitting ? (
-                          <><span className="spinner-border spinner-border-sm mr-2"></span> {(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? 'Đang đăng ký...' : 'Đang kết nối VNPay...'}</>
+                          <><span className="spinner-border spinner-border-sm mr-2"></span> {(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? 'Đang đăng ký...' : 'Đang kết nối PayOS...'}</>
                         ) : !isPriceApplied ? (
                           <><i className="fa fa-refresh mr-2"></i> Cập nhật giá trước khi thanh toán</>
                         ) : (
-                          <>{(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? <><i className="fa fa-pencil-square-o mr-2"></i> Đăng ký ngay</> : <><i className="fa fa-lock mr-2"></i> Trả tiền qua VNPay</>}</>
+                          <>{(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? <><i className="fa fa-pencil-square-o mr-2"></i> Đăng ký ngay</> : <><i className="fa fa-lock mr-2"></i> Trả tiền qua PayOS</>}</>
                         )}
                       </button>
                       <p className="text-muted small mt-3">
-                        <i className="fa fa-shield mr-1"></i> {(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? 'Đăng ký an toàn & nhanh chóng' : 'Thanh toán an toàn qua cổng VNPay'}
+                        <i className="fa fa-shield mr-1"></i> {(program.price === 0 || (priceBreakdown && priceBreakdown.totalPayment === 0)) ? 'Đăng ký an toàn & nhanh chóng' : 'Thanh toán an toàn qua cổng PayOS'}
                       </p>
                     </div>
                   </div>
@@ -714,10 +714,10 @@ const Checkout = ({ user }) => {
                       </div>
                       <h4 className="mb-3" style={{ color: '#dc3545' }}>Thanh toán thất bại</h4>
                       <p className="text-muted mb-2">
-                        {order.adminNote || 'Đơn hàng đã bị hủy hoặc thanh toán thất bại qua cổng VNPay.'}
+                        {order.adminNote || 'Đơn hàng đã bị hủy hoặc thanh toán thất bại qua cổng PayOS.'}
                       </p>
-                      <button className="btn btn-maincolor mt-3" onClick={handleVnpayPayment} disabled={submitting}>
-                        {submitting ? '...' : <><i className="fa fa-refresh mr-1"></i> Thử lại (Pay over VNPay)</>}
+                      <button className="btn btn-maincolor mt-3" onClick={handlePayosPayment} disabled={submitting}>
+                        {submitting ? '...' : <><i className="fa fa-refresh mr-1"></i> Thử lại (Pay over PayOS)</>}
                       </button>
                     </>
                   )}
@@ -729,8 +729,8 @@ const Checkout = ({ user }) => {
                       </div>
                       <h4 className="mb-3">Thanh toán đang chờ</h4>
                       <div className="d-flex justify-content-center" style={{ gap: '15px' }}>
-                        <button className="btn btn-maincolor" onClick={handleVnpayPayment} disabled={submitting}>
-                          {submitting ? '...' : <><i className="fa fa-arrow-right mr-1"></i> Thanh toán qua VNPay ngay</>}
+                        <button className="btn btn-maincolor" onClick={handlePayosPayment} disabled={submitting}>
+                          {submitting ? '...' : <><i className="fa fa-arrow-right mr-1"></i> Thanh toán qua PayOS ngay</>}
                         </button>
                         <button className="btn btn-outline-dark" onClick={handleCancel} disabled={submitting}>
                           <i className="fa fa-times mr-1"></i> Hủy đơn hàng
@@ -747,7 +747,7 @@ const Checkout = ({ user }) => {
                       {order.paymentMethod && (
                         <li>
                           <strong style={{ display: 'inline-block', width: '120px' }}>Phương thức:</strong> 
-                          {order.paymentMethod === 'VNPAY' ? t('checkout.vnpay.title') : t('checkout.manual.title')}
+                          {order.paymentMethod === 'PAYOS' ? 'PayOS' : order.paymentMethod === 'VNPAY' ? t('checkout.vnpay.title') : t('checkout.manual.title')}
                         </li>
                       )}
                     </ul>

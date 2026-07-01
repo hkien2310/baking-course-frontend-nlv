@@ -158,7 +158,9 @@ const AdminOrders = () => {
                         </span>
                       </td>
                       <td>
-                        {order.paymentMethod === 'VNPAY' ? (
+                        {order.paymentMethod === 'PAYOS' ? (
+                          <span className="badge bg-success text-white" style={{ fontSize: '10px' }}>PayOS</span>
+                        ) : order.paymentMethod === 'VNPAY' ? (
                           <span className="badge bg-success text-white" style={{ fontSize: '10px' }}>VNPay</span>
                         ) : order.paidViaWebhook ? (
                           <span className="badge bg-info text-white" style={{ fontSize: '10px' }}>Webhook</span>
@@ -264,7 +266,32 @@ const AdminOrders = () => {
 
               {selectedOrder.paidViaWebhook && (
                 <div className="alert alert-info small mb-3">
-                  <i className="fa fa-bolt mr-1"></i> Đơn hàng này được tự động xác nhận qua {selectedOrder.paymentMethod === 'VNPAY' ? 'VNPay' : 'webhook'}.
+                  <i className="fa fa-bolt mr-1"></i> Đơn hàng này được tự động xác nhận qua {selectedOrder.paymentMethod === 'VNPAY' ? 'VNPay' : selectedOrder.paymentMethod === 'PAYOS' ? 'PayOS' : 'webhook'}.
+                </div>
+              )}
+
+              {/* PayOS Gateway Info */}
+              {selectedOrder.paymentMethod === 'PAYOS' && (
+                <div className="mb-3 p-3" style={{ backgroundColor: 'rgba(40,167,69,0.05)', borderRadius: '8px', border: '1px solid rgba(40,167,69,0.15)' }}>
+                  <small style={{ color: '#88929e', fontWeight: '600' }}>Thông tin cổng PayOS</small>
+                  <div className="row mt-2" style={{ fontSize: '13px' }}>
+                    <div className="col-6 mb-1">
+                      <small style={{ color: '#88929e' }}>Mã giao dịch PayOS</small>
+                      <div><code>{selectedOrder.gatewayTxnRef || '—'}</code></div>
+                    </div>
+                    <div className="col-6 mb-1">
+                      <small style={{ color: '#88929e' }}>Mã GD Tại Ngân Hàng</small>
+                      <div><code>{selectedOrder.gatewayTransactionNo || '—'}</code></div>
+                    </div>
+                    <div className="col-6 mb-1">
+                      <small style={{ color: '#88929e' }}>Trạng thái giao dịch</small>
+                      <div><code>{selectedOrder.gatewayTransactionStatus || '—'}</code></div>
+                    </div>
+                    <div className="col-6 mb-1">
+                      <small style={{ color: '#88929e' }}>Thời gian thanh toán</small>
+                      <div>{selectedOrder.paidAt ? new Date(selectedOrder.paidAt).toLocaleString() : '—'}</div>
+                    </div>
+                  </div>
                 </div>
               )}
 

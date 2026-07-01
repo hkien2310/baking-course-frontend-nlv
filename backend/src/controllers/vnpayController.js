@@ -97,13 +97,12 @@ exports.handleReturn = async (req, res) => {
     const result = await vnpayService.processReturnCallback(req.query);
 
     const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').trim();
-    const redirectUrl = `${frontendUrl}/payment/vnpay-return?orderId=${result.orderId || ''}&status=${result.status}`;
-
+    const redirectUrl = `${frontendUrl}/payment/result?orderId=${result.orderId || ''}&status=${result.status}`;
     res.redirect(redirectUrl);
   } catch (error) {
     console.error('VNPay return error:', error);
-    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').trim();
-    res.redirect(`${frontendUrl}/payment/vnpay-return?status=failed`);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/payment/result?status=failed`);
   }
 };
 

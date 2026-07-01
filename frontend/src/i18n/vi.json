@@ -366,7 +366,9 @@
       "empty": "Chưa có đơn hàng",
       "emptyDesc": "Đơn hàng sẽ xuất hiện ở đây sau khi thanh toán.",
       "viewCourses": "Xem khóa học"
-    }
+    },
+    "noCourses": "Bạn chưa có khóa học nào",
+    "browseCatalog": "Khám phá khóa học ngay!"
   },
   "receipt": {
     "loading": "Đang tải bài viết...",
